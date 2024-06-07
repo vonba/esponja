@@ -56,6 +56,7 @@
 				if (isOwnUser) {
 					$loginSession = JSON.parse(JSON.stringify(user))
 				}
+				// TODO: empty the password fields
 				dispatch('saved', { reply })
 			} catch (error) {
 				message = 'API unavailable'
@@ -67,7 +68,7 @@
 	}
 
 	const passwordMatch = () => {
-		return user?.password === confirmPassword?.value
+		return !user.password || user?.password === confirmPassword?.value
 	}
 </script>
 
@@ -101,7 +102,7 @@
 					<div class="invalid-feedback">Se requiere dirección de correo electrónico</div>
 				</div>
 				
-				{#if isNewUser}
+				{#if isNewUser || isOwnUser}
 					<div class="mb-3">
 						<label class="form-label" for="password">Contraseña</label>
 						<input
