@@ -28,6 +28,7 @@
 	onMount(async () => {
 		// initializeGoogleAccounts()
 
+		// TODO: remove bootstrap completely
 		await import('bootstrap/js/dist/collapse') // lots of ways to load Bootstrap but prefer this approach to avoid SSR issues
 		await import('bootstrap/js/dist/dropdown')
 		Toast = (await import('bootstrap/js/dist/toast')).default

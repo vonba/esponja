@@ -5,7 +5,9 @@
 	
 	const dispatch = createEventDispatcher();
 
-	export let event: EEvent;
+	export let venues: [Venue]
+
+	export let event: EEvent
 	if (!event) {
 		event = {
 			id: 0,
@@ -87,7 +89,14 @@
 				</div>
 
 				<div class="mb-3">
-					TODO: add remaining event fields
+					<select
+						bind:value={event.venueId}
+					>
+						{#each venues as venue (venue?.id)}
+							<option value={venue?.id}>{venue?.name}</option>
+						{/each}
+					</select>
+
 				</div>
 
 				{#if message}

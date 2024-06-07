@@ -14,7 +14,7 @@
       <button on:click={() => handleLikeEvent(event.id)}>
         Guardar
       </button>
-      <button on:click={() => handleEditEvent(event.id)}>
+      <button on:click={() => handleEditEvent(event)}>
         Modificar
       </button>
       <button on:click={() => handleDisableEvent(event.id) }>

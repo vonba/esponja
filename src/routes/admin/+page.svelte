@@ -28,7 +28,7 @@
 <Tabs {titles} {activeTab} {setActiveTab}>
 	{#if activeTab === 0}
 		<div in:fade>
-			<Events events={data.events} />
+			<Events events={data.events} venues={data.venues} />
 		</div>
 	{:else if activeTab === 1}
 		<div in:fade>

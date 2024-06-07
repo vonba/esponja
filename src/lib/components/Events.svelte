@@ -4,7 +4,8 @@
 	import EditEvent from "./EditEvent.svelte"
 	import EventListItem from "./EventListItem.svelte"
 
-  export let events
+  export let events: [EEvent]
+  export let venues: [Venue]
 
   let showCreateEvent = false
   let showEditEvent = false
@@ -30,6 +31,7 @@
 {#if showCreateEvent}
   <div in:fade>
     <EditEvent 
+      {venues}
       event={null} 
       on:saved={() => {
         invalidateAll();
@@ -42,6 +44,7 @@
 {:else if showEditEvent}
   <div in:fade>
     <EditEvent 
+      {venues}
       event={editEvent}
       on:saved={() => {
         invalidateAll();
