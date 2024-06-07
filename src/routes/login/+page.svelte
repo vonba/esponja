@@ -27,7 +27,7 @@
 				}
 			}
 		} else {
-			form.classList.add('was-validated')
+			form.classList.add('.validationErrors')
 			focusOnFirstError(form)
 		}
 	}
@@ -70,109 +70,59 @@
 </script>
 
 <svelte:head>
-	<title>Login Form</title>
+	<title>Esponja Admin – Ingresar</title>
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<div class="d-flex justify-content-center mt-5">
-	<div class="card">
-		<div class="card-body">
-			<form id="signIn" autocomplete="on" novalidate>
-				<h4><strong>Sign In</strong></h4>
-				<p>Welcome back.</p>
-				<div>
-					<div class="mb-1">
-						<div id="googleButton"></div>
-					</div>
-					<div class="text-centered">
-						<div class="strike">
-							<span>or</span>
-						</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="email">Email</label>
-						<input
-							type="email"
-							class="form-control"
-							bind:this={focusedField}
-							bind:value={credentials.email}
-							required
-							placeholder="Email"
-							autocomplete="email"
-						/>
-						<div class="invalid-feedback">Email address required</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="password">Password</label>
-						<input
-							class="form-control"
-							type="password"
-							bind:value={credentials.password}
-							required
-							minlength="8"
-							maxlength="80"
-							placeholder="Password"
-							autocomplete="current-password"
-						/>
-						<div class="invalid-feedback">Password with 8 chars or more required</div>
-						<div class="form-text">
-							Password minimum length 8, must have one capital letter, 1 number, and one unique
-							character.
-						</div>
-					</div>
+<div class="loginWrapper">
+	<h2>Ingresar</h2>
+	
+	<form id="signIn" autocomplete="on" novalidate>
+		<fieldset>
+			<div>
+				<label for="email">Email</label>
+				<input
+					type="email"
+					bind:this={focusedField}
+					bind:value={credentials.email}
+					required
+					placeholder="Email"
+					autocomplete="email"
+				/>
+				<div class="invalidFeedback">Email address required</div>
+			</div>
+			<div>
+				<label for="password">Password</label>
+				<input
+					type="password"
+					bind:value={credentials.password}
+					required
+					minlength="8"
+					maxlength="80"
+					placeholder="Contraseña"
+					autocomplete="current-password"
+				/>
+				<div class="invalidFeedback">Password with 8 chars or more required</div>
+				<div class="form-text">
+					Password minimum length 8, must have one capital letter, 1 number, and one unique
+					character.
 				</div>
-				<div>
-					<a href="/forgot" class="text-black-50">Forgot Password?</a><br />
-					<br />
-				</div>
-				{#if message}
-					<p class="text-danger">{message}</p>
-				{/if}
-				<div class="d-grid gap-2">
-					<button on:click|preventDefault={login} class="btn btn-primary btn-lg">Sign In</button>
-				</div>
-			</form>
+			</div>
+		</fieldset>
+
+		<div>
+			<a href="/forgot">¿Olvidaste tu contraseña?</a>
 		</div>
-		<div class="card-footer text-center bg-white">
-			<a href="/register" class="text-black-50">Don't have an account?</a>
+
+		{#if message}
+			<p class="text-danger">{message}</p>
+		{/if}
+		<div class="d-grid gap-2">
+			<button on:click|preventDefault={login} class="btn btn-primary btn-lg">Ingresar</button>
 		</div>
-	</div>
+	</form>
 </div>
 
 <style lang="scss">
-	.card-body {
-		width: 25rem;
-	}
-
-	.strike {
-		display: block;
-		text-align: center;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-
-	.strike > span {
-		position: relative;
-		display: inline-block;
-	}
-
-	.strike > span:before,
-	.strike > span:after {
-		content: '';
-		position: absolute;
-		top: 50%;
-		width: 9999px;
-		height: 1px;
-		background: darkgray;
-	}
-
-	.strike > span:before {
-		right: 100%;
-		margin-right: 10px;
-	}
-
-	.strike > span:after {
-		left: 100%;
-		margin-left: 10px;
-	}
+	
 </style>

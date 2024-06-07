@@ -6,6 +6,7 @@
 	import Users from '$lib/components/Users.svelte'
 	import Venues from '$lib/components/Venues.svelte'
 	import Events from '$lib/components/Events.svelte'
+	import { loginSession } from '../../stores'
 
 	// Component props
 	export let data: PageData
@@ -18,6 +19,18 @@
 	let titles = ['Eventos', 'Foros', null, 'Cuenta']
 	if (user?.role === 'admin') {
 		titles = ['Eventos', 'Foros', 'Usuarios', 'Cuenta']
+	}
+
+	async function logout() {
+		// Request server delete httpOnly cookie called loginSession
+		const url = '/auth/logout'
+		const res = await fetch(url, {
+			method: 'POST'
+		})
+		if (res.ok) {
+			loginSession.set(undefined) // delete loginSession.user from
+			goto('/login')
+		} else console.error(`Logout not successful: ${res.statusText} (${res.status})`)
 	}
 </script>
 
@@ -41,6 +54,9 @@
 	{:else if activeTab === 3}
 		<div in:fade>
 			<EditUser user={data.user} />
+			<button on:click|preventDefault={logout}>
+				Salir
+		</button>
 		</div>
 	{/if}
 </Tabs>

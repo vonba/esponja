@@ -48,37 +48,33 @@
 	<title>Forgot Password</title>
 </svelte:head>
 
-<div class="d-flex justify-content-center mt-5">
-	<div class="card">
-		<div class="card-body">
-			<form id="forgot" autocomplete="on" novalidate>
-				<h4><strong>Forgot password</strong></h4>
-				<p>Hey, you're human. We get it.</p>
-				<div class="mb-3">
-					<label class="form-label" for="email">Email</label>
-					<input
-						bind:this={focusedField}
-						bind:value={email}
-						type="email"
-						id="email"
-						class="form-control"
-						required
-						placeholder="Email"
-						autocomplete="email"
-					/>
-					<div class="invalid-feedback">Email address required</div>
-				</div>
-				{#if message}
-					<p class="text-danger">{message}</p>
-				{/if}
-				<div class="d-grid gap-2">
-					<button on:click|preventDefault={sendPasswordReset} class="btn btn-primary btn-lg"
-						>Send Email</button
-					>
-				</div>
-			</form>
+<div class="forgotWrapper">
+	<h2>Forgot password</h2>
+
+	<form id="forgot" autocomplete="on" novalidate>
+		<div class="mb-3">
+			<label class="form-label" for="email">Email</label>
+			<input
+				bind:this={focusedField}
+				bind:value={email}
+				type="email"
+				id="email"
+				class="form-control"
+				required
+				placeholder="Email"
+				autocomplete="email"
+			/>
+			<div class="invalid-feedback">Email address required</div>
 		</div>
-	</div>
+		{#if message}
+			<p class="text-danger">{message}</p>
+		{/if}
+		<div class="d-grid gap-2">
+			<button on:click|preventDefault={sendPasswordReset} class="btn btn-primary btn-lg"
+				>Send Email</button
+			>
+		</div>
+	</form>
 </div>
 
 <style lang="scss">
