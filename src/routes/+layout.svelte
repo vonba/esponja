@@ -6,8 +6,6 @@
 
 	// import { initializeGoogleAccounts } from '$lib/google'
 
-	import 'bootstrap/scss/bootstrap.scss' // preferred way to load Bootstrap SCSS for hot module reloading
-
 	export let data: LayoutServerData
 
 	// If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
@@ -27,11 +25,6 @@
 
 	onMount(async () => {
 		// initializeGoogleAccounts()
-
-		// TODO: remove bootstrap completely
-		await import('bootstrap/js/dist/collapse') // lots of ways to load Bootstrap but prefer this approach to avoid SSR issues
-		await import('bootstrap/js/dist/dropdown')
-		Toast = (await import('bootstrap/js/dist/toast')).default
 
 		// if (!$loginSession) google.accounts.id.prompt()
 	})

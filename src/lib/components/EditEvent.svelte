@@ -62,53 +62,48 @@
 
 </script>
 
-<div class="d-flex my-3">
-	<div class="card login">
-		<div class="card-body">
-			
-			<h2>
-				{#if isNewEvent}
-					Nuevo evento
-				{:else}
-					Modificar evento
-				{/if}
-			</h2>
+<div class="editEvent">
+	<h2>
+		{#if isNewEvent}
+			Nuevo evento
+		{:else}
+			Modificar evento
+		{/if}
+	</h2>
 
-			<form id="eventForm" autocomplete="off" novalidate class="mt-3">
-				<div class="mb-3">
-					<label class="form-label" for="name">Nombre</label>
-					<input
-						bind:this={focusedField}
-						bind:value={event.name}
-						class="form-control"
-						id="name"
-						required
-						placeholder="Nombre"
-					/>
-					<div class="invalid-feedback">Se requiere el nombre</div>
-				</div>
-
-				<div class="mb-3">
-					<select
-						bind:value={event.venueId}
-					>
-						{#each venues as venue (venue?.id)}
-							<option value={venue?.id}>{venue?.name}</option>
-						{/each}
-					</select>
-
-				</div>
-
-				{#if message}
-					<p>{message}</p>
-				{/if}
-
-				<button type="button" on:click={update} class="btn btn-primary btn-lg">
-					Guardar
-				</button>
-			</form>
+	<form id="eventForm" autocomplete="off" novalidate class="mt-3">
+		<div class="mb-3">
+			<label class="form-label" for="name">Nombre</label>
+			<input
+				bind:this={focusedField}
+				bind:value={event.name}
+				class="form-control"
+				id="name"
+				required
+				placeholder="Nombre"
+			/>
+			<div class="invalid-feedback">Se requiere el nombre</div>
 		</div>
-	</div>
+
+		<div class="mb-3">
+			<select
+				bind:value={event.venueId}
+			>
+				{#each venues as venue (venue?.id)}
+					<option value={venue?.id}>{venue?.name}</option>
+				{/each}
+			</select>
+
+		</div>
+
+		{#if message}
+			<p>{message}</p>
+		{/if}
+
+		<button type="button" on:click={update} class="btn btn-primary btn-lg">
+			Guardar
+		</button>
+	</form>
 </div>
 
 

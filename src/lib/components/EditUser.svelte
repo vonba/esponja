@@ -72,106 +72,101 @@
 	}
 </script>
 
-<div class="d-flex my-3">
-	<div class="card login">
-		<div class="card-body">
-			
-			<h2>
-				{#if isOwnUser}
-					Modificar tu cuenta
-				{:else if !isNewUser}
-					Modificar usuario
-				{:else}
-					Nuevo usuario
-				{/if}
-			</h2>
+<div class="editUser">
+	
+	<h2>
+		{#if isOwnUser}
+			Modificar tu cuenta
+		{:else if !isNewUser}
+			Modificar usuario
+		{:else}
+			Nuevo usuario
+		{/if}
+	</h2>
 
-			<form id="profile" autocomplete="on" novalidate class="mt-3">
-				<div class="mb-3">
-					<label class="form-label" for="email">Correo electrónico</label>
-					<input
-						bind:this={focusedField}
-						type="email"
-						class="form-control"
-						bind:value={user.email}
-						required
-						placeholder="Correo electrónico"
-						id="email"
-						autocomplete="email"
-					/>
-					<div class="invalid-feedback">Se requiere dirección de correo electrónico</div>
-				</div>
-				
-				{#if isNewUser || isOwnUser}
-					<div class="mb-3">
-						<label class="form-label" for="password">Contraseña</label>
-						<input
-							type="password"
-							id="password"
-							class="form-control"
-							bind:value={user.password}
-							minlength="8"
-							maxlength="80"
-							placeholder="Contraseña"
-						/>
-						<div class="invalid-feedback">Se requiere una contraseña con 8 caracteres o más</div>
-						<div class="form-text">
-							Mínimo 8 caracteres, una letra mayúscula, un número y un carácter especial.
-						</div>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" for="password">Confirmar contraseña</label>
-						<input
-							type="password"
-							id="passwordConfirm"
-							class="form-control"
-							bind:this={confirmPassword}
-							required={!!(user.password)}
-							minlength="8"
-							maxlength="80"
-							placeholder="Contraseña (de nuevo)"
-							autocomplete="new-password"
-						/>
-					</div>
-				{/if}
-
-				<div class="mb-3">
-					<label class="form-label" for="firstName">Nombre</label>
-					<input
-						bind:value={user.firstName}
-						class="form-control"
-						id="firstName"
-						required
-						placeholder="Nombre"
-						autocomplete="given-name"
-					/>
-					<div class="invalid-feedback">Se requiere el nombre</div>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="lastName">Apellido</label>
-					<input
-						bind:value={user.lastName}
-						class="form-control"
-						id="lastName"
-						required
-						placeholder="Apellido"
-						autocomplete="family-name"
-					/>
-					<div class="invalid-feedback">Se requiere el apellido</div>
-				</div>
-
-				{#if message}
-					<p>{message}</p>
-				{/if}
-
-				<button type="button" on:click={update} class="btn btn-primary btn-lg">
-					Guardar
-				</button>
-			</form>
+	<form id="profile" autocomplete="on" novalidate class="mt-3">
+		<div class="mb-3">
+			<label class="form-label" for="email">Correo electrónico</label>
+			<input
+				bind:this={focusedField}
+				type="email"
+				class="form-control"
+				bind:value={user.email}
+				required
+				placeholder="Correo electrónico"
+				id="email"
+				autocomplete="email"
+			/>
+			<div class="invalid-feedback">Se requiere dirección de correo electrónico</div>
 		</div>
-	</div>
-</div>
+		
+		{#if isNewUser || isOwnUser}
+			<div class="mb-3">
+				<label class="form-label" for="password">Contraseña</label>
+				<input
+					type="password"
+					id="password"
+					class="form-control"
+					bind:value={user.password}
+					minlength="8"
+					maxlength="80"
+					placeholder="Contraseña"
+				/>
+				<div class="invalid-feedback">Se requiere una contraseña con 8 caracteres o más</div>
+				<div class="form-text">
+					Mínimo 8 caracteres, una letra mayúscula, un número y un carácter especial.
+				</div>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="password">Confirmar contraseña</label>
+				<input
+					type="password"
+					id="passwordConfirm"
+					class="form-control"
+					bind:this={confirmPassword}
+					required={!!(user.password)}
+					minlength="8"
+					maxlength="80"
+					placeholder="Contraseña (de nuevo)"
+					autocomplete="new-password"
+				/>
+			</div>
+		{/if}
 
+		<div class="mb-3">
+			<label class="form-label" for="firstName">Nombre</label>
+			<input
+				bind:value={user.firstName}
+				class="form-control"
+				id="firstName"
+				required
+				placeholder="Nombre"
+				autocomplete="given-name"
+			/>
+			<div class="invalid-feedback">Se requiere el nombre</div>
+		</div>
+		<div class="mb-3">
+			<label class="form-label" for="lastName">Apellido</label>
+			<input
+				bind:value={user.lastName}
+				class="form-control"
+				id="lastName"
+				required
+				placeholder="Apellido"
+				autocomplete="family-name"
+			/>
+			<div class="invalid-feedback">Se requiere el apellido</div>
+		</div>
+
+		{#if message}
+			<p>{message}</p>
+		{/if}
+
+		<button type="button" on:click={update} class="btn btn-primary btn-lg">
+			Guardar
+		</button>
+	</form>
+</div>
 
 <style lang="scss">
 	.card-body {

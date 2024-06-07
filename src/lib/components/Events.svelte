@@ -55,7 +55,7 @@
   </div>
 
 {:else}
-  <div in:fade>
+  <div class="events" in:fade>
     <div class="tools">
       <div class="viewOptions">
         <button 
@@ -72,7 +72,7 @@
       <button on:click={() => showCreateEvent = true}>Nuevo evento</button>
     </div>
     <ul class="events {displayMode}">
-      {#each events as event (event.id)}
+      {#each events as event (event?.id)}
         <EventListItem {event} {handleLikeEvent} {handleDisableEvent} {handleEditEvent} />
       {/each}
     </ul>

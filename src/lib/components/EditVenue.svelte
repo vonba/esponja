@@ -56,76 +56,71 @@
 
 </script>
 
-<div class="d-flex my-3">
-	<div class="card login">
-		<div class="card-body">
-			
-			<h2>
-				{#if isNewVenue}
-					Nuevo foro
-				{:else}
-					Modificar foro
-				{/if}
-			</h2>
+<div class="editVenue">
+	
+	<h2>
+		{#if isNewVenue}
+			Nuevo foro
+		{:else}
+			Modificar foro
+		{/if}
+	</h2>
 
-			<form id="venueForm" autocomplete="off" novalidate class="mt-3">
-				<div class="mb-3">
-					<label class="form-label" for="name">Nombre</label>
-					<input
-						bind:this={focusedField}
-						bind:value={venue.name}
-						class="form-control"
-						id="name"
-						required
-						placeholder="Nombre"
-					/>
-					<div class="invalid-feedback">Se requiere el nombre</div>
-				</div>
-
-				<div class="mb-3">
-					<label class="form-label" for="addressline1">Dirección</label>
-					<input
-						bind:value={venue.addressline1}
-						class="form-control"
-						id="addressline1"
-					/>
-					<input
-						bind:value={venue.addressline2}
-						class="form-control"
-						id="addressline2"
-					/>
-				</div>
-
-				<div class="mb-3">
-					<label class="form-label" for="postcode">Código postal</label>
-					<input
-						bind:value={venue.postcode}
-						class="form-control"
-						id="postcode"
-					/>
-				</div>
-
-				<div class="mb-3">
-					<label class="form-label" for="postcode">Ciudad</label>
-					<input
-						bind:value={venue.city}
-						class="form-control"
-						id="city"
-					/>
-				</div>
-
-				{#if message}
-					<p>{message}</p>
-				{/if}
-
-				<button type="button" on:click={update} class="btn btn-primary btn-lg">
-					Guardar
-				</button>
-			</form>
+	<form id="venueForm" autocomplete="off" novalidate class="mt-3">
+		<div class="mb-3">
+			<label class="form-label" for="name">Nombre</label>
+			<input
+				bind:this={focusedField}
+				bind:value={venue.name}
+				class="form-control"
+				id="name"
+				required
+				placeholder="Nombre"
+			/>
+			<div class="invalid-feedback">Se requiere el nombre</div>
 		</div>
-	</div>
-</div>
 
+		<div class="mb-3">
+			<label class="form-label" for="addressline1">Dirección</label>
+			<input
+				bind:value={venue.addressline1}
+				class="form-control"
+				id="addressline1"
+			/>
+			<input
+				bind:value={venue.addressline2}
+				class="form-control"
+				id="addressline2"
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label" for="postcode">Código postal</label>
+			<input
+				bind:value={venue.postcode}
+				class="form-control"
+				id="postcode"
+			/>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label" for="postcode">Ciudad</label>
+			<input
+				bind:value={venue.city}
+				class="form-control"
+				id="city"
+			/>
+		</div>
+
+		{#if message}
+			<p>{message}</p>
+		{/if}
+
+		<button type="button" on:click={update} class="btn btn-primary btn-lg">
+			Guardar
+		</button>
+	</form>
+</div>
 
 <style lang="scss">
 	.card-body {
