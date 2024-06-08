@@ -26,16 +26,16 @@
   }
 
   .tabsContent {
-    padding: 1em;
+    padding: var(--spacing);
   }
   
   header {
     display: flex;
     width: 100%;
-    gap: 1em;
-    background-color: green;
-    color: white;
-    padding: 1em;
+    gap: calc(2 * var(--spacing));
+    background-color: var(--colorGreen);
+    color: var(--colorOffWhite);
+    padding: var(--spacing);
     
     button {
       border: none;
@@ -45,10 +45,11 @@
       padding-bottom: 0.5em;
       border-bottom: 2px solid transparent;
       transition: all 0.5s;
+      cursor: pointer;
       
       &:hover,
       &.active {
-        border-bottom-color: white;
+        border-bottom-color: var(--colorOffWhite);
       }
     }
   }

@@ -1,14 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 
-// TODO: type venues and events when those types are available
-interface AdminPageData {
-	user: User,
-	users: Array<User> | null;
-	venues: Array<Venue> | null;
-	events: Array<Event> | null;
-}
-
 export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPageData> => {
 	const { user } = locals
 	
@@ -20,7 +12,7 @@ export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPage
 
 	let returnValue: AdminPageData = {
 		user,
-		users: null,
+		users: [],
 		venues: [],
 		events: [],
 	}

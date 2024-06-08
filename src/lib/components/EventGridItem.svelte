@@ -1,8 +1,11 @@
-<script lang="ts">  
+<script lang="ts">
+	import EButton from "./EButton.svelte"
+
+  
   export let event: EEvent
-  export let handleDisableEvent: Function
-  export let handleEditEvent: Function
-  export let handleLikeEvent: Function
+  export let handleDisableEvent: Function | null = null
+  export let handleEditEvent: Function | null = null
+  export let handleLikeEvent: Function | null = null
 </script>
 
 {#if event}
@@ -11,24 +14,27 @@
     {new Date(event.startDate)}
     
     <div class="actions">
-      <button on:click={() => handleLikeEvent(event.id)}>
+      {#if handleLikeEvent}
+      <EButton on:click={() => handleLikeEvent(event.id)}>
         Guardar
-      </button>
-      <button on:click={() => handleEditEvent(event.id)}>
-        Modificar
-      </button>
-      <button on:click={() => handleDisableEvent(event.id) }>
-        Ocultar
-      </button>
+        </EButton>
+      {/if}
+      {#if handleEditEvent}
+        <EButton on:click={() => handleEditEvent(event)}>
+          Modificar
+        </EButton>
+      {/if}
+      {#if handleDisableEvent}
+        <EButton on:click={() => handleDisableEvent(event.id) }>
+          Ocultar
+        </EButton>
+      {/if}
     </div>
   </li>
 {/if}
 
-<style>
+<style lang="scss">
   .eventGridItem {
-    padding: 1em;
-    border: 1px solid grey;
-    border-radius: 5px;
-    margin-bottom: 1em;
+    //
   }
 </style>

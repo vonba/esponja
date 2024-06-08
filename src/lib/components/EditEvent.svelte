@@ -5,7 +5,7 @@
 	
 	const dispatch = createEventDispatcher();
 
-	export let venues: [Venue]
+	export let venues: [Venue] | []
 
 	export let event: EEvent
 	if (!event) {

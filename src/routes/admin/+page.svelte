@@ -1,15 +1,19 @@
 <script lang="ts">
 	import type { PageData } from './$types'
+	import { goto } from '$app/navigation'
 	import { fade } from 'svelte/transition';
+
 	import EditUser from '$lib/components/EditUser.svelte';
 	import Tabs from '$lib/components/Tabs.svelte'
 	import Users from '$lib/components/Users.svelte'
 	import Venues from '$lib/components/Venues.svelte'
-	import Events from '$lib/components/Events.svelte'
 	import { loginSession } from '../../stores'
+	import EButton from '$lib/components/EButton.svelte'
+	import AdminEvents from '$lib/components/AdminEvents.svelte'
+
 
 	// Component props
-	export let data: PageData
+	export let data: AdminPageData
 	const { user } = data;
 
 	// Tabs
@@ -21,7 +25,9 @@
 		titles = ['Eventos', 'Foros', 'Usuarios', 'Cuenta']
 	}
 
-	async function logout() {
+	async function logout(e: Event) {
+		e.preventDefault()
+
 		// Request server delete httpOnly cookie called loginSession
 		const url = '/auth/logout'
 		const res = await fetch(url, {
@@ -41,7 +47,7 @@
 <Tabs {titles} {activeTab} {setActiveTab}>
 	{#if activeTab === 0}
 		<div in:fade>
-			<Events events={data.events} venues={data.venues} />
+			<AdminEvents events={data.events} venues={data.venues} />
 		</div>
 	{:else if activeTab === 1}
 		<div in:fade>
@@ -54,9 +60,9 @@
 	{:else if activeTab === 3}
 		<div in:fade>
 			<EditUser user={data.user} />
-			<button on:click|preventDefault={logout}>
+			<EButton on:click={logout}>
 				Salir
-		</button>
+			</EButton>
 		</div>
 	{/if}
 </Tabs>

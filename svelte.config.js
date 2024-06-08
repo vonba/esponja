@@ -8,7 +8,7 @@ const baseCsp = [
 	'https://www.gstatic.com/recaptcha/', // recaptcha
 	'https://accounts.google.com/gsi/', // sign-in w/google
 	'https://www.google.com/recaptcha/', // recapatcha
-	'https://fonts.gstatic.com/' // recaptcha fonts
+	'https://fonts.gstatic.com/', // recaptcha fonts
 ]
 
 if (!production) baseCsp.push('ws://localhost:3000')
@@ -27,7 +27,7 @@ const config = {
 				'default-src': [...baseCsp],
 				'script-src': ['unsafe-inline', ...baseCsp],
 				'img-src': ['data:', 'blob:', ...baseCsp],
-				'style-src': ['unsafe-inline', ...baseCsp],
+        'style-src': ["'self'", 'https://fonts.googleapis.com/', "'unsafe-inline'"], // Allow Google Fonts and inline styles
 				'object-src': ['none'],
 				'base-uri': ['self']
 			}

@@ -5,6 +5,7 @@
 	import { loginSession } from '../../stores'
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
+	import EButton from '$lib/components/EButton.svelte'
 
 	let focusedField: HTMLInputElement
 	let message: string
@@ -13,7 +14,8 @@
 		password: ''
 	}
 
-	async function login() {
+	async function login(e: Event) {
+		e.preventDefault()
 		message = ''
 		const form = <HTMLFormElement>document.getElementById('signIn')
 
@@ -33,9 +35,6 @@
 	}
 
 	onMount(() => {
-		// initializeGoogleAccounts()
-		// renderGoogleButton()
-
 		focusedField.focus()
 	})
 
@@ -75,23 +74,23 @@
 </svelte:head>
 
 <div class="loginWrapper">
-	<h2>Ingresar</h2>
-	
 	<form id="signIn" autocomplete="on" novalidate>
+		<h1>Bienvenidx</h1>
+
 		<fieldset>
-			<div>
-				<label for="email">Email</label>
+			<div class="inputContainer">
+				<label for="email">Correo electrónico</label>
 				<input
 					type="email"
 					bind:this={focusedField}
 					bind:value={credentials.email}
 					required
-					placeholder="Email"
+					placeholder="Correo electrónico"
 					autocomplete="email"
 				/>
-				<div class="invalidFeedback">Email address required</div>
+				<div class="invalidFeedback">Introducir correo electrónico</div>
 			</div>
-			<div>
+			<div class="inputContainer">
 				<label for="password">Password</label>
 				<input
 					type="password"
@@ -102,27 +101,36 @@
 					placeholder="Contraseña"
 					autocomplete="current-password"
 				/>
-				<div class="invalidFeedback">Password with 8 chars or more required</div>
-				<div class="form-text">
-					Password minimum length 8, must have one capital letter, 1 number, and one unique
-					character.
-				</div>
+				<div class="invalidFeedback">Introducir contraseña</div>
 			</div>
 		</fieldset>
 
-		<div>
+		<p>
 			<a href="/forgot">¿Olvidaste tu contraseña?</a>
-		</div>
+		</p>
 
 		{#if message}
 			<p class="text-danger">{message}</p>
 		{/if}
-		<div class="d-grid gap-2">
-			<button on:click|preventDefault={login} class="btn btn-primary btn-lg">Ingresar</button>
-		</div>
+		
+		<EButton on:click={login}>Ingresar</EButton>
 	</form>
 </div>
 
 <style lang="scss">
-	
+	.loginWrapper {
+		height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		form {
+			border: 1px solid var(--colorGreen);
+			border-radius: var(--borderRadius);
+			padding: calc(2 * var(--spacing));
+			margin: calc(2 * var(--spacing));
+			width: 100%;
+			max-width: 20em;
+		}
+	}
 </style>

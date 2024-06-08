@@ -82,3 +82,15 @@ interface UserSession {
 	id: string
 	user: User
 }
+
+interface AdminPageData {
+	user: User,
+	users: [User] | [];
+	venues: [Venue] | [];
+	events: [EEvent] | [];
+}
+
+interface HomePageData {
+	venues: [Venue] | [];
+	events: [EEvent] | [];
+}
