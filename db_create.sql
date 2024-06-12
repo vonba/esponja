@@ -113,6 +113,7 @@ CREATE TABLE public.events (
   description text COLLATE pg_catalog."default",
   ticket_link character varying(255) COLLATE pg_catalog."default",
   price_cents integer,
+  image_url VARCHAR(255),
   hidden boolean NOT NULL DEFAULT false,
   CONSTRAINT events_pkey PRIMARY KEY (id),
   CONSTRAINT events_user_id_fkey FOREIGN KEY (user_id)
@@ -364,7 +365,7 @@ $BODY$;
 
 ALTER PROCEDURE public.update_user(integer, json) OWNER TO auth;
 
-CREATE OR REPLACE PROCEDURE public.upsert_event(input json)
+CREATE OR REPLACE PROCEDURE public.upsert_event(input IN json, new_id OUT integer)
 LANGUAGE plpgsql
 AS $BODY$
 DECLARE
@@ -382,8 +383,8 @@ DECLARE
 BEGIN
   IF input_id = 0 THEN
     INSERT INTO events (user_id, venue_id, name, start_date, start_time, end_date, end_time, description, ticket_link, hidden)
-    VALUES (
-      input_user_id, input_venue_id, input_name, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden);
+    VALUES (input_user_id, input_venue_id, input_name, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden)
+    RETURNING id INTO new_id;
   ELSE
     UPDATE events SET
       user_id = input_user_id,
@@ -401,7 +402,7 @@ BEGIN
 END;
 $BODY$;
 
-CREATE OR REPLACE PROCEDURE public.upsert_venue(input json)
+CREATE OR REPLACE PROCEDURE public.upsert_venue(input IN json, new_id OUT integer)
 LANGUAGE plpgsql
 AS $BODY$
 DECLARE
@@ -415,8 +416,8 @@ DECLARE
 BEGIN
   IF input_id = 0 THEN
     INSERT INTO venues (name, addressline1, addressline2, postcode, city, hidden)
-    VALUES (
-      input_name, input_addressline1, input_addressline2, input_postcode, input_city, input_hidden);
+    VALUES (input_name, input_addressline1, input_addressline2, input_postcode, input_city, input_hidden)
+    RETURNING id INTO new_id;
   ELSE
     UPDATE venues SET
       name = input_name,
@@ -435,7 +436,6 @@ CALL public.upsert_user('{"id":0, "role":"admin", "email":"admin@example.com", "
 CALL public.upsert_user('{"id":0, "role":"editor", "email":"editor@example.com", "password":"editor123", "firstName":"John", "lastName":"Doe"}'::json);
 CALL public.upsert_user('{"id":0, "role":"contributor", "email":"contributor@example.com", "password":"contributor123", "firstName":"Justin", "lastName":"Case"}'::json);
 
-
 CALL upsert_venue('{
   "name": "Venue 1",
   "addressline1": "123 Main St",
@@ -443,7 +443,7 @@ CALL upsert_venue('{
   "postcode": "12345",
   "city": "CDMX",
   "hidden": false
-}');
+}', null);
 
 CALL upsert_venue('{
   "name": "Venue 2",
@@ -452,7 +452,7 @@ CALL upsert_venue('{
   "postcode": "67890",
   "city": "CDMX",
   "hidden": false
-}');
+}', null);
 
 CALL upsert_venue('{
   "name": "Venue 3",
@@ -461,7 +461,7 @@ CALL upsert_venue('{
   "postcode": "54321",
   "city": "CDMX",
   "hidden": false
-}');
+}', null);
 
 CALL upsert_venue('{
   "name": "Venue 4",
@@ -470,7 +470,7 @@ CALL upsert_venue('{
   "postcode": "98765",
   "city": "CDMX",
   "hidden": false
-}');
+}', null);
 
 CALL upsert_venue('{
   "name": "Venue 5",
@@ -479,7 +479,7 @@ CALL upsert_venue('{
   "postcode": "11223",
   "city": "CDMX",
   "hidden": false
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -491,7 +491,7 @@ CALL upsert_event('{
   "endTime": "18:00:00",
   "description": "Description for Event 1",
   "ticketLink": "http://example.com/ticket1"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -501,7 +501,7 @@ CALL upsert_event('{
   "startTime": "11:00:00",
   "description": "Description for Event 2",
   "ticketLink": "http://example.com/ticket2"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -513,7 +513,7 @@ CALL upsert_event('{
   "endTime": "20:00:00",
   "description": "Description for Event 3",
   "ticketLink": "http://example.com/ticket3"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -523,7 +523,7 @@ CALL upsert_event('{
   "startTime": "13:00:00",
   "description": "Description for Event 4",
   "ticketLink": "http://example.com/ticket4"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -535,7 +535,7 @@ CALL upsert_event('{
   "description": "Description for Event 5",
   "ticketLink": "http://example.com/ticket5",
   "price": 120
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -548,7 +548,7 @@ CALL upsert_event('{
   "description": "Description for Event 6",
   "ticketLink": "http://example.com/ticket6",
   "price": 200
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -558,7 +558,7 @@ CALL upsert_event('{
   "startTime": "16:00:00",
   "description": "Description for Event 7",
   "price": 80
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -568,7 +568,7 @@ CALL upsert_event('{
   "description": "Description for Event 8",
   "ticketLink": "http://example.com/ticket8",
   "price": 250
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -579,7 +579,7 @@ CALL upsert_event('{
   "endDate": "2024-06-25",
   "endTime": "22:00:00",
   "description": "Description for Event 9"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -591,7 +591,7 @@ CALL upsert_event('{
   "description": "Description for Event 10",
   "ticketLink": "http://example.com/ticket10",
   "price": 150
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -600,7 +600,7 @@ CALL upsert_event('{
   "startDate": "2024-06-26",
   "description": "Description for Event 11",
   "ticketLink": "http://example.com/ticket11"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -612,7 +612,7 @@ CALL upsert_event('{
   "endTime": "23:00:00",
   "description": "Description for Event 12",
   "price": 200
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -622,7 +622,7 @@ CALL upsert_event('{
   "startTime": "20:00:00",
   "description": "Description for Event 13",
   "ticketLink": "http://example.com/ticket13"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -632,7 +632,7 @@ CALL upsert_event('{
   "startTime": "21:00:00",
   "endDate": "2024-06-30",
   "description": "Description for Event 14"
-}');
+}', null);
 
 CALL upsert_event('{
   "userId": 1,
@@ -642,5 +642,5 @@ CALL upsert_event('{
   "startTime": "22:00:00",
   "description": "Description for Event 15",
   "ticketLink": "http://example.com/ticket15"
-}');
+}', null);
 

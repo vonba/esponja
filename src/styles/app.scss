@@ -1,0 +1,67 @@
+// Archivo font
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import url('forms.scss');
+
+/* variables */
+
+* {
+  --colorGreen: #007E68;
+  --colorOffWhite: #FFFDF7;
+  
+  --fsNormal: 14px;
+  --fsTitleMedium: 20px;
+  --fsTitleBig: 30px;
+
+  --borderRadius: 5px;
+  --spacing: 10px;
+}
+
+/* global styles */
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "Archivo", Arial, sans-serif;
+  font-size: var(--fsNormal);
+  color: var(--colorGreen);
+  background-color: var(--colorOffWhite);
+  line-height: 1.5;
+  padding: 0;
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: var(--fsTitleBig);
+}
+
+h2,
+h3 {
+  font-size: var(--fsTitleMedium);
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1.5em;
+}
+
+a {
+  color: var(--colorGreen);
+}
+
+.imageWrapper {
+  img {
+    max-width: 100%;
+  }
+}
+

@@ -20,7 +20,7 @@ export const PUT: RequestHandler = async event => {
 	const venueUpdate = await event.request.json()
 
 	try {
-		await query(`CALL upsert_venue($1);`, [JSON.stringify(venueUpdate)])
+		await query(`CALL upsert_venue($1, $2);`, [JSON.stringify(venueUpdate), null])
 	} catch (err) {
 		console.log('Error updating venue', err)
 		error(503, 'Database error')
@@ -39,7 +39,7 @@ export const POST: RequestHandler = async event => {
 
 	try {
 		// Creates new venue (id = 0)
-		await query(`CALL upsert_venue($1, $2);`, [0, JSON.stringify(venueCreate)])
+		await query(`CALL upsert_venue($1, $2);`, [0, JSON.stringify(venueCreate), null])
 	} catch (err) {
 		console.log('Error creating venue', err)
 		error(503, 'Database error')

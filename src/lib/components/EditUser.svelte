@@ -3,6 +3,7 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import { loginSession } from '../../stores'
 	import {createEventDispatcher} from 'svelte';
+	import EButton from './EButton.svelte'
 	
 	const dispatch = createEventDispatcher();
 
@@ -56,8 +57,10 @@
 				if (isOwnUser) {
 					$loginSession = JSON.parse(JSON.stringify(user))
 				}
-				// TODO: empty the password fields
-				dispatch('saved', { reply })
+				if (res.ok) {
+					// TODO: empty the password fields
+					dispatch('saved', { reply })
+				}
 			} catch (error) {
 				message = 'API unavailable'
 			}
@@ -85,12 +88,11 @@
 	</h2>
 
 	<form id="profile" autocomplete="on" novalidate class="mt-3">
-		<div class="mb-3">
-			<label class="form-label" for="email">Correo electrónico</label>
+		<div class="inputContainer">
+			<label for="email">Correo electrónico</label>
 			<input
 				bind:this={focusedField}
 				type="email"
-				class="form-control"
 				bind:value={user.email}
 				required
 				placeholder="Correo electrónico"
@@ -101,12 +103,11 @@
 		</div>
 		
 		{#if isNewUser || isOwnUser}
-			<div class="mb-3">
-				<label class="form-label" for="password">Contraseña</label>
+			<div class="inputContainer">
+				<label for="password">Contraseña</label>
 				<input
 					type="password"
 					id="password"
-					class="form-control"
 					bind:value={user.password}
 					minlength="8"
 					maxlength="80"
@@ -117,12 +118,11 @@
 					Mínimo 8 caracteres, una letra mayúscula, un número y un carácter especial.
 				</div>
 			</div>
-			<div class="mb-3">
-				<label class="form-label" for="password">Confirmar contraseña</label>
+			<div class="inputContainer">
+				<label for="password">Confirmar contraseña</label>
 				<input
 					type="password"
 					id="passwordConfirm"
-					class="form-control"
 					bind:this={confirmPassword}
 					required={!!(user.password)}
 					minlength="8"
@@ -133,11 +133,10 @@
 			</div>
 		{/if}
 
-		<div class="mb-3">
-			<label class="form-label" for="firstName">Nombre</label>
+		<div class="inputContainer">
+			<label for="firstName">Nombre</label>
 			<input
 				bind:value={user.firstName}
-				class="form-control"
 				id="firstName"
 				required
 				placeholder="Nombre"
@@ -145,11 +144,10 @@
 			/>
 			<div class="invalid-feedback">Se requiere el nombre</div>
 		</div>
-		<div class="mb-3">
-			<label class="form-label" for="lastName">Apellido</label>
+		<div class="inputContainer">
+			<label for="lastName">Apellido</label>
 			<input
 				bind:value={user.lastName}
-				class="form-control"
 				id="lastName"
 				required
 				placeholder="Apellido"
@@ -162,14 +160,14 @@
 			<p>{message}</p>
 		{/if}
 
-		<button type="button" on:click={update} class="btn btn-primary btn-lg">
+		<EButton type="button" on:click={update}>
 			Guardar
-		</button>
+		</EButton>
+		<EButton type="button" on:click={() => dispatch('cancel')}>
+			Cancelar
+		</EButton>
 	</form>
 </div>
 
 <style lang="scss">
-	.card-body {
-		width: 25rem;
-	}
 </style>

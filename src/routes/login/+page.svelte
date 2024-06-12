@@ -6,6 +6,7 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 	import EButton from '$lib/components/EButton.svelte'
+	import ButtonLink from '$lib/components/ButtonLink.svelte'
 
 	let focusedField: HTMLInputElement
 	let message: string
@@ -114,6 +115,7 @@
 		{/if}
 		
 		<EButton on:click={login}>Ingresar</EButton>
+		<ButtonLink href="/info">Cancelar</ButtonLink>
 	</form>
 </div>
 

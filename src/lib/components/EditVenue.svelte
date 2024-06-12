@@ -44,7 +44,9 @@
 				})
 				const reply = await res.json()
 				message = reply.message
-				dispatch('saved', { reply })
+				if (res.ok) {
+					dispatch('saved', { reply })
+				}
 			} catch (error) {
 				message = 'API unavailable'
 			}
@@ -123,7 +125,4 @@
 </div>
 
 <style lang="scss">
-	.card-body {
-		width: 25rem;
-	}
 </style>

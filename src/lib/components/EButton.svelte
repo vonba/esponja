@@ -1,0 +1,68 @@
+<script lang="ts">
+	// import type { MouseEventHandler } from "svelte/elements"
+  // export let className: string
+  // export let onClick: MouseEventHandler<HTMLButtonElement>
+</script>
+
+<button on:click {...$$restProps}>
+  <slot />
+</button>
+
+<style lang="scss">
+  button {
+    background: var(--colorOffWhite);
+    color: var(--colorGreen);
+    border: 1px solid var(--colorGreen);
+    border-radius: var(--borderRadius);
+    padding: calc(0.5 * var(--spacing)) var(--spacing);
+    box-shadow: 2px 2px 0 var(--colorGreen);
+    transition: all 0.25s;
+    cursor: pointer;
+    line-height: 1;
+
+    &:hover {
+      box-shadow: none;
+      transform: translate(2px, 2px);
+    }
+    
+    &.selected {
+      color: var(--colorOffWhite);
+      background: var(--colorGreen);
+    }
+  }
+
+  button.icon {
+    text-indent: -999em;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: var(--fsNormal);
+    width: 30px;
+
+    &.saveFilled {
+      background-image: url('/icon-save-filled-green.svg');
+      background-size: 12px;
+    }
+    &.search {
+      background-image: url('/icon-search-green.svg');
+    }
+    &.info {
+      background-image: url('/icon-info-green.svg');
+    }
+    &.grid {
+      background-image: url('/icon-grid-green.svg');
+    }
+    &.list {
+      background-image: url('/icon-list-green.svg');
+    }
+    
+    &.selected {
+      &.grid {
+        background-image: url('/icon-grid-offwhite.svg');
+      }
+      &.list {
+        background-image: url('/icon-list-offwhite.svg');
+      }
+      
+    }
+  }
+</style>

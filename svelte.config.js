@@ -26,7 +26,7 @@ const config = {
 			directives: {
 				'default-src': [...baseCsp],
 				'script-src': ['unsafe-inline', ...baseCsp],
-				'img-src': ['data:', 'blob:', ...baseCsp],
+				'img-src': ['data:', 'blob:', "'self'", 'https://*.amazonaws.com', ...baseCsp],
         'style-src': ["'self'", 'https://fonts.googleapis.com/', "'unsafe-inline'"], // Allow Google Fonts and inline styles
 				'object-src': ['none'],
 				'base-uri': ['self']

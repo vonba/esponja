@@ -1,0 +1,44 @@
+form {
+  &:not(.validationErrors) .invalidFeedback {
+    display: none;
+  }
+
+  label {
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+  select,
+  input,
+  textarea {
+    color: var(--colorGreen);
+    border: 1px solid var(--colorGreen);
+    padding: calc(0.5 * var(--spacing)) var(--spacing);
+    background: var(--colorOffWhite);
+    border-radius: var(--borderRadius);
+    width: 100%;
+
+    &:focus {
+      outline: 1px solid var(--colorGreen);
+    }
+    
+    &::placeholder {
+      color: var(--colorGreen);
+      font-style: italic;
+    }
+  }
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+.inputContainer {
+  margin-bottom: var(--spacing);
+
+  label {
+    display: block;
+    width: 100%;
+  }
+}

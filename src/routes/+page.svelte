@@ -3,12 +3,12 @@
 	import ButtonLink from "$lib/components/ButtonLink.svelte"
 	import EButton from "$lib/components/EButton.svelte"
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
+	import PublicLogo from "$lib/components/PublicLogo.svelte"
 
 	export let data: HomePageData
 
 	// State
 	let eventTimeWindow = 'week'
-	let showSearch = false
 
 	const setEventTimeWindow = (newTimeWindow: string) => {
 		if (eventTimeWindow === newTimeWindow) {
@@ -18,69 +18,71 @@
 		}
 	}
 
-	const toggleSearch = () => showSearch = !showSearch
-
-	const showSavedEvents = () => {
-		// TODO: global modal state
-	}
 </script>
 
 <svelte:head>
 	<title>Esponja – Eventos de Música Alternativa en la Ciudad de México</title>
 </svelte:head>
 
-<nav id="eventsNavigation">
-	<EButton 
-		on:click={() => setEventTimeWindow('today')}
-		class={'today' === eventTimeWindow ? 'selected' : ''}
-	>
-		Hoy
-	</EButton>
-	<EButton 
-		on:click={() => setEventTimeWindow('tomorrow')}
-		class={'tomorrow' === eventTimeWindow ? 'selected' : ''}
-	>
-		Mañana
-	</EButton>
-	<EButton 
-		on:click={() => setEventTimeWindow('week')}
-		class={'week' === eventTimeWindow ? 'selected' : ''}
-	>
-		Este mes
-	</EButton>
-	<EButton 
-		on:click={() => setEventTimeWindow('month')}
-		class={'month' === eventTimeWindow ? 'selected' : ''}
-	>
-		Este mes
-	</EButton>
-</nav>
+<section class="homeHeader">
+	<PublicLogo />
+	
+	<nav id="eventsNavigation">
+		<EButton 
+			on:click={() => setEventTimeWindow('today')}
+			class={'today' === eventTimeWindow ? 'selected' : ''}
+		>
+			Hoy
+		</EButton>
+		<EButton 
+			on:click={() => setEventTimeWindow('tomorrow')}
+			class={'tomorrow' === eventTimeWindow ? 'selected' : ''}
+		>
+			Mañana
+		</EButton>
+		<EButton 
+			on:click={() => setEventTimeWindow('week')}
+			class={'week' === eventTimeWindow ? 'selected' : ''}
+		>
+			Esta semana
+		</EButton>
+		<EButton 
+			on:click={() => setEventTimeWindow('month')}
+			class={'month' === eventTimeWindow ? 'selected' : ''}
+		>
+			Este mes
+		</EButton>
+	</nav>
+</section>
 
-<nav id="pageNavigation">
-	<EButton 
-		on:click={() => showSavedEvents()}
-		class="saved icon"
-	>
-		Guardados
-	</EButton>
-	<EButton 
-		on:click={() => toggleSearch()}
-		class="search icon"
-	>
-		Buscar
-	</EButton>
-	<ButtonLink href="/info">
-		Info
-	</ButtonLink>
-</nav>
-
-<PublicEvents events={data.events} venues={data.venues} />
+<section id="homePage">
+	<PublicEvents events={data.events} venues={data.venues} />
+</section>
 
 <style lang="scss">
-	#pageNavigation {
+	#homePage {
+		/* :global(.publicEvents) {
+			// Pull events up so that grid/list selector lines up with menu buttons
+			margin-top: -35px;
+		} */
+	}
+
+	.homeHeader {
+		position: sticky;
+		top: 0;
+		background-color: var(--colorOffWhite);
+		z-index: 10;
+	}
+
+	#eventsNavigation {
 		display: flex;
 		width: 100%;
-		align-items: flex-end;
 		margin-top: var(--spacing);
+		padding: 0 var(--spacing);
+		gap: var(--spacing);
+
+		:global(button) {
+			flex-grow: 1;
+		}
 	}
 </style>

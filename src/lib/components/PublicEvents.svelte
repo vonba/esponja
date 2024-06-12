@@ -1,0 +1,114 @@
+<script lang="ts">
+	import { fade } from "svelte/transition"
+	import EventListItem from "./EventListItem.svelte"
+	import EButton from "./EButton.svelte"
+	import ButtonLink from "./ButtonLink.svelte"
+
+  export let events: [EEvent] | []
+  export let venues: [Venue] | []
+
+  let displayMode = 'list'
+  let showSearch = false
+
+  const handleLikeEvent = (eventId: number) => {
+    // TODO: add event to cookie
+    console.log('like with id ' + eventId)
+  }
+
+  const handleEditEvent = (event: EEvent) => {
+    // Navigate to edit page for this event
+  }
+
+  const toggleSearch = () => showSearch = !showSearch
+
+  const showSavedEvents = () => {
+    // TODO: global modal state
+  }
+</script>
+<div class="publicEvents" in:fade>
+  <div class="tools">
+    <div class="viewOptions">
+      <EButton 
+        class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
+        on:click={() => displayMode = 'grid'}
+        disabled={displayMode === 'grid'}
+      >Grid</EButton>
+      <EButton 
+        class="icon list {displayMode === 'list' ? 'selected' : ''}"
+        on:click={() => displayMode = 'list'}
+        disabled={displayMode === 'list'}
+      >List</EButton>
+    </div>
+
+    <nav id="pageNavigation">
+      <EButton 
+        on:click={() => showSavedEvents()}
+        class="saveFilled icon"
+      >
+        Guardados
+      </EButton>
+      <EButton 
+        on:click={() => toggleSearch()}
+        class="search icon"
+      >
+        Buscar
+      </EButton>
+      <ButtonLink href="/info" class="info icon">
+        Info
+      </ButtonLink>
+    </nav>
+  </div>
+  <ul class="events {displayMode}">
+    {#each events as event (event?.id)}
+      <EventListItem {event} {handleLikeEvent} {handleEditEvent} />
+    {/each}
+  </ul>
+</div>
+
+<style lang="scss">
+  .publicEvents {
+    padding: var(--spacing);
+  }
+  
+  .tools {
+    display: flex;
+    gap: var(--spacing);
+    justify-content: space-between;
+    margin-bottom: 1em;
+  }
+
+  .viewOptions {
+    // Override EButton styles
+    :global(button:hover),
+    :global(button.selected) {
+      transform: none;
+      box-shadow: 2px 2px 0 var(--colorGreen);
+    }
+    :global(button.grid) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    :global(button.list) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      transform: translateX(-4px);
+    }
+  }
+
+  #pageNavigation {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--spacing);
+	}
+
+  ul.events {
+    list-style: none;
+    padding: 0;
+
+    &.grid {
+      display: grid;
+      gap: 1em;
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+</style>
