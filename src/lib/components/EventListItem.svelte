@@ -61,19 +61,27 @@
 </li>
 
 <style lang="scss">
+  @import "$lib/sass/variables";
+
   h2 {
     font-size: var(--fsTitleMedium);
     margin-bottom: 0;
   }
 
   .eventListItem {
+    --itemHeight: 150px;
+
     margin-bottom: var(--spacing);
     display: grid;
     grid-template-columns: 1fr minmax(100px, 33%);
     gap: var(--spacing);
     border-top: 1px solid var(--colorGreen);
     padding-top: var(--spacing);
-    height: calc(150px + var(--spacing));
+    height: calc(var(--itemHeight) + var(--spacing));
+
+    @media (min-width: $mediaL) {
+      --itemHeight: 250px;
+    }
   }
 
   .imageWrapper {

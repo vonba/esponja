@@ -6,12 +6,12 @@
 	import EButton from "./EButton.svelte"
 	import EventGridItem from "./EventGridItem.svelte"
 
-  export let events: [EEvent] | []
-  export let venues: [Venue] | []
+  export let events: [EventProperties] | []
+  export let venues: [VenueProperties] | []
 
   let showCreateEvent = false
   let showEditEvent = false
-  let editEvent: EEvent = null
+  let editEvent: EventProperties | null = null
   let displayMode = 'list'
 
   const handleDisableEvent = (eventId: number) => {
@@ -19,7 +19,7 @@
     console.log('disable event with id ' + eventId)
   }
 
-  const handleEditEvent = (event: EEvent) => {
+  const handleEditEvent = (event: EventProperties) => {
     editEvent = event
     showEditEvent = true
   }
@@ -71,9 +71,9 @@
     <ul class="events {displayMode}">
       {#each events as event (event?.id)}
         {#if displayMode === 'list'}
-          <EventListItem {event} {handleDisableEvent} {handleEditEvent} />
+          <EventListItem {event} {venues} {handleDisableEvent} {handleEditEvent} />
         {:else}
-          <EventGridItem {event} {handleDisableEvent} {handleEditEvent} />
+          <EventGridItem {event} {venues} {handleDisableEvent} {handleEditEvent} />
         {/if}
       {/each}
     </ul>

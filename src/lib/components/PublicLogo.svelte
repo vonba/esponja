@@ -8,7 +8,7 @@
 <style>
   .publicLogo {
     width: 70vw;
-    max-width: 400px;
+    max-width: 300px;
     padding: var(--spacing)
   }
   img {

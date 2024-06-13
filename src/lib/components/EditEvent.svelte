@@ -8,7 +8,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let venues: [Venue] | []
-	export let event: EventProperties
+	export let event: EventProperties | null
 	if (!event) {
 		event = {
 			id: 0,
