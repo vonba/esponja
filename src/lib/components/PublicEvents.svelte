@@ -5,11 +5,15 @@
 	import ButtonLink from "./ButtonLink.svelte"
 	import EventGridItem from "./EventGridItem.svelte"
 
-  export let events: [EEvent] | []
-  export let venues: [Venue] | []
+  export let events: [EventProperties] | []
+  export let venues: [VenueProperties] | []
+  export let startDate: string | null
+  export let endDate: string | null
 
   let displayMode = 'list'
   let showSearch = false
+
+  $: filteredEvents = events.filter(event => (!startDate || event.startDate >= startDate) && (!endDate || event.startDate <= endDate))
 
   const handleLikeEvent = (eventId: number) => {
     // TODO: add event to cookie
@@ -60,13 +64,18 @@
     </nav>
   </div>
   <ul class="events {displayMode}">
-    {#each events as event (event?.id)}
+    {#each filteredEvents as event (event.id)}
       {#if displayMode === 'list'}
         <EventListItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
       {:else}
         <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
       {/if}
     {/each}
+    {#if !filteredEvents.length}
+      <p class="emptyList">
+        No hay eventos para las fechas seleccionadas
+      </p>
+    {/if}
   </ul>
 </div>
 

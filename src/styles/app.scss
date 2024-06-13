@@ -76,3 +76,10 @@ a {
   display: flex;
   gap: var(--spacing);
 }
+
+.emptyList {
+  text-align: center;
+  padding: 40px;
+  border: 1px solid var(--colorGreen);
+  border-radius: var(--borderRadius);;
+}

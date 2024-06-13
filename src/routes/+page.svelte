@@ -8,7 +8,9 @@
 	export let data: HomePageData
 
 	// State
-	let eventTimeWindow = 'week'
+	let eventTimeWindow: string | null
+	let eventFilterDateStart: string | null  // YYYY-MM-DD
+	let eventFilterDateEnd: string | null // YYYY-MM-DD
 
 	const setEventTimeWindow = (newTimeWindow: string) => {
 		if (eventTimeWindow === newTimeWindow) {
@@ -16,7 +18,32 @@
 		} else {
 			eventTimeWindow = newTimeWindow
 		}
+
+		if ('today' === eventTimeWindow) {
+			eventFilterDateStart = new Date().toISOString().split('T')[0];
+			eventFilterDateEnd = eventFilterDateStart;
+		} else if ('tomorrow' === eventTimeWindow) {
+			let tomorrow = new Date();
+			tomorrow.setDate(tomorrow.getDate() + 1);
+			eventFilterDateStart = tomorrow.toISOString().split('T')[0];
+			eventFilterDateEnd = eventFilterDateStart;
+		} else if ('week' === eventTimeWindow) {
+			let currentDate = new Date();
+			let firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1));
+			eventFilterDateStart = firstDayOfWeek.toISOString().split('T')[0];
+			let lastDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7));
+			eventFilterDateEnd = lastDayOfWeek.toISOString().split('T')[0];
+		} else if ('month' === eventTimeWindow) {
+			let currentMonth = new Date();
+			eventFilterDateStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString().split('T')[0];
+			eventFilterDateEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).toISOString().split('T')[0];
+		} else {
+			eventFilterDateStart = null
+			eventFilterDateEnd = null
+		}
 	}
+	// Default filter
+	setEventTimeWindow('week')
 
 </script>
 
@@ -56,7 +83,7 @@
 </section>
 
 <section id="homePage">
-	<PublicEvents events={data.events} venues={data.venues} />
+	<PublicEvents events={data.events} venues={data.venues} startDate={eventFilterDateStart} endDate={eventFilterDateEnd} />
 </section>
 
 <style lang="scss">

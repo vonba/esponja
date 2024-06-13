@@ -88,11 +88,11 @@ interface UserSession {
 interface AdminPageData {
 	user: User,
 	users: [User] | [];
-	venues: [Venue] | [];
-	events: [EEvent] | [];
+	venues: [VenueProperties] | [];
+	events: [EventProperties] | [];
 }
 
 interface HomePageData {
-	venues: [Venue] | [];
-	events: [EEvent] | [];
+	venues: [VenueProperties] | [];
+	events: [EventProperties] | [];
 }
