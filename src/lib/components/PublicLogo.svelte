@@ -9,7 +9,8 @@
   .publicLogo {
     width: 70vw;
     max-width: 300px;
-    padding: var(--spacing)
+    padding: var(--spacing);
+    padding-bottom: 0;
   }
   img {
     display: block;

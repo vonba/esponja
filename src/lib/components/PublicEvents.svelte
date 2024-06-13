@@ -4,6 +4,7 @@
 	import EButton from "./EButton.svelte"
 	import ButtonLink from "./ButtonLink.svelte"
 	import EventGridItem from "./EventGridItem.svelte"
+	import SearchEvents from "./SearchEvents.svelte"
 
   export let events: [EventProperties] | []
   export let venues: [VenueProperties] | []
@@ -11,9 +12,20 @@
   export let endDate: string | null
 
   let displayMode = 'list'
-  let showSearch = false
+  let isSearchVisible = false
+  let searchString = ''
 
-  $: filteredEvents = events.filter(event => (!startDate || event.startDate >= startDate) && (!endDate || event.startDate <= endDate))
+  $: filteredEvents = events.filter(event => 
+    (!startDate || event.startDate >= startDate) 
+    && (!endDate || event.startDate <= endDate)
+    && (searchString === '' || eventMatchesSearch(event, searchString))
+  )
+
+  const eventMatchesSearch = (event: EventProperties, searchString: string) => {
+    const venue = venues.find(v => v.id === event.venueId)
+    return (event.name).toLowerCase().includes(searchString.toLowerCase())
+      || (`${venue?.name}`).toLowerCase().includes(searchString.toLowerCase())
+  }
 
   const handleLikeEvent = (eventId: number) => {
     // TODO: add event to cookie
@@ -24,7 +36,12 @@
     // Navigate to edit page for this event
   }
 
-  const toggleSearch = () => showSearch = !showSearch
+  const toggleSearch = () => {
+    isSearchVisible = !isSearchVisible
+    searchString = ''
+  }
+
+  const handleSearchChange = (newSearchString: string) => searchString = newSearchString
 
   const showSavedEvents = () => {
     // TODO: global modal state
@@ -52,12 +69,7 @@
       >
         Guardados
       </EButton>
-      <EButton 
-        on:click={() => toggleSearch()}
-        class="search icon"
-      >
-        Buscar
-      </EButton>
+      <SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
       <ButtonLink href="/info" class="info icon">
         Info
       </ButtonLink>
@@ -83,12 +95,13 @@
   @import "$lib/sass/variables";
 
   .publicEvents {
-    padding: var(--spacing);
+
   }
   
   .tools {
     display: flex;
     gap: var(--spacing);
+    padding: var(--spacing);
     justify-content: space-between;
     margin-bottom: 1em;
   }
@@ -120,6 +133,8 @@
   ul.events {
     list-style: none;
     padding: 0;
+    margin-bottom: var(--spacing);
+    border-top: 1px solid var(--colorGreen);
     --eventColumns: 1;
     
     @media (min-width: $mediaM) {

@@ -24,10 +24,6 @@
   .tabsContainer {
     width: 100%;
   }
-
-  .tabsContent {
-    padding: var(--spacing);
-  }
   
   header {
     display: flex;

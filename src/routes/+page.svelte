@@ -1,10 +1,11 @@
 <!-- This is the public home page of the app -->
 <script lang="ts">
-	import ButtonLink from "$lib/components/ButtonLink.svelte"
 	import EButton from "$lib/components/EButton.svelte"
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
+	import { getDateFiltersFromTimeWindow } from "$lib/dateTime"
 
+	// Props
 	export let data: HomePageData
 
 	// State
@@ -12,35 +13,17 @@
 	let eventFilterDateStart: string | null  // YYYY-MM-DD
 	let eventFilterDateEnd: string | null // YYYY-MM-DD
 
+	// Date filters
 	const setEventTimeWindow = (newTimeWindow: string) => {
 		if (eventTimeWindow === newTimeWindow) {
-			eventTimeWindow = ''
+			eventTimeWindow = '' // Unset filter by clicking already selected button
 		} else {
 			eventTimeWindow = newTimeWindow
 		}
 
-		if ('today' === eventTimeWindow) {
-			eventFilterDateStart = new Date().toISOString().split('T')[0];
-			eventFilterDateEnd = eventFilterDateStart;
-		} else if ('tomorrow' === eventTimeWindow) {
-			let tomorrow = new Date();
-			tomorrow.setDate(tomorrow.getDate() + 1);
-			eventFilterDateStart = tomorrow.toISOString().split('T')[0];
-			eventFilterDateEnd = eventFilterDateStart;
-		} else if ('week' === eventTimeWindow) {
-			let currentDate = new Date();
-			let firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1));
-			eventFilterDateStart = firstDayOfWeek.toISOString().split('T')[0];
-			let lastDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7));
-			eventFilterDateEnd = lastDayOfWeek.toISOString().split('T')[0];
-		} else if ('month' === eventTimeWindow) {
-			let currentMonth = new Date();
-			eventFilterDateStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString().split('T')[0];
-			eventFilterDateEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).toISOString().split('T')[0];
-		} else {
-			eventFilterDateStart = null
-			eventFilterDateEnd = null
-		}
+		const { startDate, endDate } = getDateFiltersFromTimeWindow(eventTimeWindow);
+		eventFilterDateStart = startDate
+		eventFilterDateEnd = endDate
 	}
 	// Default filter
 	setEventTimeWindow('week')
@@ -87,18 +70,23 @@
 </section>
 
 <style lang="scss">
-	#homePage {
-		/* :global(.publicEvents) {
-			// Pull events up so that grid/list selector lines up with menu buttons
-			margin-top: -35px;
-		} */
-	}
+	@import "$lib/sass/variables";
+
+	/* #homePage {
+	} */
 
 	.homeHeader {
 		position: sticky;
 		top: 0;
 		background-color: var(--colorOffWhite);
 		z-index: 10;
+		margin-bottom: var(--spacing);
+
+		@media (min-width: $mediaL) {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+		}
 	}
 
 	#eventsNavigation {
@@ -107,9 +95,15 @@
 		margin-top: var(--spacing);
 		padding: 0 var(--spacing);
 		gap: var(--spacing);
+		height: 2em;
 
 		:global(button) {
 			flex-grow: 1;
+		}
+
+		@media (min-width: $mediaL) {
+			width: 50%;
+			max-width: 40em;
 		}
 	}
 </style>

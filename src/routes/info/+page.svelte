@@ -15,7 +15,8 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 	<h2>¿Qué es Esponja?</h2>
 	<p>
 		Esponja es una plataforma <strong>gratuita</strong> y sin fines de lucro para publicar eventos de música alternativa en la Ciudad de México.
-		Fue realizada como un apoyo para <strong>la comunidad artística</strong> de la ciudad, y busca ser <strong>una alternativa</strong> a las redes sociales, para que lxs artistas y los foros puedan visibilizar sus eventos, sin depender de algoritmos con poca transparencia y sin tener que pagar por las publicaciones.
+		Fue realizada como un apoyo para <strong>la comunidad artística</strong> de la ciudad, y busca ser <strong>una alternativa</strong> a las redes sociales, 
+		para que lxs artistas y los foros puedan visibilizar sus eventos, sin depender de algoritmos con poca transparencia y sin tener que pagar por las publicaciones.
 	</p>
 	
 	<h2>¿Quieres publicar un evento?</h2>
@@ -28,7 +29,7 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 	
 	<h2>Contacto</h2>
 	<p>
-		¿Tienes dudas? ¿Quieres ayudar a actualizar Esponja? Nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+		¿Tienes dudas? ¿Quieres ayudar a mantener Esponja actualizado? Nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
 	</p>
 
 	<p>
@@ -37,8 +38,12 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 </section>
 
 <style lang="scss">
+	@import "$lib/sass/variables";
+
 	.pageContent {
 		padding: var(--spacing);
+		margin-top: 2em;
+		max-width: 40em;
 
 		p {
 			text-align: justify;

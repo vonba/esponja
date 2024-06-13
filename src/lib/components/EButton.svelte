@@ -78,6 +78,9 @@
     &.share {
       background-image: url('/icon-share-green.svg');
     }
+    &.close {
+      background-image: url('/icon-cross-green.svg');
+    }
     
     &.selected {
       &.grid {

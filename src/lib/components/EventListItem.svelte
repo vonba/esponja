@@ -66,18 +66,21 @@
   h2 {
     font-size: var(--fsTitleMedium);
     margin-bottom: 0;
+
+    @media (min-width: $mediaL) {
+      font-size: var(--fsTitleBig);
+    }
   }
 
   .eventListItem {
     --itemHeight: 150px;
 
-    margin-bottom: var(--spacing);
+    padding: var(--spacing);
     display: grid;
     grid-template-columns: 1fr minmax(100px, 33%);
     gap: var(--spacing);
-    border-top: 1px solid var(--colorGreen);
-    padding-top: var(--spacing);
     height: calc(var(--itemHeight) + var(--spacing));
+    border-bottom: 1px solid var(--colorGreen);
 
     @media (min-width: $mediaL) {
       --itemHeight: 250px;
@@ -118,5 +121,7 @@
     position: absolute;
     right: 0;
     bottom: 0;
+    display: flex;
+    gap: var(--spacing);
   }
 </style>

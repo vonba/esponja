@@ -87,6 +87,7 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 1em;
+    padding: var(--spacing);
   }
 
   .viewOptions {
