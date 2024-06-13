@@ -3,11 +3,11 @@
 	import { focusOnFirstError } from '$lib/focus'
 	import {createEventDispatcher} from 'svelte';
 	import EButton from './EButton.svelte'
+	import { getImageURL } from '$lib/file'
 	
 	const dispatch = createEventDispatcher();
 
 	export let venues: [Venue] | []
-
 	export let event: EEvent
 	if (!event) {
 		event = {
@@ -28,6 +28,17 @@
 	let message: string
 	let error = false
 	let loading = false
+	let eventImageFile: HTMLInputElement | null = null
+	let isEventImageSelected = false;
+
+	// Function to handle file selection
+	function handleFileChange() {
+		if (eventImageFile && eventImageFile?.files && eventImageFile.files.length > 0) {
+			isEventImageSelected = true;
+		} else {
+			isEventImageSelected = false;
+		}
+	}
 
 	const isNewEvent = event?.id === 0
 
@@ -44,10 +55,11 @@
 			const method = isNewEvent ? 'POST' : 'PUT'
 
 			try {
+				// Convert event object to form data
 				const formData = new FormData();
-				// formData.append('event', JSON.stringify(event));
 				for (const key in event) {
 					if (event.hasOwnProperty(key)) {
+						// Ignore TypeScript error here, this is correct
 						formData.append(key, event[key]);
 					}
 				}
@@ -57,14 +69,10 @@
 				if (eventImageInput.files && eventImageInput.files[0]) {
 					formData.append('eventImage', eventImageInput.files[0]);
 				}
-
 				loading = true
 				error = false
 				const res = await fetch(url, {
 					method,
-					// headers: {
-					// 	'Content-Type': 'application/json'
-					// },
 					body: formData,
 				})
 				const reply = await res.json()
@@ -76,7 +84,7 @@
 				}
 				loading = false
 			} catch (error) {
-				message = 'API unavailable'
+				message = 'Servidor no disponible'
 			}
 		} else {
 			form.classList.add('was-validated')
@@ -111,10 +119,27 @@
 
 			<div class="inputContainer">
 				<label for="image">Imagen</label>
+				{#if event.imageURL}
+					<div class="imageWrapper">
+						<img src={getImageURL(event.imageURL)} alt="Imagen del evento" />
+					</div>
+				{/if}
+				<EButton 
+					on:click={(e) => {
+						e.preventDefault()
+						eventImageFile?.click()
+					}}
+					class={`large eventImageWrapper ${isEventImageSelected ? 'file-selected' : ''}`}
+				>
+					{isEventImageSelected ? 'Imagen seleccionada' : 'Subir nueva imagen'}
+				</EButton>
+				<!-- Hidden -->
 				<input
 					type="file"
 					id="eventImage"
 					placeholder="Nombre"
+					bind:this={eventImageFile}
+					on:change={handleFileChange}
 				/>
 			</div>
 	
@@ -135,19 +160,45 @@
 			<p>{message}</p>
 		{/if}
 		
-		<EButton type="button" on:click={update} disabled={loading}>
-			{#if loading}
-				Cargando...
-			{:else}
-				Guardar
-			{/if}
-		</EButton>
-		<EButton type="button" on:click={() => dispatch('cancel')}>
-			Cancelar
-		</EButton>
+		<div class="buttons">
+			<EButton type="button" on:click={update} disabled={loading} class="large">
+				{#if loading}
+					Cargando...
+				{:else}
+					Guardar
+				{/if}
+			</EButton>
+			<EButton type="button" on:click={() => dispatch('cancel')} class="large">
+				Cerrar
+			</EButton>
+		</div>
 	</form>
 </div>
 
 
 <style lang="scss">
+	:global(button.eventImageWrapper) {
+		width: 100%;
+		position: relative;
+	}
+
+	input#eventImage {
+		display: none;
+	}
+
+	.buttons {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--spacing);
+	}
+
+	.imageWrapper {
+		overflow: hidden;
+		border-radius: var(--borderRadius);
+		margin-bottom: var(--spacing);
+
+		img {
+			float: left;
+		}
+	}
 </style>

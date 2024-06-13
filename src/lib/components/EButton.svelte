@@ -24,10 +24,21 @@
       box-shadow: none;
       transform: translate(2px, 2px);
     }
+
+    &:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
+    }
     
     &.selected {
       color: var(--colorOffWhite);
       background: var(--colorGreen);
+    }
+
+    &.large {
+      font-weight: bold;
+      text-transform: uppercase;
+      line-height: 2;
     }
   }
 

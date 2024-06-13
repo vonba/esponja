@@ -22,14 +22,26 @@ export const PUT: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
 		
-	const eventUpdate = await event.request.json()
+	// Copy form data from the request body (we need form data )
+	const formData = await event.request.formData();
+	
+	const eventUpdate: any = {};
+	for (const [key, value] of formData as any) {
+		if (!(value instanceof File)) {
+			eventUpdate[key] = value;
+		}
+	}
 
+	// Update event
 	try {
-		await query(`CALL upsert_event($1, $2);`, [JSON.stringify(eventUpdate), null])
+		await query(`CALL upsert_event($1, $2);`, [JSON.stringify(eventUpdate).replaceAll('"null"', 'null'), null])
 	} catch (err) {
 		console.log('Error updating event', err)
 		error(503, 'Database error')
 	}
+	
+	// Upload file (this also updates event with image key)
+	await doFileUpload(formData, eventUpdate.id)
 
 	return json({
 		message: 'Successfully updated event.'
@@ -40,20 +52,18 @@ export const POST: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
 		
-	// const eventCreate = await event.request.json()
-	// / Get form data from the request body
+	// Copy form data from the request body (we need form data )
   const formData = await event.request.formData();
   const eventCreate: any = {};
-
-  // Copy everything that isn't a file
   for (const [key, value] of formData as any) {
 		if (!(value instanceof File)) {
 			eventCreate[key] = value;
 		}
 	}
-	eventCreate.userId = user.id
-
+	
+	// Update event
 	let eventId
+	eventCreate.userId = user.id
 	try {
 		// Creates new event (id = 0)
 		const dbResult = await query(`CALL upsert_event($1, $2);`, [JSON.stringify(eventCreate), null])
@@ -64,16 +74,24 @@ export const POST: RequestHandler = async event => {
 		error(503, 'No se pudo crear el evento')
 	}
 
+	// Upload file (this also updates event with image key)
+	await doFileUpload(formData, eventId)
+
+	return json({
+		message: 'Successfully created event.'
+	})
+}
+
+const doFileUpload = async (formData: FormData, eventId: number): Promise<void> => {
 	try {
-		// File upload
 		const file = formData.get('eventImage') as File;
-		const fileData = await file.arrayBuffer();
-		const fileBody = Buffer.from(fileData);
 		
 		// TODO: check file format and size
 		// TODO: resize image
 		
 		if (file) {
+			const fileData = await file.arrayBuffer();
+			const fileBody = Buffer.from(fileData);
 			const fileSuffix = file.name.split('.')[1]
 			const fileKey = `event-${eventId}-${Date.now()}.${fileSuffix}`
 			const uploadResult = await s3Client.send(
@@ -93,12 +111,8 @@ export const POST: RequestHandler = async event => {
 		}
 	} catch (err) {
 		console.log('Error uploading event image', err)
-		error(503, 'No se pudo subir el imagen')		
+		error(503, 'No se pudo subir la imagen')		
 	}
-
-	return json({
-		message: 'Successfully created event.'
-	})
 }
 
 

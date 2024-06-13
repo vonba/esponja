@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import {createEventDispatcher} from 'svelte';
+	import EButton from './EButton.svelte'
 	
 	const dispatch = createEventDispatcher();
 
@@ -17,10 +18,13 @@
 			hidden: false,
 		}
 	}
-	const isNewVenue = venue.id === 0
-
+	
 	let focusedField: HTMLInputElement
 	let message: string
+	let error = false
+	let loading = false
+
+	const isNewVenue = venue.id === 0
 
 	onMount(() => {
 		focusedField.focus()
@@ -35,6 +39,8 @@
 			const method = isNewVenue ? 'POST' : 'PUT'
 
 			try {
+				loading = true
+				error = false
 				const res = await fetch(url, {
 					method,
 					headers: {
@@ -46,9 +52,12 @@
 				message = reply.message
 				if (res.ok) {
 					dispatch('saved', { reply })
+				} else {
+					error = true
 				}
+				loading = false;
 			} catch (error) {
-				message = 'API unavailable'
+				message = 'Servidor no disponible'
 			}
 		} else {
 			form.classList.add('was-validated')
@@ -118,9 +127,18 @@
 			<p>{message}</p>
 		{/if}
 
-		<button type="button" on:click={update} class="btn btn-primary btn-lg">
-			Guardar
-		</button>
+		<div class="buttons">
+			<EButton type="button" on:click={update} disabled={loading} class="large">
+				{#if loading}
+					Cargando...
+				{:else}
+					Guardar
+				{/if}
+			</EButton>
+			<EButton type="button" on:click={() => dispatch('cancel')} class="large">
+				Cerrar
+			</EButton>
+		</div>
 	</form>
 </div>
 

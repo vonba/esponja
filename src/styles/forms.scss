@@ -32,6 +32,11 @@ form {
 fieldset {
   border: none;
   padding: 0;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .inputContainer {

@@ -43,7 +43,7 @@
 
 <style lang="scss">
   .eventListItem {
-    margin-bottom: calc(2 * var(--spacing));
+    margin-bottom: var(--spacing);
     display: grid;
     grid-template-columns: 1fr minmax(100px, 33%);
     gap: var(--spacing);

@@ -76,6 +76,8 @@
 {/if}
 
 <style lang="scss">
+  @import "$lib/sass/variables";
+
   .tools {
     display: flex;
     justify-content: space-between;
@@ -85,11 +87,27 @@
   ul.events {
     list-style: none;
     padding: 0;
+    --eventColumns: 1;
+    
+    @media (min-width: $mediaM) {
+      --eventColumns: 2;
+    }
+    @media (min-width: $mediaL) {
+      --eventColumns: 3;
+    }
+    @media (min-width: $mediaXL) {
+      --eventColumns: 4;
+    }
 
     &.grid {
       display: grid;
       gap: 1em;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(var(--eventColumns), 1fr);
     }
+  }
+
+  :global(.viewOptions button:disabled) {
+    opacity: 1;
+    pointer-events: none;
   }
 </style>
