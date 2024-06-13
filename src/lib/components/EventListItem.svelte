@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatDate } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
   import EButton from "./EButton.svelte"
   
@@ -12,7 +13,7 @@
   <li class="eventListItem">
     <div class="contentWrapper">
       <strong>{event.name}</strong><br />
-      {new Date(event.startDate)}
+      {formatDate(event.startDate)}
       
       <div class="actions">
         {#if handleLikeEvent}
@@ -49,9 +50,6 @@
     gap: var(--spacing);
     border-top: 1px solid var(--colorGreen);
     padding-top: var(--spacing);
-  }
-
-  .contentWrapper {
   }
 
   .imageWrapper {
