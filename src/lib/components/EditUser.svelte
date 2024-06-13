@@ -65,7 +65,7 @@
 				message = 'API unavailable'
 			}
 		} else {
-			form.classList.add('was-validated')
+			form.classList.add('validationErrors')
 			focusOnFirstError(form)
 		}
 	}
@@ -99,7 +99,7 @@
 				id="email"
 				autocomplete="email"
 			/>
-			<div class="invalid-feedback">Se requiere dirección de correo electrónico</div>
+			<div class="invalidFeedback">Se requiere dirección de correo electrónico</div>
 		</div>
 		
 		{#if isNewUser || isOwnUser}
@@ -113,7 +113,7 @@
 					maxlength="80"
 					placeholder="Contraseña"
 				/>
-				<div class="invalid-feedback">Se requiere una contraseña con 8 caracteres o más</div>
+				<div class="invalidFeedback">Se requiere una contraseña con 8 caracteres o más</div>
 				<div class="form-text">
 					Mínimo 8 caracteres, una letra mayúscula, un número y un carácter especial.
 				</div>
@@ -142,7 +142,7 @@
 				placeholder="Nombre"
 				autocomplete="given-name"
 			/>
-			<div class="invalid-feedback">Se requiere el nombre</div>
+			<div class="invalidFeedback">Se requiere el nombre</div>
 		</div>
 		<div class="inputContainer">
 			<label for="lastName">Apellido</label>
@@ -153,7 +153,7 @@
 				placeholder="Apellido"
 				autocomplete="family-name"
 			/>
-			<div class="invalid-feedback">Se requiere el apellido</div>
+			<div class="invalidFeedback">Se requiere el apellido</div>
 		</div>
 
 		{#if message}

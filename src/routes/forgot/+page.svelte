@@ -38,7 +38,7 @@
 				return goto('/')
 			}
 		} else {
-			form.classList.add('was-validated')
+			form.classList.add('validationErrors')
 			focusOnFirstError(form)
 		}
 	}
@@ -64,7 +64,7 @@
 				placeholder="Email"
 				autocomplete="email"
 			/>
-			<div class="invalid-feedback">Email address required</div>
+			<div class="invalidFeedback">Email address required</div>
 		</div>
 		{#if message}
 			<p class="text-danger">{message}</p>

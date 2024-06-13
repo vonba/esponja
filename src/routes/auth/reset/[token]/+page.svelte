@@ -55,7 +55,7 @@
 				message = body.message
 			}
 		} else {
-			form.classList.add('was-validated')
+			form.classList.add('validationErrors')
 			focusOnFirstError(form)
 		}
 	}
@@ -84,7 +84,7 @@
 						placeholder="Password"
 						autocomplete="new-password"
 					/>
-					<div class="invalid-feedback">Password with 8 chars or more required</div>
+					<div class="invalidFeedback">Password with 8 chars or more required</div>
 					<div class="form-text">
 						Password minimum length 8, must have one capital letter, 1 number, and one unique
 						character.
@@ -103,7 +103,7 @@
 						placeholder="Password (again)"
 						autocomplete="new-password"
 					/>
-					<div class="invalid-feedback">Passwords must match</div>
+					<div class="invalidFeedback">Passwords must match</div>
 				</div>
 
 				{#if message}

@@ -87,7 +87,7 @@
 				message = 'Servidor no disponible'
 			}
 		} else {
-			form.classList.add('was-validated')
+			form.classList.add('validationErrors')
 			focusOnFirstError(form)
 		}
 	}
@@ -114,7 +114,7 @@
 					required
 					placeholder="Nombre"
 				/>
-				<div class="invalid-feedback">Se requiere el nombre</div>
+				<div class="invalidFeedback">Se requiere el nombre</div>
 			</div>
 
 			<div class="inputContainer">
