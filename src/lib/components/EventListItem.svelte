@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDate } from "$lib/dateTime"
+	import { formatDate, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
   import EButton from "./EButton.svelte"
   
@@ -13,7 +13,10 @@
   <li class="eventListItem">
     <div class="contentWrapper">
       <strong>{event.name}</strong><br />
-      {formatDate(event.startDate)}
+
+      <div class="dates">
+        {#if event.startDate}{formatDate(event.startDate)}{/if}{#if event.startTime}, {formatTime(event.startTime)}{/if}
+      </div>
       
       <div class="actions">
         {#if handleLikeEvent}
@@ -54,7 +57,7 @@
 
   .imageWrapper {
     height: 100%;
-    max-height: 150px;
+    height: 150px;
 
     img {
       object-fit: cover;
@@ -62,5 +65,9 @@
       height: 100%;
       width: 100%;
     }
+  }
+
+  .dates::first-letter {
+    text-transform: capitalize;
   }
 </style>

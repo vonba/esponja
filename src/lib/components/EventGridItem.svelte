@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatDate, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
 	import EButton from "./EButton.svelte"
 
@@ -39,11 +40,16 @@
         <img src={getImageURL(event.imageURL)} alt="Imagen del evento" />
       </div>
     {/if}
+
+    <div class="dates">
+      {#if event.startDate}{formatDate(event.startDate)}{/if}{#if event.startTime}, {formatTime(event.startTime)}{/if}
+      {#if event.endDate}<br />{formatDate(event.startDate)}{/if}{#if event.endTime}, {formatTime(event.endTime)}{/if}
+    </div>
   </li>
 {/if}
 
 <style lang="scss">
-  .eventGridItem {
-    //
+  .dates::first-letter {
+    text-transform: capitalize;
   }
 </style>
