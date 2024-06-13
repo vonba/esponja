@@ -4,6 +4,7 @@
 	import EditEvent from "./EditEvent.svelte"
 	import EventListItem from "./EventListItem.svelte"
 	import EButton from "./EButton.svelte"
+	import EventGridItem from "./EventGridItem.svelte"
 
   export let events: [EEvent] | []
   export let venues: [Venue] | []
@@ -55,12 +56,12 @@
     <div class="tools">
       <div class="viewOptions">
         <EButton 
-          class="grid {displayMode === 'grid' ? 'selected' : ''}"
+          class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
           on:click={() => displayMode = 'grid'}
           disabled={displayMode === 'grid'}
         >Grid</EButton>
         <EButton 
-          class="list {displayMode === 'list' ? 'selected' : ''}"
+          class="icon list {displayMode === 'list' ? 'selected' : ''}"
           on:click={() => displayMode = 'list'}
           disabled={displayMode === 'list'}
         >List</EButton>
@@ -69,7 +70,11 @@
     </div>
     <ul class="events {displayMode}">
       {#each events as event (event?.id)}
-        <EventListItem {event} {handleDisableEvent} {handleEditEvent} />
+        {#if displayMode === 'list'}
+          <EventListItem {event} {handleDisableEvent} {handleEditEvent} />
+        {:else}
+          <EventGridItem {event} {handleDisableEvent} {handleEditEvent} />
+        {/if}
       {/each}
     </ul>
   </div>
@@ -82,6 +87,24 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 1em;
+  }
+
+  .viewOptions {
+    // Override EButton styles
+    :global(button:hover),
+    :global(button.selected) {
+      transform: none;
+      box-shadow: 2px 2px 0 var(--colorGreen);
+    }
+    :global(button.grid) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    :global(button.list) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      transform: translateX(-4px);
+    }
   }
 
   ul.events {

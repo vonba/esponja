@@ -3,6 +3,7 @@
 	import EventListItem from "./EventListItem.svelte"
 	import EButton from "./EButton.svelte"
 	import ButtonLink from "./ButtonLink.svelte"
+	import EventGridItem from "./EventGridItem.svelte"
 
   export let events: [EEvent] | []
   export let venues: [Venue] | []
@@ -60,7 +61,11 @@
   </div>
   <ul class="events {displayMode}">
     {#each events as event (event?.id)}
-      <EventListItem {event} {handleLikeEvent} {handleEditEvent} />
+      {#if displayMode === 'list'}
+        <EventListItem {event} {handleLikeEvent} {handleEditEvent} />
+      {:else}
+        <EventGridItem {event} {handleLikeEvent} {handleEditEvent} />
+      {/if}
     {/each}
   </ul>
 </div>
