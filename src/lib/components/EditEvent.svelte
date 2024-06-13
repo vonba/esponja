@@ -119,9 +119,9 @@
 
 			<div class="inputContainer">
 				<label for="image">Imagen</label>
-				{#if event.imageURL}
+				{#if event.imageKeyLarge}
 					<div class="imageWrapper">
-						<img src={getImageURL(event.imageURL)} alt="Imagen del evento" />
+						<img src={getImageURL(event.imageKeyLarge)} alt="Imagen del evento" />
 					</div>
 				{/if}
 				<EButton 

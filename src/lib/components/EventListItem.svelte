@@ -12,7 +12,7 @@
 {#if event}
   <li class="eventListItem">
     <div class="contentWrapper">
-      <strong>{event.name}</strong><br />
+      <h2>{event.name}</h2>
 
       <div class="dates">
         {#if event.startDate}{formatDate(event.startDate)}{/if}{#if event.startTime}, {formatTime(event.startTime)}{/if}
@@ -37,15 +37,20 @@
       </div>
     </div>
 
-    {#if event.imageURL}
+    {#if event.imageKeySmall}
       <div class="imageWrapper">
-        <img src={getImageURL(event.imageURL)} alt="Imagen del evento" />
+        <img src={getImageURL(event.imageKeySmall)} alt="Imagen del evento" />
       </div>
     {/if}
   </li>
 {/if}
 
 <style lang="scss">
+  h2 {
+    font-size: var(--fsTitleMedium);
+    margin-bottom: 0;
+  }
+
   .eventListItem {
     margin-bottom: var(--spacing);
     display: grid;
@@ -53,11 +58,13 @@
     gap: var(--spacing);
     border-top: 1px solid var(--colorGreen);
     padding-top: var(--spacing);
+    height: calc(150px + var(--spacing));
   }
 
   .imageWrapper {
     height: 100%;
-    height: 150px;
+    border-radius: var(--borderRadius);
+    overflow: hidden;
 
     img {
       object-fit: cover;

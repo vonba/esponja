@@ -74,7 +74,8 @@ interface EventProperties {
   description?: string;
   ticketLink?: string;
   priceCents?: number;
-	imageURL?: string;
+	imageKeyLarge?: string;
+	imageKeySmall?: string;
 }
 
 type EEvent = EventProperties | undefined | null

@@ -1,3 +1,4 @@
+import sharp from 'sharp'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
@@ -9,7 +10,8 @@ export const GET: RequestHandler = async event => {
 	try {
 		result = await query(`SELECT id, user_id AS "userId", venue_id AS "venueId", 
 		name, start_date AS "startDate", start_time AS "startTime", end_date AS "endDate",
-		end_time AS "endTime", description, ticket_link AS "ticketLink", price_cents AS "priceCents", image_url as "imageURL" 
+		end_time AS "endTime", description, ticket_link AS "ticketLink", price_cents AS "priceCents", 
+		image_key_large as "imageKeyLarge", image_key_small as "imageKeySmall"
 		FROM events WHERE hidden = false ORDER BY start_date ASC`);
 	} catch (err) {
 		error(503, 'Database error')
@@ -78,37 +80,68 @@ export const POST: RequestHandler = async event => {
 	await doFileUpload(formData, eventId)
 
 	return json({
-		message: 'Successfully created event.'
+		message: 'Evento creado'
 	})
 }
 
 const doFileUpload = async (formData: FormData, eventId: number): Promise<void> => {
-	try {
+	try {		
+		// Get file from form data
 		const file = formData.get('eventImage') as File;
-		
-		// TODO: check file format and size
-		// TODO: resize image
-		
-		if (file) {
-			const fileData = await file.arrayBuffer();
-			const fileBody = Buffer.from(fileData);
-			const fileSuffix = file.name.split('.')[1]
-			const fileKey = `event-${eventId}-${Date.now()}.${fileSuffix}`
-			const uploadResult = await s3Client.send(
-				new PutObjectCommand({
-					Bucket: S3_BUCKET,
-					Key: fileKey,
-					Body: fileBody,
-				})
-			);
+    if (!file) return
 
-			if (uploadResult.$metadata.httpStatusCode !== 200) {
-				console.log('S3 upload error', uploadResult)
-			}
+    // Check file format
+    const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedFormats.includes(file.type)) {
+      throw new Error("Solo se permiten imagenes JPEG, PNG y GIF");
+    }
 
-			// Update the event with the image URL
-			await query(`UPDATE events SET image_url = $1 WHERE id = $2;`, [fileKey, eventId]);
+    // Check file size (limit to 5MB for example)
+    const maxSizeInBytes = 5 * 1024 * 1024;
+    if (file.size > maxSizeInBytes) {
+      throw new Error("El tamaño máximo del archivo es de 5 MB");
+    }
+
+		// Get image data
+		const imageBuffer = await file.arrayBuffer();
+		
+		// Convert to large jpeg
+		const processedImageLarge = await sharp(Buffer.from(imageBuffer))
+			.resize({ width: 1200, withoutEnlargement: true }) // Max width 1200px
+			.jpeg({ quality: 80 }) // JPEG compression
+			.toBuffer();
+		const fileKeyLarge = `event-${eventId}-${Date.now()}.jpg`
+		let uploadResult = await s3Client.send(
+			new PutObjectCommand({
+				Bucket: S3_BUCKET,
+				Key: fileKeyLarge,
+				Body: processedImageLarge,
+			})
+		);
+		if (uploadResult.$metadata.httpStatusCode !== 200) {
+			console.log('S3 upload error', uploadResult)
 		}
+		// Convert to small jpeg
+		const processedImageSmall = await sharp(Buffer.from(imageBuffer))
+			.resize({ width: 400, withoutEnlargement: true }) // Max width 400px
+			.jpeg({ quality: 80 }) // JPEG compression
+			.toBuffer();
+		const fileKeySmall = `event-${eventId}-${Date.now()}.jpg`
+		uploadResult = await s3Client.send(
+			new PutObjectCommand({
+				Bucket: S3_BUCKET,
+				Key: fileKeySmall,
+				Body: processedImageSmall,
+			})
+		);
+		if (uploadResult.$metadata.httpStatusCode !== 200) {
+			console.log('S3 upload error', uploadResult)
+		}
+		// Finished uploading
+
+		// Update the event with the image URL
+		await query(`UPDATE events SET image_key_large = $1, image_key_small = $2 WHERE id = $3;`, [fileKeyLarge, fileKeySmall, eventId]);
+
 	} catch (err) {
 		console.log('Error uploading event image', err)
 		error(503, 'No se pudo subir la imagen')		

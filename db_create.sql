@@ -113,7 +113,8 @@ CREATE TABLE public.events (
   description text COLLATE pg_catalog."default",
   ticket_link character varying(255) COLLATE pg_catalog."default",
   price_cents integer,
-  image_url VARCHAR(255),
+  image_key_large VARCHAR(255),
+  image_key_small VARCHAR(255),
   hidden boolean NOT NULL DEFAULT false,
   CONSTRAINT events_pkey PRIMARY KEY (id),
   CONSTRAINT events_user_id_fkey FOREIGN KEY (user_id)
