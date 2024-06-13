@@ -36,19 +36,21 @@
     background-color: var(--colorGreen);
     color: var(--colorOffWhite);
     padding: var(--spacing);
+    padding-bottom: 0;
     
     button {
       border: none;
       background: none;
-      color: white;
+      color: darker(var(--colorOffWhite));
       padding: 0;
       padding-bottom: 0.5em;
-      border-bottom: 2px solid transparent;
+      border-bottom: 5px solid transparent;
       transition: all 0.5s;
       cursor: pointer;
       
       &:hover,
       &.active {
+        color: var(--colorOffWhite);
         border-bottom-color: var(--colorOffWhite);
       }
     }

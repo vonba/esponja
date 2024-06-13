@@ -10,6 +10,7 @@
 	import { loginSession } from '../../stores'
 	import EButton from '$lib/components/EButton.svelte'
 	import AdminEvents from '$lib/components/AdminEvents.svelte'
+	import AdminLogo from '$lib/components/AdminLogo.svelte'
 
 
 	// Component props
@@ -43,6 +44,8 @@
 <svelte:head>
 	<title>Esponja Admin</title>
 </svelte:head>
+
+<AdminLogo />
 
 <Tabs {titles} {activeTab} {setActiveTab}>
 	{#if activeTab === 0}
