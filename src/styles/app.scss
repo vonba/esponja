@@ -25,8 +25,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+body,
+button,
+input,
+textarea,
+select {
   font-family: "Archivo", Arial, sans-serif;
+}
+
+body {
   font-size: var(--fsNormal);
   color: var(--colorGreen);
   background-color: var(--colorOffWhite);
@@ -65,3 +72,7 @@ a {
   }
 }
 
+.flex {
+  display: flex;
+  gap: var(--spacing);
+}

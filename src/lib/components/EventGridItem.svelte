@@ -5,9 +5,11 @@
 
   
   export let event: EEvent
+  export let venues: [Venue] | []
   export let handleDisableEvent: Function | null = null
   export let handleEditEvent: Function | null = null
   export let handleLikeEvent: Function | null = null
+  export let handleShareEvent: Function | null = null
 </script>
 
 {#if event}
@@ -18,17 +20,22 @@
       
       <div class="actions">
         {#if handleLikeEvent}
-        <EButton on:click={() => handleLikeEvent(event.id)} class="icon saveFilled">
+        <EButton on:click={() => handleLikeEvent(event.id)} class="icon saveOutline">
           Guardar
           </EButton>
         {/if}
+        {#if handleShareEvent}
+          <EButton on:click={() => handleShareEvent(event.id)} class="icon share">
+            Compartir
+          </EButton>
+        {/if}
         {#if handleEditEvent}
-          <EButton on:click={() => handleEditEvent(event)}>
+          <EButton on:click={() => handleEditEvent(event)} class="icon edit">
             Modificar
           </EButton>
         {/if}
         {#if handleDisableEvent}
-          <EButton on:click={() => handleDisableEvent(event.id) }>
+          <EButton on:click={() => handleDisableEvent(event.id) } class="icon delete">
             Ocultar
           </EButton>
         {/if}

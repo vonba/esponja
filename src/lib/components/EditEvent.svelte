@@ -8,22 +8,23 @@
 	const dispatch = createEventDispatcher();
 
 	export let venues: [Venue] | []
-	export let event: EEvent
+	export let event: EventProperties
 	if (!event) {
 		event = {
 			id: 0,
 			userId: 0,
 			venueId: 0,
 			name: '',
-			startDate: '2024-07-16', // ISO 8601 date format
-			startTime: '19:00:00', // ISO 8601 time format
-			endDate: '2024-07-16', // ISO 8601 date format
-			endTime: '02:00:00', // ISO 8601 time format
+			startDate: (new Date()).toISOString().split('T')[0], // YYYY-MM-DD
+			startTime: '19:00:00',
+			endDate: undefined,
+			endTime: undefined,
 			description: '',
 			ticketLink: '',
 			priceCents: 0,
 		}
 	}
+
 	let focusedField: HTMLInputElement
 	let message: string
 	let error = false
@@ -142,6 +143,44 @@
 					on:change={handleFileChange}
 				/>
 			</div>
+			
+			<div class="inputContainer">
+				<label for="startDate">Inicia</label>
+				<div class="flex">
+					<input
+						type="date"
+						bind:value={event.startDate}
+						id="startDate"
+						required
+					/>
+					<input
+						type="time"
+						bind:value={event.startTime}
+						id="startTime"
+						autocomplete="off"
+					/>
+				</div>
+				<div class="invalidFeedback">Se requiere una fecha de inicio</div>
+			</div>
+
+			<div class="inputContainer">
+				<label for="endDate">Termina</label>
+				<div class="flex">
+					<input
+						type="date"
+						bind:value={event.endDate}
+						id="endDate"
+						autocomplete="off"
+					/>
+					<input
+						type="time"
+						bind:value={event.endTime}
+						id="endTime"
+						autocomplete="off"
+					/>
+				</div>
+				<div class="invalidFeedback">Se requiere una fecha de inicio</div>
+			</div>
 	
 			<div class="inputContainer">
 				<label for="venueId">Foro</label>
@@ -153,6 +192,16 @@
 						<option value={venue?.id}>{venue?.name}</option>
 					{/each}
 				</select>
+			</div>
+
+			<div class="inputContainer">
+				<label for="name">Descripción</label>
+				<textarea
+					rows=8
+					bind:value={event.description}
+					id="description"
+					placeholder="¡Cuenta nos!"
+				/>
 			</div>
 		</fieldset>
 
@@ -190,6 +239,8 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: var(--spacing);
+		margin-top: calc(2 * var(--spacing));
+		margin-bottom: calc(2 * var(--spacing));
 	}
 
 	.imageWrapper {

@@ -1,9 +1,12 @@
+import { format } from 'date-fns';
 import sharp from 'sharp'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
+
+const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
 	let result;
@@ -17,7 +20,16 @@ export const GET: RequestHandler = async event => {
 		error(503, 'Database error')
 	}
 
-	return json(result.rows);
+	const formattedRows = result.rows.map(row => {
+		return {
+			...row,
+			// pg creates date objects but we only want the actual date
+			startDate: row.startDate.toISOString().split('T')[0],
+			endDate: row.endDate ? row.endDate.toISOString().split('T')[0] : null,
+		}
+	})
+
+	return json(formattedRows);
 }
 
 export const PUT: RequestHandler = async event => {
@@ -30,9 +42,12 @@ export const PUT: RequestHandler = async event => {
 	const eventUpdate: any = {};
 	for (const [key, value] of formData as any) {
 		if (!(value instanceof File)) {
-			eventUpdate[key] = value;
+			if (value || !dateKeys.includes(key)) {
+				eventUpdate[key] = value;
+			}
 		}
 	}
+
 
 	// Update event
 	try {
@@ -59,7 +74,9 @@ export const POST: RequestHandler = async event => {
   const eventCreate: any = {};
   for (const [key, value] of formData as any) {
 		if (!(value instanceof File)) {
-			eventCreate[key] = value;
+			if (value || !dateKeys.includes(key)) {
+				eventCreate[key] = value;
+			}
 		}
 	}
 	

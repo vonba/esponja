@@ -62,9 +62,9 @@
   <ul class="events {displayMode}">
     {#each events as event (event?.id)}
       {#if displayMode === 'list'}
-        <EventListItem {event} {handleLikeEvent} {handleEditEvent} />
+        <EventListItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
       {:else}
-        <EventGridItem {event} {handleLikeEvent} {handleEditEvent} />
+        <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
       {/if}
     {/each}
   </ul>
@@ -128,5 +128,10 @@
       gap: 1em;
       grid-template-columns: repeat(var(--eventColumns), 1fr);
     }
+  }
+
+  :global(.viewOptions button:disabled) {
+    opacity: 1;
+    pointer-events: none;
   }
 </style>

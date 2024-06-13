@@ -1,5 +1,5 @@
 export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
+  const date = new Date(`${dateString}T00:00:00`); // Force local time
   const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
   return new Intl.DateTimeFormat('es-MX', options).format(date);
 }

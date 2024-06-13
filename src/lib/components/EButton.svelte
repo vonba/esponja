@@ -53,6 +53,10 @@
       background-image: url('/icon-save-filled-green.svg');
       background-size: 12px;
     }
+    &.saveOutline {
+      background-image: url('/icon-save-outline-green.svg');
+      background-size: 12px;
+    }
     &.search {
       background-image: url('/icon-search-green.svg');
     }
@@ -64,6 +68,15 @@
     }
     &.list {
       background-image: url('/icon-list-green.svg');
+    }
+    &.edit {
+      background-image: url('/icon-edit-green.svg');
+    }
+    &.delete {
+      background-image: url('/icon-delete-green.svg');
+    }
+    &.share {
+      background-image: url('/icon-share-green.svg');
     }
     
     &.selected {
