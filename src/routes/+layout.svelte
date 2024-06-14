@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import type { LayoutServerData } from './$types'
-	import { goto, beforeNavigate } from '$app/navigation'
-	import { loginSession, toast } from '../stores'
+	import { beforeNavigate } from '$app/navigation'
+	import { loginSession } from '../stores'
 
 	// Global styles
 	import '../styles/app.scss'

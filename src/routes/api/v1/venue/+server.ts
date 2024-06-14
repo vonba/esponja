@@ -5,6 +5,7 @@ import { query } from '$lib/server/db'
 export const GET: RequestHandler = async event => {
 	let result;
 	try {
+		// TODO: we need a way to show only hidden venues to unhide them
 		result = await query('SELECT * FROM venues WHERE hidden = false ORDER BY name ASC');
 	} catch (err) {
 		error(503, 'Database error')

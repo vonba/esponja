@@ -45,7 +45,7 @@
       event={editEvent}
       on:saved={() => {
         invalidateAll();
-        showCreateEvent = false
+        showEditEvent = false
       }}
       on:cancel={() => showEditEvent = false}
     />
@@ -111,6 +111,7 @@
   ul.events {
     list-style: none;
     padding: 0;
+    border-top: 1px solid var(--colorGreen);
     --eventColumns: 1;
     
     @media (min-width: $mediaM) {

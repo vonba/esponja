@@ -1,7 +1,9 @@
 // Archivo font
 @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
 
+@import '../lib/sass/_variables';
 @import url('forms.scss');
+
 
 /* variables */
 
@@ -64,6 +66,16 @@ p {
 
 a {
   color: var(--colorGreen);
+  transition: all 0.5s;
+}
+
+p a {
+  &:hover {
+    text-decoration: none;
+    background-color: var(--colorGreen);
+    color: var(--colorOffWhite);
+    // border-radius: var(--borderRadius);
+  }
 }
 
 .imageWrapper {
@@ -83,4 +95,16 @@ a {
   border: 1px solid var(--colorGreen);
   border-radius: var(--borderRadius);
   margin: var(--spacing);
+}
+
+.overlay {
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: var(--colorOffWhite);
+  padding: var(--spacing);
+  overflow-y: auto;
 }

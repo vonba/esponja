@@ -5,21 +5,35 @@
 	import ButtonLink from "./ButtonLink.svelte"
 	import EventGridItem from "./EventGridItem.svelte"
 	import SearchEvents from "./SearchEvents.svelte"
+	import { loginSession } from "../../stores"
+	import { goto, invalidateAll } from "$app/navigation"
+	import EditEvent from "./EditEvent.svelte"
 
+  // Props
   export let events: [EventProperties] | []
   export let venues: [VenueProperties] | []
   export let startDate: string | null
   export let endDate: string | null
 
-  let displayMode = 'list'
+  // State
+  let displayMode = 'grid'
   let isSearchVisible = false
   let searchString = ''
+  let showEditEvent = false
+  let editEvent: EventProperties | null = null
+  let user: User;
+  loginSession.subscribe(value => {
+    user = value;
+  });
 
+  // Observable
   $: filteredEvents = events.filter(event => 
     (!startDate || event.startDate >= startDate) 
     && (!endDate || event.startDate <= endDate)
     && (searchString === '' || eventMatchesSearch(event, searchString))
   )
+
+  // -- Handlers --
 
   const eventMatchesSearch = (event: EventProperties, searchString: string) => {
     const venue = venues.find(v => v.id === event.venueId)
@@ -32,8 +46,9 @@
     console.log('like with id ' + eventId)
   }
 
-  const handleEditEvent = (event: EEvent) => {
-    // Navigate to edit page for this event
+  const handleEditEvent = (event: EventProperties) => {
+    editEvent = event
+    showEditEvent = true
   }
 
   const toggleSearch = () => {
@@ -47,49 +62,63 @@
     // TODO: global modal state
   }
 </script>
-<div class="publicEvents" in:fade>
-  <div class="tools">
-    <div class="viewOptions">
-      <EButton 
-        class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
-        on:click={() => displayMode = 'grid'}
-        disabled={displayMode === 'grid'}
-      >Grid</EButton>
-      <EButton 
-        class="icon list {displayMode === 'list' ? 'selected' : ''}"
-        on:click={() => displayMode = 'list'}
-        disabled={displayMode === 'list'}
-      >List</EButton>
-    </div>
-
-    <nav id="pageNavigation">
-      <EButton 
-        on:click={() => showSavedEvents()}
-        class="saveFilled icon"
-      >
-        Guardados
-      </EButton>
-      <SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
-      <ButtonLink href="/info" class="info icon">
-        Info
-      </ButtonLink>
-    </nav>
+{#if showEditEvent}
+  <div in:fade class="overlay">
+    <EditEvent 
+      {venues}
+      event={editEvent}
+      on:saved={() => {
+        invalidateAll();
+        showEditEvent = false
+      }}
+      on:cancel={() => showEditEvent = false}
+    />
   </div>
-  <ul class="events {displayMode}">
-    {#each filteredEvents as event (event.id)}
-      {#if displayMode === 'list'}
-        <EventListItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
-      {:else}
-        <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
+{:else}
+  <div class="publicEvents" in:fade>
+    <div class="tools">
+      <div class="viewOptions">
+        <EButton 
+          class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
+          on:click={() => displayMode = 'grid'}
+          disabled={displayMode === 'grid'}
+        >Grid</EButton>
+        <EButton 
+          class="icon list {displayMode === 'list' ? 'selected' : ''}"
+          on:click={() => displayMode = 'list'}
+          disabled={displayMode === 'list'}
+        >List</EButton>
+      </div>
+
+      <nav id="pageNavigation">
+        <EButton 
+          on:click={() => showSavedEvents()}
+          class="saveFilled icon"
+        >
+          Guardados
+        </EButton>
+        <SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
+        <ButtonLink href="/info" class="info icon">
+          Info
+        </ButtonLink>
+      </nav>
+    </div>
+    <ul class="events {displayMode}">
+      {#each filteredEvents as event (event.id)}
+        {#if displayMode === 'list'}
+          <EventListItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
+        {:else}
+          <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
+        {/if}
+      {/each}
+      {#if !filteredEvents.length}
+        <p class="emptyList">
+          No hay eventos para las fechas seleccionadas
+        </p>
       {/if}
-    {/each}
-    {#if !filteredEvents.length}
-      <p class="emptyList">
-        No hay eventos para las fechas seleccionadas
-      </p>
-    {/if}
-  </ul>
-</div>
+    </ul>
+  </div>
+{/if}
 
 <style lang="scss">
   @import "$lib/sass/variables";
@@ -149,7 +178,6 @@
 
     &.grid {
       display: grid;
-      gap: 1em;
       grid-template-columns: repeat(var(--eventColumns), 1fr);
     }
   }

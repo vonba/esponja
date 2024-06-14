@@ -5,16 +5,14 @@ import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
+import { eventColumns } from '$lib/server/queries';
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
 	let result;
 	try {
-		result = await query(`SELECT id, user_id AS "userId", venue_id AS "venueId", 
-		name, start_date AS "startDate", start_time AS "startTime", end_date AS "endDate",
-		end_time AS "endTime", description, ticket_link AS "ticketLink", price_cents AS "priceCents", 
-		image_key_large as "imageKeyLarge", image_key_small as "imageKeySmall"
+		result = await query(`SELECT ${eventColumns}
 		FROM events WHERE hidden = false ORDER BY start_date ASC`);
 	} catch (err) {
 		error(503, 'Database error')

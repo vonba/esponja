@@ -1,0 +1,111 @@
+<script lang="ts">
+	import { invalidateAll } from "$app/navigation"
+	import ButtonLink from "$lib/components/ButtonLink.svelte"
+	import EButton from "$lib/components/EButton.svelte"
+	import EditEvent from "$lib/components/EditEvent.svelte"
+	import EventGridItem from "$lib/components/EventGridItem.svelte"
+  import PublicLogo from "$lib/components/PublicLogo.svelte"
+	import { fade } from "svelte/transition"
+	import { loginSession } from "../../../stores"
+
+  type SingleEventPageData = {
+    user: User,
+    event: [EventProperties] | [],
+    venues: [VenueProperties] | []
+  }
+  export let data: SingleEventPageData
+  const { venues } = data
+  const event = data.event[0]
+
+  // State
+  let showEditEvent = false
+  let editEvent: EventProperties | null = null
+  
+  const showSavedEvents = () => {
+    // TODO: global modal state
+  }
+
+  const handleLikeEvent = (eventId: number) => {
+    // TODO: add event to cookie
+    console.log('like with id ' + eventId)
+  }
+
+  const handleEditEvent = $loginSession?.role === 'admin'
+    ? (event: EventProperties) => {
+      editEvent = event
+      showEditEvent = true
+    }
+    : null
+</script>
+
+<svelte:head>
+  <title>{event ? event.name : 'No encontrado'} – Esponja</title>
+</svelte:head>
+
+<div class="pageHeaderWrapper">
+  <PublicLogo />
+  <nav id="pageNavigation">
+    <EButton 
+      on:click={() => showSavedEvents()}
+      class="saveFilled icon"
+    >
+      Guardados
+    </EButton>
+    <ButtonLink href="/info" class="info icon">
+      Info
+    </ButtonLink>
+  </nav>
+</div>
+
+{#if showEditEvent}
+  <div in:fade class="overlay">
+    <EditEvent 
+      {venues}
+      event={editEvent}
+      on:saved={() => {
+        invalidateAll();
+        showEditEvent = false
+      }}
+      on:cancel={() => showEditEvent = false}
+    />
+  </div>
+{:else}
+  {#if event}
+    <ul class="eventWrapper">
+      <EventGridItem isSingle={true} {event} {venues} {handleLikeEvent} {handleEditEvent} />
+    </ul>
+
+    {:else}
+    <p class="emptyList">
+      <strong>No encontrado</strong><br />
+      No encontramos el evento que buscas. ¿Pegaste mal el link?
+    </p>
+  {/if}
+{/if}
+
+<style lang="scss">
+  @import "$lib/sass/variables";
+
+  .pageHeaderWrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #pageNavigation {
+    margin-top: var(--spacing);
+    padding: var(--spacing);
+    display: flex;
+    gap: var(--spacing);
+    justify-content: flex-end;
+    height: 3.25em;
+  }
+
+  .eventWrapper {
+    --eventColumns: 1;
+    list-style: none;
+    padding: var(--spacing);
+    margin: calc(2 * var(--spacing)) 0 0 0;
+    padding-top: var(--spacing);
+    border-top: 1px solid var(--colorGreen);
+  }
+</style>

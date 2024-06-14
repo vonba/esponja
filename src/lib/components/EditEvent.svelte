@@ -231,6 +231,11 @@
 		position: relative;
 	}
 
+	.editEvent {
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
 	input#eventImage {
 		display: none;
 	}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { formatDate, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
+	import { formatDescription } from "$lib/strings"
   import EButton from "./EButton.svelte"
   
   export let event: EventProperties
@@ -15,18 +16,26 @@
 
 <li class="eventListItem">
   <div class="contentWrapper">
-    <h2>{event.name}</h2>
+    <h2>
+      <a href="/event/{event.id}">{event.name}</a>
+    </h2>
 
     <div class="datesWrapper">
-      <img src="/icon-date-green.svg" alt="calendar" />
+      <img src="/icon-date-green.svg" alt="Fecha" />
       <div class="dates">
         {#if event.startDate}{formatDate(event.startDate)}{/if}{#if event.startTime}, {formatTime(event.startTime)}{/if}
       </div>
     </div>
 
-    <div class="venue">
-      <img src="/icon-venue-green.svg" alt="venue" />
-      {venue?.name}
+    <p class="venue">
+      <img src="/icon-venue-green.svg" alt="Foro" />
+      <a href="/venue/{venue?.id}">
+        {venue?.name}
+      </a>
+    </p>
+
+    <div class="description">
+      <p>{@html formatDescription(event.description)}</p>
     </div>
     
     <div class="actions">
@@ -53,19 +62,31 @@
     </div>
   </div>
 
-  <div class="imageWrapper">
-    {#if event.imageKeySmall}
-      <img src={getImageURL(event.imageKeySmall)} alt="Imagen del evento" />
-    {/if}
-  </div>
+  <a href="/event/{event.id}">
+    <div class="imageWrapper">
+      {#if event.imageKeySmall && event.imageKeyLarge}
+      
+      <img 
+        src={getImageURL(event.imageKeySmall)} 
+        sizes="(max-width: 600px) 30vw, (max-width: 1200px) 30vw, 1200px"
+        srcset="{getImageURL(event.imageKeySmall)} 400w, {getImageURL(event.imageKeyLarge)} 1200w"
+        alt="Imagen del evento" 
+      />
+      {/if}
+    </div>
+  </a>
 </li>
 
 <style lang="scss">
   @import "$lib/sass/variables";
 
+  h2 a {
+    text-decoration: none;
+  }
+
   h2 {
     font-size: var(--fsTitleMedium);
-    margin-bottom: 0;
+    margin-bottom: var(--spacing);
 
     @media (min-width: $mediaL) {
       font-size: var(--fsTitleBig);
@@ -83,12 +104,18 @@
     border-bottom: 1px solid var(--colorGreen);
 
     @media (min-width: $mediaL) {
-      --itemHeight: 250px;
+      --itemHeight: 25vw;
+    }
+  }
+  
+  .description {
+    @media (max-width: $mediaL) {
+      display: none;
     }
   }
 
   .imageWrapper {
-    height: 100%;
+    height: calc(var(--itemHeight) - var(--spacing));
     width: 100%;
     border-radius: var(--borderRadius);
     overflow: hidden;
@@ -111,6 +138,11 @@
     display: flex;
     align-items: center;
     gap: var(--spacing);
+    margin-bottom: var(--spacing);
+
+    img {
+      margin-top: 3px;
+    }
   }
 
   .dates::first-letter {

@@ -88,6 +88,7 @@ CREATE TABLE public.venues (
   addressline2 character varying(255) COLLATE pg_catalog."default",
   postcode character varying(20) COLLATE pg_catalog."default",
   city character varying(100) COLLATE pg_catalog."default",
+  country character varying(100) COLLATE pg_catalog."default",
   hidden boolean NOT NULL DEFAULT false,
   CONSTRAINT venues_pkey PRIMARY KEY (id)
 ) TABLESPACE pg_default;
@@ -381,10 +382,12 @@ DECLARE
   input_description text := TRIM((input->>'description')::text);
   input_ticket_link varchar(255) := TRIM((input->>'ticketLink')::varchar);
   input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);
+  input_image_key_large varchar(255) := TRIM((input->>'imageKeyLarge')::varchar);
+  input_image_key_small varchar(255) := TRIM((input->>'imageKeySmall')::varchar);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO events (user_id, venue_id, name, start_date, start_time, end_date, end_time, description, ticket_link, hidden)
-    VALUES (input_user_id, input_venue_id, input_name, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden)
+    INSERT INTO events (user_id, venue_id, name, start_date, start_time, end_date, end_time, description, ticket_link, hidden, image_key_large, image_key_small)
+    VALUES (input_user_id, input_venue_id, input_name, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden, input_image_key_large, input_image_key_small)
     RETURNING id INTO new_id;
   ELSE
     UPDATE events SET
@@ -397,7 +400,9 @@ BEGIN
       end_time = input_end_time,
       description = input_description,
       ticket_link = input_ticket_link,
-      hidden = input_hidden
+      hidden = input_hidden,
+      image_key_large = input_image_key_large,
+      image_key_small = input_image_key_small
     WHERE id = input_id;
   END IF;
 END;
@@ -438,210 +443,149 @@ CALL public.upsert_user('{"id":0, "role":"editor", "email":"editor@example.com",
 CALL public.upsert_user('{"id":0, "role":"contributor", "email":"contributor@example.com", "password":"contributor123", "firstName":"Justin", "lastName":"Case"}'::json);
 
 CALL upsert_venue('{
-  "name": "Venue 1",
-  "addressline1": "123 Main St",
-  "addressline2": "Suite 1",
-  "postcode": "12345",
-  "city": "CDMX",
+  "name": "Teatro Lúcido",
+  "addressline1": "C. Dr. Enrique González Martínez 234",
+  "addressline2": "Sta María la Ribera",
+  "postcode": "06400",
+  "city": "Ciudad de México",
   "hidden": false
 }', null);
-
 CALL upsert_venue('{
-  "name": "Venue 2",
-  "addressline1": "456 Elm St",
-  "addressline2": "Apt 2B",
-  "postcode": "67890",
-  "city": "CDMX",
+  "name": "316Centro",
+  "addressline1": "Fray Servando Teresa de Mier 316",
+  "addressline2": "La Merced",
+  "postcode": "06090",
+  "city": "Ciudad de México",
   "hidden": false
 }', null);
-
 CALL upsert_venue('{
-  "name": "Venue 3",
-  "addressline1": "789 Oak St",
-  "addressline2": "Floor 3",
-  "postcode": "54321",
-  "city": "CDMX",
+  "name": "Bajo Circuito",
+  "addressline1": "Bajo Puente de, Cto. Interior S/N",
+  "addressline2": "Colonia Condesa",
+  "postcode": "06140",
+  "city": "Ciudad de México",
   "hidden": false
 }', null);
-
 CALL upsert_venue('{
-  "name": "Venue 4",
-  "addressline1": "101 Pine St",
-  "addressline2": "Building 4",
-  "postcode": "98765",
-  "city": "CDMX",
+  "name": "Casa del lago",
+  "addressline1": "Bosque de Chapultepec Primera Seccion S/N",
+  "addressline2": "San Miguel Chapultepec I Secc,",
+  "postcode": "11850",
+  "city": "Ciudad de México",
   "hidden": false
 }', null);
-
 CALL upsert_venue('{
-  "name": "Venue 5",
-  "addressline1": "202 Birch St",
-  "addressline2": "",
-  "postcode": "11223",
-  "city": "CDMX",
+  "name": "Multiforo Alicia",
+  "addressline1": "C. Eligio Ancona 145",
+  "addressline2": "Sta María la Ribera",
+  "postcode": "06400",
+  "city": "Ciudad de México",
   "hidden": false
 }', null);
 
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 1,
-  "name": "Event 1",
-  "startDate": "2024-06-16",
-  "startTime": "10:00:00",
-  "endDate": "2024-06-17",
-  "endTime": "18:00:00",
-  "description": "Description for Event 1",
-  "ticketLink": "http://example.com/ticket1"
-}', null);
 
 CALL upsert_event('{
   "userId": 1,
   "venueId": 2,
-  "name": "Event 2",
-  "startDate": "2024-06-17",
-  "startTime": "11:00:00",
-  "description": "Description for Event 2",
-  "ticketLink": "http://example.com/ticket2"
+  "name": "Fusce finibus dapibus ante a tristique",
+  "startDate": "2024-06-16",
+  "startTime": "20:00:00",
+  "endDate": null,
+  "endTime": "02:00:00",
+  "description": "Sed congue sit amet velit nec eleifend. Aliquam sodales mollis nunc, vel faucibus neque finibus nec. Duis ac mi sit amet mi fermentum rutrum scelerisque sit amet urna. Proin ac felis ex. Proin lacus nisl, consequat ac sollicitudin vitae, convallis sit amet lacus. Fusce finibus dapibus ante a tristique. Sed volutpat ultrices risus, efficitur auctor tortor fermentum vitae. Ut ultrices lorem nisl. Nunc a purus nisi. Integer tempor nibh vel aliquet sollicitudin. Aenean at tristique mauris. Aliquam lectus turpis, tincidunt id leo vitae, dapibus tempor sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur finibus lacinia enim vel cursus. Aliquam sit amet nunc risus.",
+  "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
+  "imageKeyLarge": "event-1-1718256781535.jpg",
+  "imageKeySmall": "event-1-1718256784343.jpg"
 }', null);
-
 CALL upsert_event('{
   "userId": 1,
   "venueId": 3,
-  "name": "Event 3",
-  "startDate": "2024-06-18",
-  "startTime": "12:00:00",
-  "endDate": "2024-06-18",
-  "endTime": "20:00:00",
-  "description": "Description for Event 3",
-  "ticketLink": "http://example.com/ticket3"
+  "name": "In ultricies",
+  "startDate": "2024-06-17",
+  "startTime": "21:00:00",
+  "endDate": null,
+  "endTime": "01:00:00",
+  "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus",
+  "ticketLink": "",
+  "imageKeyLarge": "event-3-1718327102820.jpg",
+  "imageKeySmall": "event-3-1718327104329.jpg"
 }', null);
-
+CALL upsert_event('{
+  "userId": 1,
+  "venueId": 1,
+  "name": "Etiam eleifend efficitur elit",
+  "startDate": "2024-06-20",
+  "startTime": "20:00:00",
+  "endDate": null,
+  "endTime": "02:00:00",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tellus leo, vehicula sed porttitor id, imperdiet ut dolor. Nulla at sem imperdiet, congue dui in, ultricies dolor. Etiam eu gravida purus. Etiam quis condimentum leo. Vivamus cursus erat sapien, in blandit dolor aliquam quis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In vulputate, ante vel ullamcorper egestas, tellus est semper elit, non molestie dui nibh sit amet eros.",
+  "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
+  "imageKeyLarge": "event-1-1718256781535.jpg",
+  "imageKeySmall": "event-1-1718256784343.jpg"
+}', null);
+CALL upsert_event('{
+  "userId": 1,
+  "venueId": 2,
+  "name": "Nulla dictum",
+  "startDate": "2024-06-21",
+  "startTime": "21:00:00",
+  "endDate": null,
+  "endTime": "01:00:00",
+  "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus",
+  "ticketLink": "",
+  "imageKeyLarge": "event-3-1718327102820.jpg",
+  "imageKeySmall": "event-3-1718327104329.jpg"
+}', null);
+CALL upsert_event('{
+  "userId": 1,
+  "venueId": 3,
+  "name": "Phasellus iaculis elit enim vel pretium urna pretium",
+  "startDate": "2024-06-22",
+  "startTime": "20:00:00",
+  "endDate": null,
+  "endTime": "02:00:00",
+  "description": "Curabitur luctus, lacus ut congue aliquet, sem leo tempus dolor, quis rhoncus ligula ipsum in sem. Maecenas maximus elit a tortor luctus, ut facilisis turpis blandit. Suspendisse potenti. Duis aliquam euismod nisl, non mattis arcu. Integer nec erat quis mauris porttitor fermentum eget eleifend nibh. Phasellus suscipit massa non auctor auctor. Proin tempor urna aliquam dictum volutpat. Phasellus iaculis elit enim, vel pretium urna pretium ac. Nunc elementum magna eget laoreet vehicula. Suspendisse lectus eros, rutrum non vulputate non, sagittis id turpis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer dictum augue fermentum nisl iaculis convallis. Maecenas maximus sapien ut ipsum finibus varius.",
+  "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
+  "imageKeyLarge": "event-1-1718256781535.jpg",
+  "imageKeySmall": "event-1-1718256784343.jpg"
+}', null);
 CALL upsert_event('{
   "userId": 1,
   "venueId": 4,
-  "name": "Event 4",
-  "startDate": "2024-06-19",
-  "startTime": "13:00:00",
-  "description": "Description for Event 4",
-  "ticketLink": "http://example.com/ticket4"
+  "name": "Suspendisse malesuada sem",
+  "startDate": "2024-06-23",
+  "startTime": "21:00:00",
+  "endDate": null,
+  "endTime": "01:00:00",
+  "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus",
+  "ticketLink": "",
+  "imageKeyLarge": "event-3-1718327102820.jpg",
+  "imageKeySmall": "event-3-1718327104329.jpg"
 }', null);
-
 CALL upsert_event('{
   "userId": 1,
   "venueId": 5,
-  "name": "Event 5",
-  "startDate": "2024-06-20",
-  "startTime": "14:00:00",
-  "endDate": "2024-06-21",
-  "description": "Description for Event 5",
-  "ticketLink": "http://example.com/ticket5",
-  "price": 120
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 1,
-  "name": "Event 6",
-  "startDate": "2024-06-21",
-  "startTime": "15:00:00",
-  "endDate": "2024-06-22",
-  "endTime": "21:00:00",
-  "description": "Description for Event 6",
-  "ticketLink": "http://example.com/ticket6",
-  "price": 200
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 2,
-  "name": "Event 7",
-  "startDate": "2024-06-22",
-  "startTime": "16:00:00",
-  "description": "Description for Event 7",
-  "price": 80
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 3,
-  "name": "Event 8",
-  "startDate": "2024-06-23",
-  "description": "Description for Event 8",
-  "ticketLink": "http://example.com/ticket8",
-  "price": 250
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 4,
-  "name": "Event 9",
+  "name": "Fusce ullamcorper turpis in ligula sodales",
   "startDate": "2024-06-24",
-  "startTime": "17:00:00",
+  "startTime": "16:00:00",
   "endDate": "2024-06-25",
   "endTime": "22:00:00",
-  "description": "Description for Event 9"
+  "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus.",
+  "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
+  "imageKeyLarge": "event-1-1718256781535.jpg",
+  "imageKeySmall": "event-1-1718256784343.jpg"
 }', null);
-
 CALL upsert_event('{
   "userId": 1,
   "venueId": 5,
-  "name": "Event 10",
-  "startDate": "2024-06-25",
-  "startTime": "18:00:00",
-  "endDate": "2024-06-26",
-  "description": "Description for Event 10",
-  "ticketLink": "http://example.com/ticket10",
-  "price": 150
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 1,
-  "name": "Event 11",
-  "startDate": "2024-06-26",
-  "description": "Description for Event 11",
-  "ticketLink": "http://example.com/ticket11"
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 2,
-  "name": "Event 12",
-  "startDate": "2024-06-27",
-  "startTime": "19:00:00",
-  "endDate": "2024-06-28",
-  "endTime": "23:00:00",
-  "description": "Description for Event 12",
-  "price": 200
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 3,
-  "name": "Event 13",
+  "name": "Praesent fermentum",
   "startDate": "2024-06-28",
   "startTime": "20:00:00",
-  "description": "Description for Event 13",
-  "ticketLink": "http://example.com/ticket13"
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 4,
-  "name": "Event 14",
-  "startDate": "2024-06-29",
-  "startTime": "21:00:00",
-  "endDate": "2024-06-30",
-  "description": "Description for Event 14"
-}', null);
-
-CALL upsert_event('{
-  "userId": 1,
-  "venueId": 5,
-  "name": "Event 15",
-  "startDate": "2024-06-30",
-  "startTime": "22:00:00",
-  "description": "Description for Event 15",
-  "ticketLink": "http://example.com/ticket15"
+  "endDate": null,
+  "endTime": "01:00:00",
+  "description": "Sed congue sit amet velit nec eleifend. Aliquam sodales mollis nunc, vel faucibus neque finibus nec. Duis ac mi sit amet mi fermentum rutrum scelerisque sit amet urna. Proin ac felis ex. Proin lacus nisl, consequat ac sollicitudin vitae, convallis sit amet lacus. Fusce finibus dapibus ante a tristique. Sed volutpat ultrices risus, efficitur auctor tortor fermentum vitae. Ut ultrices lorem nisl. Nunc a purus nisi. Integer tempor nibh vel aliquet sollicitudin. Aenean at tristique mauris. Aliquam lectus turpis, tincidunt id leo vitae, dapibus tempor sapien. Vestibulum ante ipsum primis in faucibus orciluctus et ultrices posuere cubilia curae; Curabitur finibus lacinia enim vel cursus. Aliquam sit amet nunc risus.",
+  "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
+  "imageKeyLarge": "event-1-1718256781535.jpg",
+  "imageKeySmall": "event-1-1718256784343.jpg"
 }', null);
 
