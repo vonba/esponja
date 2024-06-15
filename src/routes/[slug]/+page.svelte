@@ -1,9 +1,12 @@
 <!-- This is the public home page of the app -->
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { goto } from "$app/navigation"
 	import EButton from "$lib/components/EButton.svelte"
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { getDateFiltersFromTimeWindow } from "$lib/dateTime"
+	import { onMount } from 'svelte'
 
 	// Props
 	export let data: HomePageData
@@ -12,11 +15,12 @@
 	let eventTimeWindow: string | null
 	let eventFilterDateStart: string | null  // YYYY-MM-DD
 	let eventFilterDateEnd: string | null // YYYY-MM-DD
+	let slug = ''
 
 	// Date filters
 	const setEventTimeWindow = (newTimeWindow: string) => {
 		if (eventTimeWindow === newTimeWindow) {
-			eventTimeWindow = '' // Unset filter by clicking already selected button
+			eventTimeWindow = 'todo' // Unset filter by clicking already selected button
 		} else {
 			eventTimeWindow = newTimeWindow
 		}
@@ -24,9 +28,19 @@
 		const { startDate, endDate } = getDateFiltersFromTimeWindow(eventTimeWindow);
 		eventFilterDateStart = startDate
 		eventFilterDateEnd = endDate
+
+		goto(`/${eventTimeWindow}`, { replaceState: true });
 	}
-	// Default filter
-	setEventTimeWindow('week')
+  $: ({ slug } = $page.params);
+
+	onMount(() => {
+    if(slug) {
+			setEventTimeWindow(slug)
+		} else {
+			// No default filter
+			setEventTimeWindow('todo')
+		}
+  });
 
 </script>
 
@@ -35,30 +49,30 @@
 </svelte:head>
 
 <section class="homeHeader">
-	<PublicLogo />
+	<PublicLogo on:click={() => setEventTimeWindow('todo')} />
 	
 	<nav id="eventsNavigation">
 		<EButton 
-			on:click={() => setEventTimeWindow('today')}
-			class={'today' === eventTimeWindow ? 'selected' : ''}
+			on:click={() => setEventTimeWindow('hoy')}
+			class={'hoy' === eventTimeWindow ? 'selected' : ''}
 		>
 			Hoy
 		</EButton>
 		<EButton 
-			on:click={() => setEventTimeWindow('tomorrow')}
-			class={'tomorrow' === eventTimeWindow ? 'selected' : ''}
+			on:click={() => setEventTimeWindow('manana')}
+			class={'manana' === eventTimeWindow ? 'selected' : ''}
 		>
 			Mañana
 		</EButton>
 		<EButton 
-			on:click={() => setEventTimeWindow('week')}
-			class={'week' === eventTimeWindow ? 'selected' : ''}
+			on:click={() => setEventTimeWindow('semana')}
+			class={'semana' === eventTimeWindow ? 'selected' : ''}
 		>
 			Esta semana
 		</EButton>
 		<EButton 
-			on:click={() => setEventTimeWindow('month')}
-			class={'month' === eventTimeWindow ? 'selected' : ''}
+			on:click={() => setEventTimeWindow('mes')}
+			class={'mes' === eventTimeWindow ? 'selected' : ''}
 		>
 			Este mes
 		</EButton>

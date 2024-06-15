@@ -15,8 +15,8 @@
   --fsTitleMedium: 20px;
   --fsTitleBig: 30px;
 
-  --borderRadius: 5px;
   --spacing: 10px;
+  --borderRadius: 5px;
 }
 
 /* global styles */
@@ -52,6 +52,12 @@ h1, h2, h3, h4 {
 
 h1 {
   font-size: var(--fsTitleBig);
+  line-height: 1;
+}
+
+h1,
+h2 {
+  line-height: 1;
 }
 
 h2,
@@ -107,4 +113,8 @@ p a {
   background-color: var(--colorOffWhite);
   padding: var(--spacing);
   overflow-y: auto;
+}
+
+.no-hover {
+  pointer-events: none;
 }

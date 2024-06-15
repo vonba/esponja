@@ -4,6 +4,7 @@ export const load = async ({params, fetch}) => {
 	const eventId = params.slug
 	const returnValue = {
 		event: null,
+		eventsForVenue: null,
 		venues: null,
 	};
 	try {
@@ -24,6 +25,9 @@ export const load = async ({params, fetch}) => {
 			throw new Error('Failed to fetch single event');
 		}
 		returnValue.event = await eventResponse.json()
+
+		console.log(returnValue.event)
+
 	} catch (err) {
 		error(503, 'Database error')
 	}

@@ -20,9 +20,11 @@
     cursor: pointer;
     line-height: 1;
 
-    &:hover {
-      box-shadow: none;
-      transform: translate(2px, 2px);
+    @media (hover: hover) {
+      &:hover {
+        box-shadow: none;
+        transform: translate(2px, 2px);
+      }
     }
     
     &.selected {

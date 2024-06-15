@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import sharp from 'sharp'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
@@ -45,7 +44,6 @@ export const PUT: RequestHandler = async event => {
 			}
 		}
 	}
-
 
 	// Update event
 	try {

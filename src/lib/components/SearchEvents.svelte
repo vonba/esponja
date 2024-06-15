@@ -71,9 +71,11 @@
       width: 3em;
       transition: all 0.5s;
 
-      &:hover {
-        background-color: var(--colorGreen);
-        background-image: url('/icon-close-offwhite.svg');
+      @media (hover: hover) {
+        &:hover {
+          background-color: var(--colorGreen);
+          background-image: url('/icon-close-offwhite.svg');
+        }
       }
     }
   }

@@ -100,7 +100,7 @@
     display: grid;
     grid-template-columns: 1fr minmax(100px, 33%);
     gap: var(--spacing);
-    height: calc(var(--itemHeight) + var(--spacing));
+    min-height: calc(var(--itemHeight) + var(--spacing));
     border-bottom: 1px solid var(--colorGreen);
 
     @media (min-width: $mediaL) {
@@ -115,7 +115,8 @@
   }
 
   .imageWrapper {
-    height: calc(var(--itemHeight) - var(--spacing));
+    min-height: calc(var(--itemHeight) - var(--spacing));
+    height: 100%;
     width: 100%;
     border-radius: var(--borderRadius);
     overflow: hidden;

@@ -20,7 +20,7 @@
   });
 
   function initMap() {
-    const address = `${venue.addressline1}, ${venue.addressline2 ? venue.addressline2 + ', ' : ''}${venue.city}, Mexico`;
+    const address = `${venue.name}, ${venue.addressline1}, ${venue.addressline2 ? venue.addressline2 + ', ' : ''}${venue.city}, Mexico`;
 
     const geocoder = new google.maps.Geocoder();
 

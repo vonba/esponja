@@ -14,21 +14,21 @@ export function formatTime(timeString: string): string {
 
 export function getDateFiltersFromTimeWindow(eventTimeWindow: string): {startDate: string | null, endDate: string | null} {
   let startDate, endDate
-  if ('today' === eventTimeWindow) {
+  if ('hoy' === eventTimeWindow) {
     startDate = new Date().toISOString().split('T')[0];
     endDate = startDate;
-  } else if ('tomorrow' === eventTimeWindow) {
+  } else if ('manana' === eventTimeWindow) {
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     startDate = tomorrow.toISOString().split('T')[0];
     endDate = startDate;
-  } else if ('week' === eventTimeWindow) {
+  } else if ('semana' === eventTimeWindow) {
     let currentDate = new Date();
     let firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1));
     startDate = firstDayOfWeek.toISOString().split('T')[0];
     let lastDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 7));
     endDate = lastDayOfWeek.toISOString().split('T')[0];
-  } else if ('month' === eventTimeWindow) {
+  } else if ('mes' === eventTimeWindow) {
     let currentMonth = new Date();
     startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString().split('T')[0];
     endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).toISOString().split('T')[0];

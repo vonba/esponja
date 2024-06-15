@@ -1,8 +1,11 @@
-<header class="publicLogo">
-  <a href="/">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<header class="publicLogo" on:click role="navigation">
+  <a href="/todo">
     <img src="/esponja-logo.svg" alt="Esponja" class="esponjaLogo" />
+    <img src="/esponja-tagline.svg" alt="Eventos de música alternativa en la Ciudad de México" class="esponjaTagline" />
   </a>
-  <img src="/esponja-tagline.svg" alt="Eventos de música alternativa en la Ciudad de México" class="esponjaTagline" />
 </header>
 
 <style>

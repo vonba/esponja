@@ -1,7 +1,4 @@
 <script lang="ts">
-	// import type { MouseEventHandler } from "svelte/elements"
-  // export let className: string
-  // export let onClick: MouseEventHandler<HTMLButtonElement>
 </script>
 
 <button on:click {...$$restProps}>
@@ -20,9 +17,11 @@
     cursor: pointer;
     line-height: 1;
 
-    &:hover {
-      box-shadow: none;
-      transform: translate(2px, 2px);
+    @media (hover: hover) {
+      &:hover {
+        box-shadow: none;
+        transform: translate(2px, 2px);
+      }
     }
 
     &:disabled {
