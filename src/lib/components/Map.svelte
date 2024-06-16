@@ -51,10 +51,6 @@
 <style lang="scss">
   @import "$lib/sass/variables";
 
-  .map {
-    padding: var(--spacing);
-  }
-
   .mapContainer {
     border-radius: var(--borderRadius);
     background-color: var(--colorGreen);

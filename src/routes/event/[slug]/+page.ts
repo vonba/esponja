@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit";
 
 export const load = async ({params, fetch}) => {
-	const eventId = params.slug
+	const slug = params.slug
 	const returnValue = {
 		event: null,
 		eventsForVenue: null,
@@ -18,16 +18,14 @@ export const load = async ({params, fetch}) => {
 		returnValue.venues = await venueResponse.json();
 
 		// Fetch single event
-		const eventResponse = await fetch(`/api/v1/event/${eventId}`, {
+		const eventResponse = await fetch(`/api/v1/event/${slug}`, {
 			method: 'GET'
 		});
 		if (!eventResponse.ok) {
 			throw new Error('Failed to fetch single event');
 		}
 		returnValue.event = await eventResponse.json()
-
-		console.log(returnValue.event)
-
+		
 	} catch (err) {
 		error(503, 'Database error')
 	}

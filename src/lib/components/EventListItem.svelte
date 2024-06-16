@@ -17,7 +17,7 @@
 <li class="eventListItem">
   <div class="contentWrapper">
     <h2>
-      <a href="/event/{event.id}">{event.name}</a>
+      <a href="/event/{event.slug}">{event.name}</a>
     </h2>
 
     <div class="datesWrapper">
@@ -29,7 +29,7 @@
 
     <p class="venue">
       <img src="/icon-venue-green.svg" alt="Foro" />
-      <a href="/venue/{venue?.id}">
+      <a href="/venue/{venue?.slug}">
         {venue?.name}
       </a>
     </p>
@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <a href="/event/{event.id}">
+  <a href="/event/{event.slug}">
     <div class="imageWrapper">
       {#if event.imageKeySmall && event.imageKeyLarge}
       

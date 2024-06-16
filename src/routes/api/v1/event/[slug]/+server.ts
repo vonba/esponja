@@ -6,7 +6,7 @@ import { eventColumns } from '$lib/server/queries'
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
-	const eventId = event.params.slug;
+	const slug = event.params.slug;
 
 	let mainEventResult;
 	let otherEventsResult;
@@ -16,9 +16,9 @@ export const GET: RequestHandler = async event => {
 		mainEventResult = await query(`
 			SELECT ${eventColumns}
 			FROM events
-			WHERE hidden = false AND id = $1
+			WHERE hidden = false AND slug = '${slug}'
 			ORDER BY start_date ASC
-		`, [eventId]);
+		`);
 
 		if (mainEventResult.rows.length === 0) {
 			return json({ error: 'Event not found' }, { status: 404 });
@@ -27,15 +27,15 @@ export const GET: RequestHandler = async event => {
 		const venueId = mainEventResult.rows[0].venueId;
 
 		// Fetch other events at the same venue
-		// TODO: only fetch future events
 		otherEventsResult = await query(`
 			SELECT ${eventColumns}
 			FROM events
-			WHERE hidden = false AND venue_id = $1 AND id != $2
+			WHERE hidden = false AND venue_id = ${venueId} AND slug != '${slug}' AND start_date >= CURRENT_DATE
 			ORDER BY start_date ASC
-		`, [venueId, eventId]);
+		`);
 
 	} catch (err) {
+		console.log(err)
 		return json({ error: 'Database error' }, { status: 503 });
 	}
 

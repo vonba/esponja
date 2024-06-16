@@ -127,7 +127,7 @@
     margin: calc(2 * var(--spacing)) 0 0 0;
     border-top: 1px solid var(--colorGreen);
     
-    @media (min-width: 600px) {
+    @media (min-width: $mediaM) {
       padding: 0;
     }
   }

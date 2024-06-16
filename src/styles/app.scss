@@ -93,6 +93,10 @@ p a {
 .flex {
   display: flex;
   gap: var(--spacing);
+
+  &.alignCenter {
+    align-items: center;
+  }
 }
 
 .emptyList {

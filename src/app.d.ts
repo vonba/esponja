@@ -53,6 +53,7 @@ type User = UserProperties | undefined | null
 interface VenueProperties {
 	id: number;
   name: string;
+	slug: string;
   addressline1?: string;
   addressline2?: string;
   postcode?: string;
@@ -67,6 +68,7 @@ interface EventProperties {
   userId: number;
   venueId: number;
   name: string;
+	slug: string;
   startDate: string; // ISO 8601 date format
   startTime?: string; // ISO 8601 time format
   endDate?: string; // ISO 8601 date format

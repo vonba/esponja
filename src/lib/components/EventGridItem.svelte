@@ -24,7 +24,7 @@
 
 {#if event}
   <li class="eventGridItem {isSingle ? 'isSingle' : ''}">
-    <a href="/event/{event.id}">
+    <a href="/event/{event.slug}">
       <div class="imageWrapper">
         {#if event.imageKeySmall && event.imageKeyLarge}
         
@@ -41,7 +41,7 @@
     <div class="contentWrapper">
       <header>
         <h2>
-          <a href="/event/{event.id}">
+          <a href="/event/{event.slug}">
             {event.name}
           </a>
         </h2>
@@ -86,7 +86,7 @@
       {#if venue}
         <p class="venue">
           <img src="/icon-venue-green.svg" alt="venue" />
-          <a href="/venue/{venue.id}">
+          <a href="/venue/{venue.slug}">
             {venue.name}
           </a>
         </p>
@@ -181,8 +181,8 @@
       border-left: 1px solid var(--colorGreen);
     }
     
-    // Show as columns above 600px (non-standard breakpoint)
-    @media (min-width: 600px) {
+    // Show as columns
+    @media (min-width: $mediaM) {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: calc(2 * var(--spacing));

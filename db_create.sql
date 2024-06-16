@@ -84,7 +84,7 @@ DROP TABLE IF EXISTS public.venues;
 CREATE TABLE public.venues (
   id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
   name character varying(100) COLLATE pg_catalog."default" NOT NULL,
-  slug character varying(120) COLLATE pg_catalog."default" NOT NULL,
+  slug character varying(120) COLLATE pg_catalog."default" UNIQUE NOT NULL,
   addressline1 character varying(255) COLLATE pg_catalog."default",
   addressline2 character varying(255) COLLATE pg_catalog."default",
   postcode character varying(20) COLLATE pg_catalog."default",
@@ -108,7 +108,7 @@ CREATE TABLE public.events (
   user_id integer NOT NULL,
   venue_id integer,
   name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-  slug character varying(80) COLLATE pg_catalog."default" NOT NULL,
+  slug character varying(80) COLLATE pg_catalog."default" UNIQUE NOT NULL,
   start_date date NOT NULL,
   start_time time without time zone,
   end_date date,

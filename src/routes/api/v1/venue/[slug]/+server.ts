@@ -4,16 +4,37 @@ import { query } from '$lib/server/db'
 import { eventColumns } from '$lib/server/queries'
 
 export const GET: RequestHandler = async event => {
-	const eventId = event.params.slug
+	const slug = event.params.slug
 
-	let result;
+	let venue, events
+
 	try {
-		result = await query(`SELECT * FROM venues WHERE hidden = false AND id = ${eventId}`);
+		const venueResult = await query(`SELECT * FROM venues WHERE hidden = false AND slug = '${slug}'`);
+		if (venueResult.rows) {
+			venue = venueResult.rows[0];
+
+			// Fetch other events at the same venue
+			const eventsResult = await query(`
+				SELECT ${eventColumns} FROM events
+				WHERE hidden = false AND venue_id = ${venue.id} AND start_date >= CURRENT_DATE
+				ORDER BY start_date ASC
+			`);
+
+			events = eventsResult.rows.map(row => {
+				return {
+					...row,
+					// pg creates date objects but we only want the actual date
+					startDate: row.startDate.toISOString().split('T')[0],
+					endDate: row.endDate ? row.endDate.toISOString().split('T')[0] : null,
+				}
+			})
+		}
 	} catch (err) {
+		console.log(err)
 		error(503, 'Database error')
 	}
 
-	return json(result.rows);
+	return json({venue, events});
 }
 
 

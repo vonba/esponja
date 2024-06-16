@@ -4,6 +4,7 @@
 	import {createEventDispatcher} from 'svelte';
 	import EButton from './EButton.svelte'
 	import { getImageURL } from '$lib/file'
+	import { toSlug } from '$lib/strings'
 	
 	const dispatch = createEventDispatcher();
 
@@ -15,6 +16,7 @@
 			userId: 0,
 			venueId: 0,
 			name: '',
+			slug: '',
 			startDate: (new Date()).toISOString().split('T')[0], // YYYY-MM-DD
 			startTime: '19:00:00',
 			endDate: undefined,
@@ -93,6 +95,8 @@
 		}
 	}
 
+	$: if(isNewEvent) event.slug = toSlug(event.name)
+
 </script>
 
 <div class="editEvent">
@@ -119,7 +123,25 @@
 			</div>
 
 			<div class="inputContainer">
+				<label for="name">URL</label>
+				{#if !isNewEvent}
+					<p><i>Evita cambiar el URL después de publicar el evento</i></p>
+				{/if}
+				<div class="flex alignCenter">
+					<b>esponja.mx/</b>
+					<input
+						bind:value={event.slug}
+						id="slug"
+						required
+						placeholder="URL"
+					/>
+				</div>
+				<div class="invalidFeedback">Se requiere un URL</div>
+			</div>
+
+			<div class="inputContainer">
 				<label for="image">Imagen</label>
+				<i>Recomendamos que la imagen del evento tenga poco texto</i>
 				{#if event.imageKeyLarge}
 					<div class="imageWrapper">
 						<img src={getImageURL(event.imageKeyLarge)} alt="Imagen del evento" />
@@ -233,7 +255,7 @@
 
 	.editEvent {
 		max-width: 600px;
-		margin: 0 auto;
+		margin: 20px auto;
 	}
 
 	input#eventImage {

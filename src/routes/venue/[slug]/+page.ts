@@ -10,13 +10,13 @@ export const load = async ({params, fetch}) => {
 
 		// Fetch events
 		// TODO: filter by venue
-		const eventResponse = await fetch('/api/v1/event', {
-			method: 'GET'
-		});
-		if (!eventResponse.ok) {
-			throw new Error('Failed to fetch events');
-		}
-		returnValue.events = await eventResponse.json();
+		// const eventsResponse = await fetch('/api/v1/event', {
+		// 	method: 'GET'
+		// });
+		// if (!eventsResponse.ok) {
+		// 	throw new Error('Failed to fetch events');
+		// }
+		// returnValue.events = await eventsResponse.json();
 
 		// Fetch single venue
 		const venueResponse = await fetch(`/api/v1/venue/${venueId}`, {

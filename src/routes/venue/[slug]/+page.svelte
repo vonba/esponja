@@ -7,15 +7,18 @@
 	import { fade } from "svelte/transition"
 	import { loginSession } from "../../../stores"
 	import PublicVenue from "$lib/components/PublicVenue.svelte"
+	import EventListItem from "$lib/components/EventListItem.svelte"
+	import EventSummary from "$lib/components/EventSummary.svelte"
 
   type SingleVenuePageData = {
     user: User,
-    venue: [VenueProperties] | [],
-    events: [EventProperties] | []
+    venue: {venue: VenueProperties, events: [EventProperties] | []},
   }
   export let data: SingleVenuePageData
-  const { events } = data
-  const venue = data.venue[0]
+  const events = data.venue.events
+  const venue = data.venue.venue
+
+console.log('events', events)
 
   // State
   let showEditVenue = false
@@ -45,9 +48,6 @@
 <div class="pageHeaderWrapper">
   <PublicLogo />
   <nav id="pageNavigation">
-    <ButtonLink href="/">
-      Todos los eventos
-    </ButtonLink>
     <EButton 
       on:click={() => showSavedEvents()}
       class="saveFilled icon"
@@ -73,13 +73,14 @@
   </div>
 {:else}
   {#if venue}
-    <PublicVenue venue={venue} />
+    <PublicVenue venue={venue} {events} />
 
-    {:else}
+  {:else}
     <p class="emptyList">
       <strong>No encontrado</strong><br />
       No encontramos el foro que buscas. ¿Pegaste mal el link?
     </p>
+
   {/if}
 {/if}
 

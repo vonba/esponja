@@ -1,35 +1,53 @@
 <script lang="ts">
+	import EventSummary from "./EventSummary.svelte"
 	import Map from "./Map.svelte"
-	import PublicEvents from "./PublicEvents.svelte"
 
   export let venue: VenueProperties
+  export let events: [EventProperties] | []
 </script>
 
+<div class="venueHeader">
+  <img src="/icon-venue-green.svg" alt="Foro" />
+  <h2>
+    {venue.name}
+  </h2>
+</div>
+
+{#if venue.addressline1}
+  <div class="address">
+    {venue.addressline1}
+    {#if venue.addressline2}
+      <br />
+      {venue.addressline2}
+    {/if}
+  </div>
+{/if}
+
 <div class="publicVenue">
-  <div class="venueHeader">
-    <img src="/icon-venue-green.svg" alt="Foro" />
-    <h2>
-      {venue.name}
-    </h2>
+  
+  <div class="map">
+    {#if venue.addressline1}  
+      <Map {venue} />
+    {/if}
   </div>
 
-  {#if venue.addressline1}
-    <div class="address">
-      {venue.addressline1}
-      {#if venue.addressline2}
-        <br />
-        {venue.addressline2}
-      {/if}
-    </div>
+  <div class="eventsWrapper">
+    <h2>Eventos en {venue.name}</h2>
 
-    <div class="map">
-      <Map {venue} />
-    </div>
-  {/if}
+    <ul class="events">
+      {#if events.length}
+        {#each events as event}
+          <EventSummary {event} {venue} />
+        {/each}
+      {/if}
+    </ul>
+  </div>
   
 </div>
 
 <style lang="scss">
+  @import "$lib/sass/variables";
+
   .venueHeader {
     padding: var(--spacing);
     margin-top: 20px;
@@ -45,6 +63,39 @@
     h2 {
       font-size: var(--fsTitleBig);
       margin-bottom: 0;
+    }
+  }
+
+  .publicVenue {
+    @media (min-width: $mediaM) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing);
+    }    
+  }
+
+  .map {
+    padding: var(--spacing);
+    padding-top: 0;
+  }
+
+  .events {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .eventsWrapper {
+    h2 {
+      padding: calc(2 * var(--spacing)) 0;
+      border-top: 1px solid var(--colorGreen);
+      border-bottom: 1px solid var(--colorGreen);
+      font-size: var(--fsTitleMedium);
+
+      @media (max-width: $mediaM) {
+        padding-left: var(--spacing);
+        padding-right: var(--spacing);
+      }
     }
   }
 
