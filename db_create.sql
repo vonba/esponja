@@ -84,6 +84,7 @@ DROP TABLE IF EXISTS public.venues;
 CREATE TABLE public.venues (
   id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
   name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+  slug character varying(120) COLLATE pg_catalog."default" NOT NULL,
   addressline1 character varying(255) COLLATE pg_catalog."default",
   addressline2 character varying(255) COLLATE pg_catalog."default",
   postcode character varying(20) COLLATE pg_catalog."default",
@@ -106,7 +107,8 @@ CREATE TABLE public.events (
   id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
   user_id integer NOT NULL,
   venue_id integer,
-  name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+  name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+  slug character varying(80) COLLATE pg_catalog."default" NOT NULL,
   start_date date NOT NULL,
   start_time time without time zone,
   end_date date,
@@ -233,64 +235,66 @@ $BODY$;
 
 ALTER FUNCTION public.get_session(uuid) OWNER TO auth;
 
-CREATE OR REPLACE FUNCTION public.register(
-	input json,
-	OUT user_session json)
-    RETURNS json
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-DECLARE
-  input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
-  input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
-  input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
-  input_password varchar(80) := (input->>'password')::varchar;
-BEGIN
-  PERFORM id FROM users WHERE email = input_email;
-  IF NOT FOUND THEN
-    INSERT INTO users(role, password, email, first_name, last_name)
-      VALUES('contributor', crypt(input_password, gen_salt('bf', 8)), input_email, input_first_name, input_last_name)
-      RETURNING
-        json_build_object(
-          'sessionId', create_session(users.id),
-          'user', json_build_object('id', users.id, 'role', 'contributor', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'optOut', false)
-        ) INTO user_session;
-  ELSE -- user is registering account that already exists so set sessionId and user to null so client can let them know
-  	SELECT authenticate(input) INTO user_session;
-  END IF;
-END;
-$BODY$;
+-- NOTE: unused function for register, currently we are not allowing anyone to register
+-- CREATE OR REPLACE FUNCTION public.register(
+-- 	input json,
+-- 	OUT user_session json)
+--     RETURNS json
+--     LANGUAGE 'plpgsql'
+--     COST 100
+--     VOLATILE PARALLEL UNSAFE
+-- AS $BODY$
+-- DECLARE
+--   input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
+--   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
+--   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
+--   input_password varchar(80) := (input->>'password')::varchar;
+-- BEGIN
+--   PERFORM id FROM users WHERE email = input_email;
+--   IF NOT FOUND THEN
+--     INSERT INTO users(role, password, email, first_name, last_name)
+--       VALUES('contributor', crypt(input_password, gen_salt('bf', 8)), input_email, input_first_name, input_last_name)
+--       RETURNING
+--         json_build_object(
+--           'sessionId', create_session(users.id),
+--           'user', json_build_object('id', users.id, 'role', 'contributor', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'optOut', false)
+--         ) INTO user_session;
+--   ELSE -- user is registering account that already exists so set sessionId and user to null so client can let them know
+--   	SELECT authenticate(input) INTO user_session;
+--   END IF;
+-- END;
+-- $BODY$;
 
-ALTER FUNCTION public.register(json) OWNER TO auth;
+-- ALTER FUNCTION public.register(json) OWNER TO auth;
 
-CREATE OR REPLACE FUNCTION public.start_gmail_user_session(
-	input json,
-	OUT user_session json)
-    RETURNS json
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-DECLARE
-  input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
-  input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
-  input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
-BEGIN
-  SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name)) INTO user_session FROM users WHERE email = input_email;
-  IF NOT FOUND THEN
-    INSERT INTO users(role, email, first_name, last_name)
-      VALUES('contributor', input_email, input_first_name, input_last_name)
-      RETURNING
-        json_build_object(
-          'id', create_session(users.id),
-          'user', json_build_object('id', users.id, 'role', 'contributor', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name)
-        ) INTO user_session;
-  END IF;
-END;
-$BODY$;
+-- NOTE: unused function, currently we are not allowing gmail sessions
+-- CREATE OR REPLACE FUNCTION public.start_gmail_user_session(
+-- 	input json,
+-- 	OUT user_session json)
+--     RETURNS json
+--     LANGUAGE 'plpgsql'
+--     COST 100
+--     VOLATILE PARALLEL UNSAFE
+-- AS $BODY$
+-- DECLARE
+--   input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
+--   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
+--   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
+-- BEGIN
+--   SELECT json_build_object('id', create_session(users.id), 'user', json_build_object('id', users.id, 'role', users.role, 'email', input_email, 'firstName', users.first_name, 'lastName', users.last_name)) INTO user_session FROM users WHERE email = input_email;
+--   IF NOT FOUND THEN
+--     INSERT INTO users(role, email, first_name, last_name)
+--       VALUES('contributor', input_email, input_first_name, input_last_name)
+--       RETURNING
+--         json_build_object(
+--           'id', create_session(users.id),
+--           'user', json_build_object('id', users.id, 'role', 'contributor', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name)
+--         ) INTO user_session;
+--   END IF;
+-- END;
+-- $BODY$;
 
-ALTER FUNCTION public.start_gmail_user_session(json) OWNER TO auth;
+-- ALTER FUNCTION public.start_gmail_user_session(json) OWNER TO auth;
 
 CREATE PROCEDURE public.delete_session(input_id integer)
     LANGUAGE sql
@@ -375,6 +379,7 @@ DECLARE
   input_user_id integer := (input->>'userId')::integer;
   input_venue_id integer := (input->>'venueId')::integer;
   input_name varchar(100) := TRIM((input->>'name')::varchar);
+  input_slug varchar(100) := TRIM((input->>'slug')::varchar);
   input_start_date date := (input->>'startDate')::date;
   input_start_time time := (input->>'startTime')::time;
   input_end_date date := (input->>'endDate')::date;
@@ -386,14 +391,15 @@ DECLARE
   input_image_key_small varchar(255) := TRIM((input->>'imageKeySmall')::varchar);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO events (user_id, venue_id, name, start_date, start_time, end_date, end_time, description, ticket_link, hidden, image_key_large, image_key_small)
-    VALUES (input_user_id, input_venue_id, input_name, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden, input_image_key_large, input_image_key_small)
+    INSERT INTO events (user_id, venue_id, name, slug, start_date, start_time, end_date, end_time, description, ticket_link, hidden, image_key_large, image_key_small)
+    VALUES (input_user_id, input_venue_id, input_name, input_slug, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden, input_image_key_large, input_image_key_small)
     RETURNING id INTO new_id;
   ELSE
     UPDATE events SET
       user_id = input_user_id,
       venue_id = input_venue_id,
       name = input_name,
+      slug = input_slug,
       start_date = input_start_date,
       start_time = input_start_time,
       end_date = input_end_date,
@@ -414,6 +420,7 @@ AS $BODY$
 DECLARE
   input_id integer := COALESCE((input->>'id')::integer,0);
   input_name varchar(100) := TRIM((input->>'name')::varchar);
+  input_slug varchar(100) := TRIM((input->>'slug')::varchar);
   input_addressline1 varchar(255) := TRIM((input->>'addressline1')::varchar);
   input_addressline2 varchar(255) := TRIM((input->>'addressline2')::varchar);
   input_postcode varchar(20) := TRIM((input->>'postcode')::varchar);
@@ -421,12 +428,13 @@ DECLARE
   input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO venues (name, addressline1, addressline2, postcode, city, hidden)
-    VALUES (input_name, input_addressline1, input_addressline2, input_postcode, input_city, input_hidden)
+    INSERT INTO venues (name, slug, addressline1, addressline2, postcode, city, hidden)
+    VALUES (input_name, input_slug, input_addressline1, input_addressline2, input_postcode, input_city, input_hidden)
     RETURNING id INTO new_id;
   ELSE
     UPDATE venues SET
       name = input_name,
+      slug = input_slug,
       addressline1 = input_addressline1,
       addressline2 = input_addressline2,
       postcode = input_postcode,
@@ -444,6 +452,7 @@ CALL public.upsert_user('{"id":0, "role":"contributor", "email":"contributor@exa
 
 CALL upsert_venue('{
   "name": "Teatro Lúcido",
+  "slug": "teatro-lucido",
   "addressline1": "C. Dr. Enrique González Martínez 234",
   "addressline2": "Sta María la Ribera",
   "postcode": "06400",
@@ -452,6 +461,7 @@ CALL upsert_venue('{
 }', null);
 CALL upsert_venue('{
   "name": "316Centro",
+  "slug": "316centro",
   "addressline1": "Fray Servando Teresa de Mier 316",
   "addressline2": "La Merced",
   "postcode": "06090",
@@ -460,6 +470,7 @@ CALL upsert_venue('{
 }', null);
 CALL upsert_venue('{
   "name": "Bajo Circuito",
+  "slug": "bajo-circuito",
   "addressline1": "Bajo Puente de, Cto. Interior S/N",
   "addressline2": "Colonia Condesa",
   "postcode": "06140",
@@ -468,6 +479,7 @@ CALL upsert_venue('{
 }', null);
 CALL upsert_venue('{
   "name": "Casa del lago",
+  "slug": "casa-del-lago",
   "addressline1": "Bosque de Chapultepec Primera Seccion S/N",
   "addressline2": "San Miguel Chapultepec I Secc,",
   "postcode": "11850",
@@ -476,6 +488,7 @@ CALL upsert_venue('{
 }', null);
 CALL upsert_venue('{
   "name": "Multiforo Alicia",
+  "slug": "multiforo-alicia",
   "addressline1": "C. Eligio Ancona 145",
   "addressline2": "Sta María la Ribera",
   "postcode": "06400",
@@ -488,6 +501,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 2,
   "name": "Fusce finibus dapibus ante a tristique",
+  "slug": "fusce-finibus-dapibus-ante-a-tristique",
   "startDate": "2024-06-16",
   "startTime": "20:00:00",
   "endDate": null,
@@ -501,6 +515,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 3,
   "name": "In ultricies",
+  "slug": "in-ultricies",
   "startDate": "2024-06-17",
   "startTime": "21:00:00",
   "endDate": null,
@@ -514,6 +529,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 1,
   "name": "Etiam eleifend efficitur elit",
+  "slug": "etiam-eleifend-efficitur-elit",
   "startDate": "2024-06-20",
   "startTime": "20:00:00",
   "endDate": null,
@@ -527,6 +543,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 2,
   "name": "Nulla dictum",
+  "slug": "nulla-dictum",
   "startDate": "2024-06-21",
   "startTime": "21:00:00",
   "endDate": null,
@@ -540,6 +557,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 3,
   "name": "Phasellus iaculis elit enim vel pretium urna pretium",
+  "slug": "phasellus-iaculis-elit-enim-vel-pretium-urna-pretium",
   "startDate": "2024-06-22",
   "startTime": "20:00:00",
   "endDate": null,
@@ -553,6 +571,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 4,
   "name": "Suspendisse malesuada sem",
+  "slug": "suspendisse-malesuada-sem",
   "startDate": "2024-06-23",
   "startTime": "21:00:00",
   "endDate": null,
@@ -566,6 +585,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 5,
   "name": "Fusce ullamcorper turpis in ligula sodales",
+  "slug": "fusce-ullamcorper-turpis-in-ligula-sodales",
   "startDate": "2024-06-24",
   "startTime": "16:00:00",
   "endDate": "2024-06-25",
@@ -579,6 +599,7 @@ CALL upsert_event('{
   "userId": 1,
   "venueId": 5,
   "name": "Praesent fermentum",
+  "slug": "praesent-fermentum",
   "startDate": "2024-06-28",
   "startTime": "20:00:00",
   "endDate": null,
