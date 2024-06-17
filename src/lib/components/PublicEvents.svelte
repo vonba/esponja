@@ -5,9 +5,10 @@
 	import ButtonLink from "./ButtonLink.svelte"
 	import EventGridItem from "./EventGridItem.svelte"
 	import SearchEvents from "./SearchEvents.svelte"
-	import { loginSession } from "../../stores"
-	import { goto, invalidateAll } from "$app/navigation"
+	import { likedEventsPopupVisible, loginSession } from "../../stores"
+	import { invalidateAll } from "$app/navigation"
 	import EditEvent from "./EditEvent.svelte"
+  import { likedEventsStore, toggleLikedEvent } from '$lib/likedEvents';
 
   // Props
   export let events: [EventProperties] | []
@@ -25,6 +26,7 @@
   loginSession.subscribe(value => {
     user = value;
   });
+  $: likedEvents = $likedEventsStore;
 
   // Observable
   $: filteredEvents = events.filter(event => 
@@ -41,15 +43,16 @@
       || (`${venue?.name}`).toLowerCase().includes(searchString.toLowerCase())
   }
 
-  const handleLikeEvent = (eventId: number) => {
-    // TODO: add event to cookie
-    console.log('like with id ' + eventId)
+  const handleLikeEvent = (event: EventProperties) => {
+    toggleLikedEvent(event);
   }
 
-  const handleEditEvent = (event: EventProperties) => {
-    editEvent = event
-    showEditEvent = true
-  }
+  const handleEditEvent = user && user.role === 'admin' 
+    ? (event: EventProperties) => {
+      editEvent = event
+      showEditEvent = true
+    }
+    : null
 
   const toggleSearch = () => {
     isSearchVisible = !isSearchVisible
@@ -58,9 +61,11 @@
 
   const handleSearchChange = (newSearchString: string) => searchString = newSearchString
 
-  const showSavedEvents = () => {
-    // TODO: global modal state
+  const showLikedEvents = () => {
+    likedEventsPopupVisible.set(true);
+    document.body.classList.add('popupVisible');
   }
+
 </script>
 {#if showEditEvent}
   <div in:fade class="overlay">
@@ -92,7 +97,7 @@
 
       <nav id="pageNavigation">
         <EButton 
-          on:click={() => showSavedEvents()}
+          on:click={() => showLikedEvents()}
           class="saveFilled icon"
         >
           Guardados
@@ -106,9 +111,9 @@
     <ul class="events {displayMode}">
       {#each filteredEvents as event (event.id)}
         {#if displayMode === 'list'}
-          <EventListItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
+          <EventListItem {event} {venues} {handleLikeEvent} {handleEditEvent} isLiked={likedEvents.some(e => e.id === event.id)} />
         {:else}
-          <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} />
+          <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} isLiked={likedEvents.some(e => e.id === event.id)} />
         {/if}
       {/each}
       {#if !filteredEvents.length}

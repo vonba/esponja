@@ -45,6 +45,12 @@ export const PUT: RequestHandler = async event => {
 		}
 	}
 
+	// Only admins can edit other users' events
+	// TODO: check what the user id of the event is in db
+	// if (user.role !== 'admin') {
+	// 	error(401, 'Unauthorized')
+	// }
+
 	// Update event
 	try {
 		await query(`CALL upsert_event($1, $2);`, [JSON.stringify(eventUpdate).replaceAll('"null"', 'null'), null])

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto, invalidateAll } from "$app/navigation"
 	import { formatDate, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
   

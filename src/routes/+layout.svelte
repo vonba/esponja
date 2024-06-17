@@ -2,6 +2,7 @@
 	import type { LayoutServerData } from './$types'
 	import { beforeNavigate } from '$app/navigation'
 	import { loginSession } from '../stores'
+	import LikedEventsPopup from '$lib/components/LikedEventsPopup.svelte';
 
 	// Global styles
 	import '../styles/app.scss'
@@ -25,6 +26,8 @@
 <main class="container">
 	<slot />
 </main>
+
+<LikedEventsPopup />
 
 <footer id="siteFooter">
 	<div class="contentWrapper">

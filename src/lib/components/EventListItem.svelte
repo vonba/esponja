@@ -10,6 +10,7 @@
   export let handleEditEvent: Function | null = null
   export let handleLikeEvent: Function | null = null
   export let handleShareEvent: Function | null = null
+  export let isLiked = false
 
   const venue = venues.find(v => v.id === event.venueId)
 </script>
@@ -40,7 +41,7 @@
     
     <div class="actions">
       {#if handleLikeEvent}
-      <EButton on:click={() => handleLikeEvent(event.id)} class="icon saveOutline">
+      <EButton on:click={() => handleLikeEvent(event)}  class="icon {isLiked ? 'saveFilled' : 'saveOutline'}">
         Guardar
         </EButton>
       {/if}

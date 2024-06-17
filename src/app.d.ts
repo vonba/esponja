@@ -82,6 +82,18 @@ interface EventProperties {
 
 type EEvent = EventProperties | undefined | null
 
+interface LikedEvent {
+  id: number;
+  name: string;
+  slug: string,
+  imageKeyLarge?: string,
+  imageKeySmall?: string,
+  startDate: string,
+  startTime?: string,
+  endDate?: string,
+  endTime?: string,
+}
+
 interface UserSession {
 	id: string
 	user: User
