@@ -8,13 +8,14 @@
 	
 	const dispatch = createEventDispatcher();
 
+	export let showTitle = true
 	export let venues: [Venue] | []
 	export let event: EventProperties | null
 	if (!event) {
 		event = {
 			id: 0,
 			userId: 0,
-			venueId: 0,
+			venueId: 1,
 			name: '',
 			slug: '',
 			startDate: (new Date()).toISOString().split('T')[0], // YYYY-MM-DD
@@ -95,18 +96,21 @@
 		}
 	}
 
+	// TODO: allow editing URL field
 	$: if(isNewEvent) event.slug = toSlug(event.name)
 
 </script>
 
 <div class="editEvent">
-	<h2>
-		{#if isNewEvent}
-			Nuevo evento
-		{:else}
-			Modificar evento
-		{/if}
-	</h2>
+	{#if showTitle}
+		<h2>
+			{#if isNewEvent}
+				Nuevo evento
+			{:else}
+				Modificar evento
+			{/if}
+		</h2>
+	{/if}
 
 	<form id="eventForm" autocomplete="off" novalidate enctype="multipart/form-data">
 		<fieldset disabled={loading}>
@@ -128,7 +132,7 @@
 					<p><i>Evita cambiar el URL después de publicar el evento</i></p>
 				{/if}
 				<div class="flex alignCenter">
-					<b>esponja.mx/</b>
+					<b>esponja.mx/evento/</b>
 					<input
 						bind:value={event.slug}
 						id="slug"
@@ -222,7 +226,7 @@
 					rows=8
 					bind:value={event.description}
 					id="description"
-					placeholder="¡Cuenta nos!"
+					placeholder="¡Cuéntanos!"
 				/>
 			</div>
 		</fieldset>
@@ -248,18 +252,24 @@
 
 
 <style lang="scss">
+	@import "$lib/sass/variables";
+
 	:global(button.eventImageWrapper) {
 		width: 100%;
 		position: relative;
 	}
 
 	.editEvent {
-		max-width: 600px;
+		max-width: $mediaM;
 		margin: 20px auto;
 	}
 
 	input#eventImage {
 		display: none;
+	}
+
+	:global(button.eventImageWrapper) {
+		margin-top: var(--spacing);
 	}
 
 	.buttons {

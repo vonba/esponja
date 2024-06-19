@@ -1,7 +1,11 @@
 <script lang="ts" context="module">
 	import { page } from '$app/stores'
-import PublicLogo from '$lib/components/PublicLogo.svelte'
+	import PublicLogo from '$lib/components/PublicLogo.svelte'
 </script>
+
+<svelte:head>
+	<title>Esponja – error</title>
+</svelte:head>
 
 <PublicLogo />
 

@@ -9,10 +9,14 @@ import { eventColumns } from '$lib/server/queries';
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
+	// const showUnpublished = !!event.params.moderate
+	const showUnpublished = false
+	console.log(event.params)
+
 	let result;
 	try {
 		result = await query(`SELECT ${eventColumns}
-		FROM events WHERE hidden = false ORDER BY start_date ASC`);
+		FROM events WHERE hidden = false AND published = true ORDER BY start_date ASC`);
 	} catch (err) {
 		error(503, 'Database error')
 	}
@@ -46,8 +50,9 @@ export const PUT: RequestHandler = async event => {
 	}
 
 	// Only admins can edit other users' events
-	// TODO: check what the user id of the event is in db
-	// if (user.role !== 'admin') {
+	// TODO: get existing event
+	// TODO: check what the user id of the event is
+	// if (user.role !== 'admin' && user.id !== existingEvent.id) {
 	// 	error(401, 'Unauthorized')
 	// }
 
@@ -69,9 +74,8 @@ export const PUT: RequestHandler = async event => {
 
 export const POST: RequestHandler = async event => {
 	const { user } = event.locals
-	if (!user) error(401, 'Unauthorized')
-		
-	// Copy form data from the request body (we need form data )
+
+	// Copy FormData from the request body (NOTE we only use FormData when file uploads are involved)
   const formData = await event.request.formData();
   const eventCreate: any = {};
   for (const [key, value] of formData as any) {
@@ -81,10 +85,21 @@ export const POST: RequestHandler = async event => {
 			}
 		}
 	}
+
+	// TODO: remove any HTML from description, name, ticketLink
 	
-	// Update event
+	// Create event
 	let eventId
-	eventCreate.userId = user.id
+	let needsModeration = true
+	if (user) {
+		needsModeration = false
+		eventCreate.userId = user.id
+		eventCreate.published = true
+	} else {
+		eventCreate.userId = null
+		eventCreate.published = false
+	}
+
 	try {
 		// Creates new event (id = 0)
 		const dbResult = await query(`CALL upsert_event($1, $2);`, [JSON.stringify(eventCreate), null])
@@ -97,6 +112,10 @@ export const POST: RequestHandler = async event => {
 
 	// Upload file (this also updates event with image key)
 	await doFileUpload(formData, eventId)
+
+	if (needsModeration) {
+		// TODO: send email notification
+	}
 
 	return json({
 		message: 'Evento creado'

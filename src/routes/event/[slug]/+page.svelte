@@ -6,15 +6,10 @@
 	import EventGridItem from "$lib/components/EventGridItem.svelte"
   import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { fade } from "svelte/transition"
-	import { loginSession } from "../../../stores"
+	import { likedEventsPopupVisible, loginSession } from "../../../stores"
 	import { formatDate } from "$lib/dateTime"
 	import EventSummary from "$lib/components/EventSummary.svelte"
 
-  type SingleEventPageData = {
-    user: User,
-    event: {event: EEvent, relatedEvents: [EventProperties] | []},
-    venues: [VenueProperties] | []
-  }
   export let data: SingleEventPageData
   let venues, event, relatedEvents, venue
   $: venues = data.venues
@@ -26,8 +21,9 @@
   let showEditEvent = false
   let editEvent: EventProperties | null = null
   
-  const showSavedEvents = () => {
-    // TODO: global modal state
+  const showLikedEvents = () => {
+    likedEventsPopupVisible.set(true);
+    document.body.classList.add('popupVisible');
   }
 
   const handleLikeEvent = (eventId: number) => {
@@ -55,7 +51,7 @@
   <PublicLogo />
   <nav id="pageNavigation">
     <EButton 
-      on:click={() => showSavedEvents()}
+      on:click={() => showLikedEvents()}
       class="saveFilled icon"
     >
       Guardados

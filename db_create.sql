@@ -105,7 +105,7 @@ CREATE INDEX venues_name_index
 DROP TABLE IF EXISTS public.events;
 CREATE TABLE public.events (
   id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
-  user_id integer NOT NULL,
+  user_id integer,
   venue_id integer,
   name character varying(255) COLLATE pg_catalog."default" NOT NULL,
   slug character varying(80) COLLATE pg_catalog."default" UNIQUE NOT NULL,
@@ -119,6 +119,7 @@ CREATE TABLE public.events (
   image_key_large VARCHAR(255),
   image_key_small VARCHAR(255),
   hidden boolean NOT NULL DEFAULT false,
+  published boolean NOT NULL DEFAULT false,
   CONSTRAINT events_pkey PRIMARY KEY (id),
   CONSTRAINT events_user_id_fkey FOREIGN KEY (user_id)
       REFERENCES public.users (id) MATCH SIMPLE
@@ -387,12 +388,13 @@ DECLARE
   input_description text := TRIM((input->>'description')::text);
   input_ticket_link varchar(255) := TRIM((input->>'ticketLink')::varchar);
   input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);
+  input_published boolean := COALESCE((input->>'published')::boolean, false);
   input_image_key_large varchar(255) := TRIM((input->>'imageKeyLarge')::varchar);
   input_image_key_small varchar(255) := TRIM((input->>'imageKeySmall')::varchar);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO events (user_id, venue_id, name, slug, start_date, start_time, end_date, end_time, description, ticket_link, hidden, image_key_large, image_key_small)
-    VALUES (input_user_id, input_venue_id, input_name, input_slug, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden, input_image_key_large, input_image_key_small)
+    INSERT INTO events (user_id, venue_id, name, slug, start_date, start_time, end_date, end_time, description, ticket_link, hidden, published, image_key_large, image_key_small)
+    VALUES (input_user_id, input_venue_id, input_name, input_slug, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden, input_published, input_image_key_large, input_image_key_small)
     RETURNING id INTO new_id;
   ELSE
     UPDATE events SET
@@ -407,6 +409,7 @@ BEGIN
       description = input_description,
       ticket_link = input_ticket_link,
       hidden = input_hidden,
+      published = input_published,
       image_key_large = input_image_key_large,
       image_key_small = input_image_key_small
     WHERE id = input_id;
@@ -509,7 +512,9 @@ CALL upsert_event('{
   "description": "Sed congue sit amet velit nec eleifend. Aliquam sodales mollis nunc, vel faucibus neque finibus nec. Duis ac mi sit amet mi fermentum rutrum scelerisque sit amet urna. Proin ac felis ex. Proin lacus nisl, consequat ac sollicitudin vitae, convallis sit amet lacus. Fusce finibus dapibus ante a tristique. Sed volutpat ultrices risus, efficitur auctor tortor fermentum vitae. Ut ultrices lorem nisl. Nunc a purus nisi. Integer tempor nibh vel aliquet sollicitudin. Aenean at tristique mauris. Aliquam lectus turpis, tincidunt id leo vitae, dapibus tempor sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur finibus lacinia enim vel cursus. Aliquam sit amet nunc risus.",
   "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
   "imageKeyLarge": "event-1-1718256781535.jpg",
-  "imageKeySmall": "event-1-1718256784343.jpg"
+  "imageKeySmall": "event-1-1718256784343.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -523,7 +528,9 @@ CALL upsert_event('{
   "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus",
   "ticketLink": "",
   "imageKeyLarge": "event-3-1718327102820.jpg",
-  "imageKeySmall": "event-3-1718327104329.jpg"
+  "imageKeySmall": "event-3-1718327104329.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -537,7 +544,9 @@ CALL upsert_event('{
   "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tellus leo, vehicula sed porttitor id, imperdiet ut dolor. Nulla at sem imperdiet, congue dui in, ultricies dolor. Etiam eu gravida purus. Etiam quis condimentum leo. Vivamus cursus erat sapien, in blandit dolor aliquam quis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In vulputate, ante vel ullamcorper egestas, tellus est semper elit, non molestie dui nibh sit amet eros.",
   "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
   "imageKeyLarge": "event-1-1718256781535.jpg",
-  "imageKeySmall": "event-1-1718256784343.jpg"
+  "imageKeySmall": "event-1-1718256784343.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -551,7 +560,9 @@ CALL upsert_event('{
   "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus",
   "ticketLink": "",
   "imageKeyLarge": "event-3-1718327102820.jpg",
-  "imageKeySmall": "event-3-1718327104329.jpg"
+  "imageKeySmall": "event-3-1718327104329.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -565,7 +576,9 @@ CALL upsert_event('{
   "description": "Curabitur luctus, lacus ut congue aliquet, sem leo tempus dolor, quis rhoncus ligula ipsum in sem. Maecenas maximus elit a tortor luctus, ut facilisis turpis blandit. Suspendisse potenti. Duis aliquam euismod nisl, non mattis arcu. Integer nec erat quis mauris porttitor fermentum eget eleifend nibh. Phasellus suscipit massa non auctor auctor. Proin tempor urna aliquam dictum volutpat. Phasellus iaculis elit enim, vel pretium urna pretium ac. Nunc elementum magna eget laoreet vehicula. Suspendisse lectus eros, rutrum non vulputate non, sagittis id turpis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer dictum augue fermentum nisl iaculis convallis. Maecenas maximus sapien ut ipsum finibus varius.",
   "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
   "imageKeyLarge": "event-1-1718256781535.jpg",
-  "imageKeySmall": "event-1-1718256784343.jpg"
+  "imageKeySmall": "event-1-1718256784343.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -579,7 +592,9 @@ CALL upsert_event('{
   "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus",
   "ticketLink": "",
   "imageKeyLarge": "event-3-1718327102820.jpg",
-  "imageKeySmall": "event-3-1718327104329.jpg"
+  "imageKeySmall": "event-3-1718327104329.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -593,7 +608,9 @@ CALL upsert_event('{
   "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus.",
   "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
   "imageKeyLarge": "event-1-1718256781535.jpg",
-  "imageKeySmall": "event-1-1718256784343.jpg"
+  "imageKeySmall": "event-1-1718256784343.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -607,6 +624,8 @@ CALL upsert_event('{
   "description": "Sed congue sit amet velit nec eleifend. Aliquam sodales mollis nunc, vel faucibus neque finibus nec. Duis ac mi sit amet mi fermentum rutrum scelerisque sit amet urna. Proin ac felis ex. Proin lacus nisl, consequat ac sollicitudin vitae, convallis sit amet lacus. Fusce finibus dapibus ante a tristique. Sed volutpat ultrices risus, efficitur auctor tortor fermentum vitae. Ut ultrices lorem nisl. Nunc a purus nisi. Integer tempor nibh vel aliquet sollicitudin. Aenean at tristique mauris. Aliquam lectus turpis, tincidunt id leo vitae, dapibus tempor sapien. Vestibulum ante ipsum primis in faucibus orciluctus et ultrices posuere cubilia curae; Curabitur finibus lacinia enim vel cursus. Aliquam sit amet nunc risus.",
   "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
   "imageKeyLarge": "event-1-1718256781535.jpg",
-  "imageKeySmall": "event-1-1718256784343.jpg"
+  "imageKeySmall": "event-1-1718256784343.jpg",
+  "hidden": false,
+  "published": true
 }', null);
 

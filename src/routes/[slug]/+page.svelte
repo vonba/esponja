@@ -79,6 +79,10 @@
 	</nav>
 </section>
 
+<a href="/tu-evento" class="suggestEvent">
+	Agregar tu evento
+</a>
+
 <section id="homePage">
 	<PublicEvents events={data.events} venues={data.venues} startDate={eventFilterDateStart} endDate={eventFilterDateEnd} />
 </section>
@@ -118,6 +122,43 @@
 		@media (min-width: $mediaL) {
 			width: 50%;
 			max-width: 40em;
+		}
+	}
+
+	.suggestEvent {
+		position: fixed;
+		bottom: 0;
+		right: 0;
+		text-transform: uppercase;
+		font-style: italic;
+		text-decoration: none;
+		font-weight: bold;
+		z-index: 10;
+		
+		// Small screens: banner at the bottom
+		@media (max-width: $mediaL) {
+			width: 100%;
+			text-align: center;
+			padding: var(--spacing);
+			background-color: var(--colorGreen);
+			color: var(--colorOffWhite);
+			
+			&:hover {
+				color: var(--colorGreen);
+				background-color: var(--colorOffWhite);
+				border-top: 1px solid var(--colorGreen);
+			}
+		}
+		
+		// Desktop: top right link
+		@media (min-width: $mediaL) {
+			bottom: unset;
+			top: var(--spacing);
+
+			&:hover {
+				text-decoration: underline;
+			}
+			right: var(--spacing);
 		}
 	}
 </style>

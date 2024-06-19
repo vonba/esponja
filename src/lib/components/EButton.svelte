@@ -13,6 +13,7 @@
     border-radius: var(--borderRadius);
     padding: calc(0.5 * var(--spacing)) var(--spacing);
     box-shadow: 2px 2px 0 var(--colorGreen);
+    transform: translate(-2px, -2px);
     transition: all 0.25s;
     cursor: pointer;
     line-height: 1;
@@ -20,7 +21,7 @@
     @media (hover: hover) {
       &:hover {
         box-shadow: none;
-        transform: translate(2px, 2px);
+        transform: translate(0, 0);
       }
     }
 

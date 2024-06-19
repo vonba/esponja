@@ -110,3 +110,15 @@ interface HomePageData {
 	venues: [VenueProperties] | [];
 	events: [EventProperties] | [];
 }
+
+type SingleEventPageData = {
+	user: User,
+	event: {event: EEvent, relatedEvents: [EventProperties] | []},
+	venues: [VenueProperties] | []
+}
+
+type SuggestEventPageData = {
+	venues: [VenueProperties] | []
+}
+
+
