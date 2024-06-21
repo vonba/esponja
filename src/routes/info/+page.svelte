@@ -12,27 +12,33 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 <PublicLogo frontPage={false} />
 
 <section class="pageContent" in:fade>
-	<h2>¿Qué es Esponja?</h2>
-	<p>
-		Esponja es una plataforma <strong>gratuita</strong> y sin fines de lucro para publicar eventos de música alternativa en la Ciudad de México.
-		Fue realizada como un apoyo para <strong>la comunidad artística</strong> de la ciudad, y busca ser <strong>una alternativa</strong> a las redes sociales, 
-		para que lxs artistas y los foros puedan visibilizar sus eventos, sin depender de algoritmos con poca transparencia y sin tener que pagar por las publicaciones.
-	</p>
-	
-	<h2>¿Quieres publicar un evento?</h2>
-	<p>
-		Ingresa los datos del evento aquí.<br /><br />
-		<ButtonLink class="largeButton" href="/tu-evento">Cuéntanos</ButtonLink>
-	</p>
-	
-	<h2>Contacto</h2>
-	<p>
-		¿Tienes dudas? ¿Quieres ayudar a mantener Esponja actualizado? Nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
-	</p>
+	<div class="textWrapper">
+		<h2>¿Qué es Esponja?</h2>
+		<p>
+			Esponja es una plataforma <strong>gratuita</strong> y sin fines de lucro para publicar eventos de música alternativa en la Ciudad de México.
+			Fue realizada como un apoyo para <strong>la comunidad artística</strong> de la ciudad, y busca ser <strong>una alternativa</strong> a las redes sociales, 
+			para que lxs artistas y los foros puedan visibilizar sus eventos, sin depender de algoritmos con poca transparencia y sin tener que pagar por las publicaciones.
+		</p>
 
-	<p>
-		<a href="/admin">Soy admin</a>
-	</p>
+		<div class="imageWrapper">
+			<img src="/esponja-illustration1.png" alt="Ilustración" />
+		</div>
+		
+		<h2>¿Quieres publicar un evento?</h2>
+		<p>
+			Ingresa los datos del evento aquí.<br /><br />
+			<ButtonLink class="largeButton" href="/tu-evento">Cuéntanos</ButtonLink>
+		</p>
+		
+		<h2>Contacto</h2>
+		<p>
+			¿Tienes dudas? ¿Quieres ayudar a mantener Esponja actualizado? Nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+		</p>
+	
+		<p>
+			<a href="/admin">Soy admin</a>
+		</p>
+	</div>
 </section>
 
 <style lang="scss">
@@ -45,11 +51,34 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 	.pageContent {
 		padding: var(--spacing);
 		margin-top: 4em;
-		max-width: 40em;
-
+		
 		p {
+			max-width: 40em;
 			text-align: justify;
 			margin-bottom: 4em;
+
+			@media (max-width: $mediaL) {
+				&:first-of-type {
+					margin-bottom: 0;
+				}
+			}
+		}
+		
+		.imageWrapper {
+			text-align: center;
+			margin-bottom: 2em;
+
+			img {
+				max-height: 80vh;
+			}
+		}
+
+		@media (min-width: $mediaL) {
+			.imageWrapper {
+				position: absolute;
+				top: 4em;
+				left: 45em;
+			}
 		}
 	}
 

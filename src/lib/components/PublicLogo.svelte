@@ -43,12 +43,12 @@
   }
 
   // Logo on internal pages like /info
-  .notFrontPage {
+  /* .notFrontPage {
     width: 100px;
 
     .esponjaSymbol {
       display: block;
-      height: 120px
+      height: 100px
     }
 
     .esponjaTagline {
@@ -57,5 +57,5 @@
     .esponjaLogo {
       display: none;
     }
-  }
+  } */
 </style>

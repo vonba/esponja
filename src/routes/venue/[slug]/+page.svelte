@@ -5,10 +5,8 @@
 	import EditVenue from "$lib/components/EditVenue.svelte"
   import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { fade } from "svelte/transition"
-	import { loginSession } from "../../../stores"
+	import { likedEventsPopupVisible } from "../../../stores"
 	import PublicVenue from "$lib/components/PublicVenue.svelte"
-	import EventListItem from "$lib/components/EventListItem.svelte"
-	import EventSummary from "$lib/components/EventSummary.svelte"
 
   type SingleVenuePageData = {
     user: User,
@@ -17,26 +15,11 @@
   export let data: SingleVenuePageData
   const events = data.venue.events
   const venue = data.venue.venue
-
-  // State
-  let showEditVenue = false
-  let editVenue: VenueProperties | null = null
   
-  const showSavedEvents = () => {
-    // TODO: global modal state
+  const showLikedEvents = () => {
+    likedEventsPopupVisible.set(true);
+    document.body.classList.add('popupVisible');
   }
-
-  const handleLikeVenue = (venueId: number) => {
-    // TODO: add venue to cookie
-    console.log('like with id ' + venueId)
-  }
-
-  const handleEditVenue = $loginSession?.role === 'admin'
-    ? (venue: VenueProperties) => {
-      editVenue = venue
-      showEditVenue = true
-    }
-    : null
 </script>
 
 <svelte:head>
@@ -47,7 +30,7 @@
   <PublicLogo />
   <nav id="pageNavigation">
     <EButton 
-      on:click={() => showSavedEvents()}
+      on:click={() => showLikedEvents()}
       class="saveFilled icon"
     >
       Guardados
@@ -58,29 +41,18 @@
   </nav>
 </div>
 
-{#if showEditVenue}
-  <div in:fade class="overlay">
-    <EditVenue 
-      venue={editVenue}
-      on:saved={() => {
-        invalidateAll();
-        showEditVenue = false
-      }}
-      on:cancel={() => showEditVenue = false}
-    />
-  </div>
+
+{#if venue}
+  <PublicVenue venue={venue} {events} />
+
 {:else}
-  {#if venue}
-    <PublicVenue venue={venue} {events} />
+  <p class="emptyList">
+    <strong>No encontrado</strong><br />
+    No encontramos el foro que buscas. ¿Pegaste mal el link?
+  </p>
 
-  {:else}
-    <p class="emptyList">
-      <strong>No encontrado</strong><br />
-      No encontramos el foro que buscas. ¿Pegaste mal el link?
-    </p>
-
-  {/if}
 {/if}
+
 
 <style lang="scss">
   .pageHeaderWrapper {

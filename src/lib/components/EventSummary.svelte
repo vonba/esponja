@@ -60,7 +60,7 @@
     grid-template-columns: 1fr minmax(100px, 33%);
     gap: var(--spacing);
     height: calc(var(--itemHeight) + var(--spacing));
-    border-bottom: 1px solid var(--colorGreen);
+    /* border-bottom: 1px solid var(--colorGreen); */
   }
 
   .imageWrapper {

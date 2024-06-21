@@ -9,6 +9,7 @@
 	import { likedEventsPopupVisible, loginSession } from "../../../stores"
 	import { formatDate } from "$lib/dateTime"
 	import EventSummary from "$lib/components/EventSummary.svelte"
+	import { toggleLikedEvent } from "$lib/likedEvents"
 
   export let data: SingleEventPageData
   let venues, event, relatedEvents, venue
@@ -26,9 +27,8 @@
     document.body.classList.add('popupVisible');
   }
 
-  const handleLikeEvent = (eventId: number) => {
-    // TODO: add event to cookie
-    console.log('like with id ' + eventId)
+  const handleLikeEvent = (event: EventProperties) => {
+    toggleLikedEvent(event);
   }
 
   const handleEditEvent = $loginSession?.role === 'admin'

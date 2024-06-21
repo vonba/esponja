@@ -6,34 +6,32 @@
   export let events: [EventProperties] | []
 </script>
 
-<div class="venueHeader">
-  <img src="/icon-venue-green.svg" alt="Foro" />
-  <h2>
-    {venue.name}
-  </h2>
-</div>
-
-{#if venue.addressline1}
-  <div class="address">
-    {venue.addressline1}
-    {#if venue.addressline2}
-      <br />
-      {venue.addressline2}
-    {/if}
-  </div>
-{/if}
 
 <div class="publicVenue">
   
   <div class="map">
+    <div class="venueHeader">
+      <img src="/icon-venue-green.svg" alt="Foro" />
+      <h2>
+        {venue.name}
+      </h2>
+    </div>
+
     {#if venue.addressline1}  
       <Map {venue} />
+
+      <div class="address">
+        <strong>Dirección</strong><br />
+        {venue.addressline1}
+        {#if venue.addressline2}
+          <br />
+          {venue.addressline2}
+        {/if}
+      </div>
     {/if}
   </div>
 
   <div class="eventsWrapper">
-    <h2>Eventos en {venue.name}</h2>
-
     <ul class="events">
       {#if events.length}
         {#each events as event}
@@ -41,8 +39,7 @@
         {/each}
       {/if}
     </ul>
-  </div>
-  
+  </div> 
 </div>
 
 <style lang="scss">
@@ -50,11 +47,13 @@
 
   .venueHeader {
     padding: var(--spacing);
-    margin-top: 20px;
+    /* padding-top: calc(2 * var(--spacing)); */
+    margin: var(--spacing) 0;
     display: flex;
     align-items: center;
     gap: var(--spacing);
-    
+    /* border-top: 1px solid var(--colorGreen); */
+
     img {
       height: var(--fsTitleBig);
       /* margin-top: -5px; */
@@ -66,17 +65,12 @@
     }
   }
 
-  .publicVenue {
-    @media (min-width: $mediaM) {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing);
-    }    
-  }
-
   .map {
     padding: var(--spacing);
     padding-top: 0;
+    border: 1px solid var(--colorGreen);
+    border-radius: var(--borderRadius);
+    margin: var(--spacing);
   }
 
   .events {
@@ -85,23 +79,22 @@
     margin: 0;
   }
 
-  .eventsWrapper {
-    h2 {
-      padding: calc(2 * var(--spacing)) 0;
-      border-top: 1px solid var(--colorGreen);
-      border-bottom: 1px solid var(--colorGreen);
-      font-size: var(--fsTitleMedium);
-
-      @media (max-width: $mediaM) {
-        padding-left: var(--spacing);
-        padding-right: var(--spacing);
-      }
-    }
+  .address {
+    padding-top: 0;
+    margin-top: var(--spacing);
+    font-size: var(--fsTitleMedium);
+    text-align: right;
   }
 
-  .address {
-    padding: var(--spacing);
-    padding-top: 0;
-    font-size: var(--fsTitleMedium);
+  .publicVenue {
+    @media (min-width: $mediaL) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing);
+
+      .events {
+        margin-top: 20px;
+      }
+    }    
   }
 </style>
