@@ -14,7 +14,7 @@ input,
 textarea {
   color: var(--colorGreen);
   border: 1px solid var(--colorGreen);
-  padding: var(--spacing);
+  padding: calc(0.5 * var(--spacing)) var(--spacing);
   background-color: var(--colorOffWhite);
   border-radius: var(--borderRadius);
   width: 100%;
@@ -62,9 +62,11 @@ fieldset {
 
 .inputContainer {
   margin-bottom: var(--spacing);
+  padding-bottom: var(--spacing);
 
   label {
     display: block;
     width: 100%;
+    margin-bottom: calc(0.5 * var(--spacing));
   }
 }

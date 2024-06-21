@@ -34,10 +34,6 @@
         {venue?.name}
       </a>
     </p>
-
-    <div class="description">
-      <p>{@html formatDescription(event.description)}</p>
-    </div>
     
     <div class="actions">
       {#if handleLikeEvent}
@@ -105,19 +101,12 @@
     border-bottom: 1px solid var(--colorGreen);
 
     @media (min-width: $mediaL) {
-      --itemHeight: 25vw;
-    }
-  }
-  
-  .description {
-    @media (max-width: $mediaL) {
-      display: none;
+      --itemHeight: 200px;
     }
   }
 
   .imageWrapper {
-    min-height: calc(var(--itemHeight) - var(--spacing));
-    height: 100%;
+    height: calc(var(--itemHeight) - var(--spacing));
     width: 100%;
     border-radius: var(--borderRadius);
     overflow: hidden;

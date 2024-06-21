@@ -4,7 +4,7 @@
 	import { page } from '$app/stores'
 	import { loginSession } from '../../stores'
 	import { focusOnFirstError } from '$lib/focus'
-	import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
+	// import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 	import EButton from '$lib/components/EButton.svelte'
 	import ButtonLink from '$lib/components/ButtonLink.svelte'
 

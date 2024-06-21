@@ -129,6 +129,10 @@
   .eventGridItem {
     padding: var(--spacing);
   }
+  
+  .description {
+    display: none;
+  }
 
   .imageWrapper {
     height: calc(100vw / var(--eventColumns) - var(--spacing) * var(--eventColumns));
@@ -162,9 +166,7 @@
     }
   }
 
-  .description {
-    display: none;
-  }
+
   
   // Viewing single event
   .eventGridItem.isSingle {

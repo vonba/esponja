@@ -110,7 +110,7 @@
 	#eventsNavigation {
 		display: flex;
 		width: 100%;
-		margin-top: var(--spacing);
+		margin-top: 20px;
 		padding: 0 var(--spacing);
 		gap: var(--spacing);
 		height: 2em;

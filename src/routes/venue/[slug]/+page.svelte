@@ -18,8 +18,6 @@
   const events = data.venue.events
   const venue = data.venue.venue
 
-console.log('events', events)
-
   // State
   let showEditVenue = false
   let editVenue: VenueProperties | null = null

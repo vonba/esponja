@@ -38,7 +38,8 @@
     &.large {
       font-weight: bold;
       text-transform: uppercase;
-      line-height: 2;
+      line-height: 1.5;
+      font-style: italic;
     }
   }
 

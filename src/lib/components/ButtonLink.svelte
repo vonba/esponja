@@ -15,6 +15,7 @@
     border: 1px solid var(--colorGreen);
     border-radius: var(--borderRadius);
     padding: calc(0.5 * var(--spacing)) var(--spacing);
+    transform: translate(-2px, -2px);
     box-shadow: 2px 2px 0 var(--colorGreen);
     transition: all 0.25s;
     cursor: pointer;
@@ -23,7 +24,7 @@
     @media (hover: hover) {
       &:hover {
         box-shadow: none;
-        transform: translate(2px, 2px);
+        transform: translate(0, 0);
       }
     }
     

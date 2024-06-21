@@ -12,10 +12,10 @@
 
 <PublicLogo />
 
-<h1>Agregar tu evento</h1>
 
 <div class="editEventWrapper">
   <div class="intro">
+    <h1>Agregar tu evento</h1>
   
     <p>
       Si hay un evento de música alternativa en la CDMX que sientes que deberíamos publicar, ¡cuéntanos por acá! 
@@ -44,16 +44,16 @@
   @import "$lib/sass/variables";
 
   h1 {
-    margin-top: 40px;
-    padding: var(--spacing);
-    border-top: 1px solid var(--colorGreen);
-    border-bottom: 1px solid var(--colorGreen);
-    margin-bottom: 0;
+    /* margin-top: 20px; */
+    /* padding: var(--spacing); */
+    margin-bottom: 20px;
   }
 
   .editEventWrapper {
     max-width: $mediaM;
-    padding: 0 var(--spacing);
+    border-top: 1px solid var(--colorGreen);
+    padding: 20px var(--spacing);
+    margin-top: 20px;
 
     p {
       text-align: justify;
@@ -65,15 +65,17 @@
       grid-template-columns: minmax(33%, $mediaM) minmax(33%, $mediaM) 1fr;
 
       .intro {
-        border-right: 1px solid var(--colorGreen);
-        padding: calc(2 * var(--spacing));
+        /* padding: calc(2 * var(--spacing)); */
         padding-left: 0;
-        padding-right: 30px
+        padding-right: 30px;
       }
 
-      /* :global(.editEvent) {
+      :global(.editEvent) {
         margin-top: 0;
-      } */
+        border: 1px solid var(--colorGreen);
+        border-radius: var(--borderRadius);
+        padding: 20px;
+      }
     }
   }
 </style>

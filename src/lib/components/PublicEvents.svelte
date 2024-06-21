@@ -136,8 +136,8 @@
     display: flex;
     gap: var(--spacing);
     padding: var(--spacing);
+    padding-top: 0;
     justify-content: space-between;
-    margin-bottom: 1em;
   }
 
   .viewOptions {
@@ -165,6 +165,7 @@
 	}
 
   ul.events {
+    margin-top: 0;
     list-style: none;
     padding: 0;
     margin-bottom: var(--spacing);
@@ -184,6 +185,11 @@
     &.grid {
       display: grid;
       grid-template-columns: repeat(var(--eventColumns), 1fr);
+    }
+
+    @media (min-width: $mediaL) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 

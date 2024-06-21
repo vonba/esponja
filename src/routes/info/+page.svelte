@@ -9,7 +9,7 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 	<title>Acerca de Esponja</title>
 </svelte:head>
 
-<PublicLogo />
+<PublicLogo frontPage={false} />
 
 <section class="pageContent" in:fade>
 	<h2>¿Qué es Esponja?</h2>
@@ -21,10 +21,8 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 	
 	<h2>¿Quieres publicar un evento?</h2>
 	<p>
-		Ingresa los datos del evento aquí.
-	</p>
-	<p>
-		<ButtonLink href="/sugerir">Cuéntanos</ButtonLink>
+		Ingresa los datos del evento aquí.<br /><br />
+		<ButtonLink class="largeButton" href="/sugerir">Cuéntanos</ButtonLink>
 	</p>
 	
 	<h2>Contacto</h2>
@@ -33,20 +31,33 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 	</p>
 
 	<p>
-		<ButtonLink href="/admin">Soy admin</ButtonLink>
+		<a href="/admin">Soy admin</a>
 	</p>
 </section>
 
 <style lang="scss">
 	@import "$lib/sass/variables";
 
+	h2 {
+		font-size: var(--fsTitleBig);
+	}
+
 	.pageContent {
 		padding: var(--spacing);
-		margin-top: 2em;
+		margin-top: 4em;
 		max-width: 40em;
 
 		p {
 			text-align: justify;
+			margin-bottom: 4em;
 		}
 	}
+
+	@media (max-width: 450px) {
+    :global(.largeButton) {
+			display: block;
+			width: 100%;
+			text-align: center;
+		}
+  }
 </style>
