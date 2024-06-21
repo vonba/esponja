@@ -96,6 +96,7 @@
     :global(button.selected) {
       transform: none;
       box-shadow: 2px 2px 0 var(--colorGreen);
+      transform: translate(-2px, -2px);
     }
     :global(button.grid) {
       border-top-right-radius: 0;
@@ -104,7 +105,7 @@
     :global(button.list) {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
-      transform: translateX(-4px);
+      transform: translate(-6px, -2px);
     }
   }
 

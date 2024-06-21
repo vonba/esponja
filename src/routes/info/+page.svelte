@@ -22,7 +22,7 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 	<h2>¿Quieres publicar un evento?</h2>
 	<p>
 		Ingresa los datos del evento aquí.<br /><br />
-		<ButtonLink class="largeButton" href="/sugerir">Cuéntanos</ButtonLink>
+		<ButtonLink class="largeButton" href="/tu-evento">Cuéntanos</ButtonLink>
 	</p>
 	
 	<h2>Contacto</h2>

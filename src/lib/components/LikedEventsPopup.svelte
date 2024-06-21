@@ -123,6 +123,7 @@
         gap: calc(2 * var(--spacing));
         height: var(--itemHeight);
         margin-bottom: var(--spacing);
+        align-items: center;
 
         a {
           text-decoration: none;

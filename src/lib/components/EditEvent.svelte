@@ -9,6 +9,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let showTitle = true
+	export let showCloseButton = true
 	export let venues: [Venue] | []
 	export let event: EventProperties | null
 	if (!event) {
@@ -205,7 +206,6 @@
 						autocomplete="off"
 					/>
 				</div>
-				<div class="invalidFeedback">Se requiere una fecha de inicio</div>
 			</div>
 	
 			<div class="inputContainer">
@@ -243,9 +243,11 @@
 					Guardar
 				{/if}
 			</EButton>
+			{#if showCloseButton}
 			<EButton type="button" on:click={() => dispatch('cancel')} class="large">
 				Cerrar
 			</EButton>
+			{/if}
 		</div>
 	</form>
 </div>

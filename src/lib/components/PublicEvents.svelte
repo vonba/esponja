@@ -2,10 +2,8 @@
 	import { fade } from "svelte/transition"
 	import EventListItem from "./EventListItem.svelte"
 	import EButton from "./EButton.svelte"
-	import ButtonLink from "./ButtonLink.svelte"
 	import EventGridItem from "./EventGridItem.svelte"
-	import SearchEvents from "./SearchEvents.svelte"
-	import { likedEventsPopupVisible, loginSession } from "../../stores"
+	import { loginSession } from "../../stores"
 	import { invalidateAll } from "$app/navigation"
 	import EditEvent from "./EditEvent.svelte"
   import { likedEventsStore, toggleLikedEvent } from '$lib/likedEvents';
@@ -15,11 +13,11 @@
   export let venues: [VenueProperties] | []
   export let startDate: string | null
   export let endDate: string | null
+  export let searchString = ''
 
   // State
-  let displayMode = 'grid'
-  let isSearchVisible = false
-  let searchString = ''
+  export let displayMode = 'grid'
+  // let isSearchVisible = false
   let showEditEvent = false
   let editEvent: EventProperties | null = null
   let user: User;
@@ -54,17 +52,17 @@
     }
     : null
 
-  const toggleSearch = () => {
-    isSearchVisible = !isSearchVisible
-    searchString = ''
-  }
+  // const toggleSearch = () => {
+  //   isSearchVisible = !isSearchVisible
+  //   searchString = ''
+  // }
 
-  const handleSearchChange = (newSearchString: string) => searchString = newSearchString
+  // const handleSearchChange = (newSearchString: string) => searchString = newSearchString
 
-  const showLikedEvents = () => {
-    likedEventsPopupVisible.set(true);
-    document.body.classList.add('popupVisible');
-  }
+  // const showLikedEvents = () => {
+  //   likedEventsPopupVisible.set(true);
+  //   document.body.classList.add('popupVisible');
+  // }
 
 </script>
 {#if showEditEvent}
@@ -81,7 +79,7 @@
   </div>
 {:else}
   <div class="publicEvents" in:fade>
-    <div class="tools">
+    <!-- <div class="tools">
       <div class="viewOptions">
         <EButton 
           class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
@@ -102,12 +100,12 @@
         >
           Guardados
         </EButton>
-        <SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
         <ButtonLink href="/info" class="info icon">
           Info
         </ButtonLink>
+        <SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
       </nav>
-    </div>
+    </div> -->
     <ul class="events {displayMode}">
       {#each filteredEvents as event (event.id)}
         {#if displayMode === 'list'}
@@ -128,48 +126,11 @@
 <style lang="scss">
   @import "$lib/sass/variables";
 
-  .publicEvents {
-
-  }
-  
-  .tools {
-    display: flex;
-    gap: var(--spacing);
-    padding: var(--spacing);
-    padding-top: 0;
-    justify-content: space-between;
-  }
-
-  .viewOptions {
-    // Override EButton styles
-    :global(button:hover),
-    :global(button.selected) {
-      transform: none;
-      box-shadow: 2px 2px 0 var(--colorGreen);
-    }
-    :global(button.grid) {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    :global(button.list) {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      transform: translateX(-4px);
-    }
-  }
-
-  #pageNavigation {
-		display: flex;
-		justify-content: flex-end;
-		gap: var(--spacing);
-	}
-
   ul.events {
     margin-top: 0;
     list-style: none;
     padding: 0;
     margin-bottom: var(--spacing);
-    border-top: 1px solid var(--colorGreen);
     --eventColumns: 1;
     
     @media (min-width: $mediaM) {

@@ -7,6 +7,9 @@
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { getDateFiltersFromTimeWindow } from "$lib/dateTime"
 	import { onMount } from 'svelte'
+	import ButtonLink from '$lib/components/ButtonLink.svelte'
+	import { likedEventsPopupVisible } from '../../stores'
+	import SearchEvents from '$lib/components/SearchEvents.svelte'
 
 	// Props
 	export let data: HomePageData
@@ -16,6 +19,9 @@
 	let eventFilterDateStart: string | null  // YYYY-MM-DD
 	let eventFilterDateEnd: string | null // YYYY-MM-DD
 	let slug = ''
+	let isSearchVisible = false
+  let searchString = ''
+	let displayMode = 'grid'
 
 	// Date filters
 	const setEventTimeWindow = (newTimeWindow: string) => {
@@ -32,6 +38,18 @@
 		goto(`/${eventTimeWindow}`, { replaceState: true });
 	}
   $: ({ slug } = $page.params);
+
+  const showLikedEvents = () => {
+    likedEventsPopupVisible.set(true);
+    document.body.classList.add('popupVisible');
+  }
+
+	const toggleSearch = () => {
+    isSearchVisible = !isSearchVisible
+    searchString = ''
+  }
+
+  const handleSearchChange = (newSearchString: string) => searchString = newSearchString
 
 	onMount(() => {
     if(slug) {
@@ -51,7 +69,7 @@
 <section class="homeHeader">
 	<PublicLogo on:click={() => setEventTimeWindow('todo')} />
 	
-	<nav id="eventsNavigation">
+	<nav id="eventsNavigation" class={isSearchVisible ? 'searchVisible' : ''}>
 		<EButton 
 			on:click={() => setEventTimeWindow('hoy')}
 			class={'hoy' === eventTimeWindow ? 'selected' : ''}
@@ -76,6 +94,32 @@
 		>
 			Este mes
 		</EButton>
+		<div class="smallButtons">
+			<div class="viewOptions">
+        <EButton 
+          class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
+          on:click={() => displayMode = 'grid'}
+          disabled={displayMode === 'grid'}
+        >Grid</EButton>
+        <EButton 
+          class="icon list {displayMode === 'list' ? 'selected' : ''}"
+          on:click={() => displayMode = 'list'}
+          disabled={displayMode === 'list'}
+        >List</EButton>
+      </div>
+			<div class="more">
+				<EButton 
+					on:click={() => showLikedEvents()}
+					class="saveFilled icon"
+				>
+					Guardados
+				</EButton>
+				<SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
+				<ButtonLink href="/info" class="info icon">
+					Info
+				</ButtonLink>
+			</div>
+		</div>
 	</nav>
 </section>
 
@@ -84,21 +128,26 @@
 </a>
 
 <section id="homePage">
-	<PublicEvents events={data.events} venues={data.venues} startDate={eventFilterDateStart} endDate={eventFilterDateEnd} />
+	<PublicEvents 
+		events={data.events} 
+		venues={data.venues} 
+		startDate={eventFilterDateStart} 
+		endDate={eventFilterDateEnd} 
+		{searchString}
+		{displayMode}
+	/>
 </section>
 
 <style lang="scss">
 	@import "$lib/sass/variables";
-
-	/* #homePage {
-	} */
 
 	.homeHeader {
 		position: sticky;
 		top: 0;
 		background-color: var(--colorOffWhite);
 		z-index: 10;
-		margin-bottom: var(--spacing);
+		padding-bottom: var(--spacing);
+		border-bottom: 1px solid var(--colorGreen);
 
 		@media (min-width: $mediaL) {
 			display: flex;
@@ -114,16 +163,63 @@
 		padding: 0 var(--spacing);
 		gap: var(--spacing);
 		height: 2em;
+		transition: all 0.5s;
 
-		:global(button) {
+		:global(button:not(.icon)) {
 			flex-grow: 1;
 		}
 
 		@media (min-width: $mediaL) {
-			width: 50%;
+			width: 80%;
 			max-width: 40em;
+
+			&.searchVisible {
+				max-width: 50em;
+			}
 		}
 	}
+	
+	.smallButtons {
+
+		.more {
+			display: flex;
+			gap: var(--spacing);
+		}
+
+		@media (max-width: $mediaM) {
+			display: flex;
+			width: 100%;
+			position: absolute;
+			right: 0;
+			margin-top: 28px;
+			justify-content: space-between;
+			background-color: var(--colorOffWhite);
+			padding: var(--spacing);
+		}
+	}
+
+	.viewOptions {
+    // Override EButton styles
+    :global(button:hover),
+    :global(button.selected) {
+      transform: none;
+      box-shadow: 2px 2px 0 var(--colorGreen);
+      transform: translate(-2px, -2px);
+    }
+    :global(button.grid) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    :global(button.list) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      transform: translate(-6px, -2px);
+    }
+
+    @media (min-width: $mediaM) {
+      display: none;
+    }
+  }
 
 	.suggestEvent {
 		position: fixed;

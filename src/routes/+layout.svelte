@@ -37,14 +37,20 @@
 			Esponja es una plataforma gratuita y sin fines de lucro 
 			para publicar eventos de música alternativa en la Ciudad de México.
 		</p>
-	
-		Contacto: <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+		
+		<p>
+			Contacto: <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+		</p>
+
+		<p>
+			Desarrollado por <a href="https://balthazaurus.com">Balthazaurus</a>
+		</p>
 	</div>
 </footer>
 
 <style lang="scss">
 	* {
-		--footerHeight: 300px;
+		--footerHeight: 340px;
 	}
 
 	main {
@@ -57,6 +63,7 @@
 		padding: var(--spacing);
 		padding-top: 40px;
 		height: var(--footerHeight);
+		padding-bottom: 40px;
 		
 		img {
 			height: 40px;

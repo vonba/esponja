@@ -49,6 +49,8 @@
     border-radius: var(--borderRadius);
     overflow: hidden;
     box-shadow: 2px 2px 0 var(--colorGreen);
+    transform: translate(-2px, -2px);
+    transition: all 0.5s;
 
     :global(input) {
       padding-top: 2px;
