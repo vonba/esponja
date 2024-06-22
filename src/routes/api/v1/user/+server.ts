@@ -9,7 +9,7 @@ export const GET: RequestHandler = async event => {
 
 	let result;
 	try {
-		result = await query('SELECT id, email, first_name AS "firstName", last_name AS "lastName" FROM users WHERE hidden = false ORDER BY first_name ASC');
+		result = await query('SELECT id, email, role, hidden, first_name AS "firstName", last_name AS "lastName" FROM users WHERE hidden = false ORDER BY first_name ASC');
 	} catch (err) {
 		console.log(err)
 		error(503, 'Database error')

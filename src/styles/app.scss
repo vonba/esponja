@@ -94,6 +94,8 @@ p a {
   }
 }
 
+// ======= Utility classes ======
+
 .flex {
   display: flex;
   gap: var(--spacing);
@@ -101,6 +103,10 @@ p a {
   &.alignCenter {
     align-items: center;
   }
+}
+
+:not(.flex).alignCenter {
+  text-align: center;
 }
 
 .mb {

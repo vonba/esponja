@@ -1,14 +1,13 @@
-<header class="publicLogo">
-  <a href="/">
-    <img src="/esponja-logo-offwhite.svg" alt="Esponja" class="esponjaLogo" />
-  </a>
+<header class="adminLogo">
+  <img src="/esponja-logo-offwhite.svg" alt="Esponja" class="esponjaLogo" />
   <p>
     Administración
   </p>
+  <a href="/" class="exit">Sitio público</a>
 </header>
 
 <style>
-  .publicLogo {
+  .adminLogo {
     width: 100%;
     padding: var(--spacing);
     background-color: var(--colorGreen);
@@ -17,11 +16,17 @@
     text-transform: uppercase;
     font-weight: bold;
   }
-  /* img {
-    display: block;
-  } */
+  
   .esponjaLogo {
     width: 150px;
     margin-bottom: 8px
+  }
+
+  .exit {
+    position: absolute;
+    top: var(--spacing);
+    right: var(--spacing);
+    color: var(--colorOffWhite);
+    font-style: italic;
   }
 </style>

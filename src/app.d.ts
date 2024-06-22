@@ -104,7 +104,7 @@ interface UserSession {
 
 interface AdminPageData {
 	user: User,
-	users: [User] | [];
+	users: UserProperties[];
 	venues: [VenueProperties] | [];
 	events: [EventProperties] | [];
 }

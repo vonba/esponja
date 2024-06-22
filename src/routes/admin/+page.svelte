@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import EditUser from '$lib/components/EditUser.svelte';
 	import Tabs from '$lib/components/Tabs.svelte'
-	import Users from '$lib/components/Users.svelte'
+	import AdminUsers from '$lib/components/AdminUsers.svelte'
 	import { loginSession } from '../../stores'
 	import EButton from '$lib/components/EButton.svelte'
 	import AdminEvents from '$lib/components/AdminEvents.svelte'
@@ -56,14 +56,29 @@
 		</div>
 	{:else if activeTab === 2 && user?.role === 'admin'}
 		<div in:fade>
-			<Users users={data.users} />
+			<AdminUsers users={data.users} />
 		</div>
 	{:else if activeTab === 3}
-		<div in:fade>
+		<div in:fade class="center">
 			<EditUser user={data.user} />
-			<EButton on:click={logout}>
-				Salir
-			</EButton>
+
+			<div class="logoutWrapper alignCenter">
+				<p class="mt">¿Quieres salir de tu cuenta?</p>
+				<EButton on:click={logout} class="large">
+					Log out
+				</EButton>
+			</div>
 		</div>
 	{/if}
 </Tabs>
+
+<style lang="scss">
+	@import "$lib/sass/variables";
+
+	.logoutWrapper {
+		max-width: $mediaM;
+		margin: var(--spacing) auto;
+		padding: calc(var(--spacing)) 0;
+		border-top: 1px solid var(--colorGreen);
+	}
+</style>

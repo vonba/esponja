@@ -148,6 +148,10 @@
       grid-template-columns: repeat(var(--eventColumns), 1fr);
     }
 
+    @media (max-width: $mediaM) {
+      padding-top: calc(3 * var(--spacing));
+    }
+
     @media (min-width: $mediaL) {
       display: grid;
       grid-template-columns: repeat(2, 1fr);

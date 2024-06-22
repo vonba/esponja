@@ -9,22 +9,22 @@ import { eventColumns } from '$lib/server/queries';
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
-	// const showUnpublished = !!event.params.showUnpublished
-	// const showHidden = !!event.params.showHidden
+
+	// Set query constraints
 	const searchParams = event.url.searchParams;
-	const published = searchParams.get('showUnpublished') ? '1=1' : 'published = false';
-	const hidden = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
+	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
+	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
 	const dateConstraint = searchParams.get('showPastEvents') ? '1=1' : 'start_date > NOW()';
 
 	let result;
 	try {
 		result = await query(`SELECT ${eventColumns}
 			FROM events
-			WHERE ${hidden} AND ${published}
+			WHERE ${hiddenConstraint} AND ${publishedConstraint}
 			AND ${dateConstraint}
 			ORDER BY start_date ASC`);
 	} catch (err) {
-		console.log(err)
+		console.log('Error loading events', err)
 		error(503, 'Database error');
 	}
 

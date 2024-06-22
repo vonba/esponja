@@ -239,10 +239,12 @@
 			background-color: var(--colorGreen);
 			color: var(--colorOffWhite);
 			
-			&:hover {
-				color: var(--colorGreen);
-				background-color: var(--colorOffWhite);
-				border-top: 1px solid var(--colorGreen);
+			@media (hover: hover) {
+				&:hover {
+					color: var(--colorGreen);
+					background-color: var(--colorOffWhite);
+					border-top: 1px solid var(--colorGreen);
+				}
 			}
 		}
 		
@@ -250,11 +252,13 @@
 		@media (min-width: $mediaL) {
 			bottom: unset;
 			top: var(--spacing);
-
-			&:hover {
-				text-decoration: underline;
-			}
 			right: var(--spacing);
+
+			@media (hover: hover) {
+				&:hover {
+					text-decoration: underline;
+				}
+			}
 		}
 	}
 </style>

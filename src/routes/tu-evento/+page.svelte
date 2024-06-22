@@ -18,22 +18,22 @@
     <h1>Agregar tu evento</h1>
   
     <p>
-      Si hay un evento de música alternativa en la CDMX que sientes que deberíamos publicar, ¡cuéntanos por acá! 
+      Si hay un evento de música alternativa en la CDMX que sientas que deberíamos publicar, ¡cuéntanos por acá! 
     </p>
     <p>
       Por ejemplo:<br />
-      • Si eres artista y vas a tocar<br />
-      • Si tienes conocimiento de un concierto<br />
-      • Si estás organizando un taller de música
+      •Si eres artista y vas a tocar<br />
+      •Si vas a un concierto que no está publicado en Esponja<br />
+      •Si estás organizando cualquier evento relacionado con la música alternativa y lo quieres visibilizar
     </p>
   
     <p>
-      No garantizamos que se va a publicar, pero vamos a considerar todos los eventos que se nos mandan a través de este formulario.
+      No garantizamos que se va a publicar, pero vamos a considerar todos los eventos que se nos manden a través de este formulario.
     </p>
   
     <p>
-      Si organizas eventos regularmente, o si tienes conocimiento que quieres compartir, escríbenos en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
-      para solicitar tu cuenta administrador.
+      Si organizas eventos regularmente, o si tienes conocimientos que quieres compartir, escríbenos a <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+      para solicitar tu cuenta de administrador, con la cual podrás libremente publicar y modificar eventos en Esponja.
     </p>
   </div>
 

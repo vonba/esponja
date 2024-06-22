@@ -160,14 +160,22 @@
 			<p>{message}</p>
 		{/if}
 
-		<EButton type="button" on:click={update}>
-			Guardar
-		</EButton>
-		<EButton type="button" on:click={() => dispatch('cancel')}>
-			Cancelar
-		</EButton>
+		<div class="buttons flex">
+			<EButton type="button" class="large" on:click={update}>
+				Guardar
+			</EButton>
+			<EButton type="button" class="large" on:click={() => dispatch('cancel')}>
+				Cancelar
+			</EButton>
+		</div>
 	</form>
 </div>
 
 <style lang="scss">
+	@import "$lib/sass/variables";
+
+	.editUser {
+		max-width: $mediaM;
+		margin: 20px auto;
+	}
 </style>

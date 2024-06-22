@@ -6,6 +6,7 @@
 
 	// Global styles
 	import '../styles/app.scss'
+	import ButtonLink from '$lib/components/ButtonLink.svelte'
 
 	export let data: LayoutServerData
 
@@ -45,6 +46,10 @@
 		<p>
 			Desarrollado por <a href="https://balthazaurus.com">Balthazaurus</a>
 		</p>
+
+		<p>
+			<ButtonLink href="/admin">Admin</ButtonLink>
+		</p>
 	</div>
 </footer>
 
@@ -75,7 +80,7 @@
 		}
 
 		.contentWrapper {
-			padding: var(--spacing);
+			/* padding: var(--spacing); */
 			border-radius: var(--borderRadius);
 			max-width: 24em;
 			text-align: center;
