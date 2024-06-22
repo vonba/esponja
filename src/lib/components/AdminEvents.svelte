@@ -14,11 +14,6 @@
   let editEvent: EventProperties | null = null
   let displayMode = 'list'
 
-  const handleDisableEvent = (eventId: number) => {
-    // TODO: update event and set as disabled
-    console.log('disable event with id ' + eventId)
-  }
-
   const handleEditEvent = (event: EventProperties) => {
     editEvent = event
     showEditEvent = true
@@ -71,9 +66,9 @@
     <ul class="events {displayMode}">
       {#each events as event (event?.id)}
         {#if displayMode === 'list'}
-          <EventListItem {event} {venues} {handleDisableEvent} {handleEditEvent} />
+          <EventListItem {event} {venues} {handleEditEvent} />
         {:else}
-          <EventGridItem {event} {venues} {handleDisableEvent} {handleEditEvent} />
+          <EventGridItem {event} {venues} {handleEditEvent} />
         {/if}
       {/each}
     </ul>
@@ -86,7 +81,6 @@
   .tools {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 1em;
     padding: var(--spacing);
   }
 
@@ -112,6 +106,7 @@
   ul.events {
     list-style: none;
     padding: 0;
+    margin-top: 0;
     border-top: 1px solid var(--colorGreen);
     --eventColumns: 1;
     
@@ -129,6 +124,11 @@
       display: grid;
       gap: 1em;
       grid-template-columns: repeat(var(--eventColumns), 1fr);
+    }
+
+    @media (min-width: $mediaL) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 

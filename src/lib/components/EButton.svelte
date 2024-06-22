@@ -42,6 +42,7 @@
       text-transform: uppercase;
       line-height: 1.5;
       font-style: italic;
+      height: auto;
     }
   }
 

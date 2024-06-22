@@ -43,6 +43,8 @@
       border-bottom: 5px solid transparent;
       transition: all 0.5s;
       cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
       
       &:hover,
       &.active {

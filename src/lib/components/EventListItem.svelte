@@ -6,7 +6,6 @@
   
   export let event: EventProperties
   export let venues: [VenueProperties] | []
-  export let handleDisableEvent: Function | null = null
   export let handleEditEvent: Function | null = null
   export let handleLikeEvent: Function | null = null
   export let handleShareEvent: Function | null = null
@@ -49,11 +48,6 @@
       {#if handleEditEvent}
         <EButton on:click={() => handleEditEvent(event)} class="icon edit">
           Modificar
-        </EButton>
-      {/if}
-      {#if handleDisableEvent}
-        <EButton on:click={() => handleDisableEvent(event.id) } class="icon delete">
-          Ocultar
         </EButton>
       {/if}
     </div>

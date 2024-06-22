@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPage
 	returnValue.venues = await venueResponse.json();
 
 	// Fetch events
-	const eventResponse = await fetch('/api/v1/event', {
+	const eventResponse = await fetch('/api/v1/event?showUnpublished=true&showHidden=true', {
 		method: 'GET'
 	});
 	if (!eventResponse.ok) {

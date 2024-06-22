@@ -78,6 +78,8 @@ interface EventProperties {
   priceCents?: number;
 	imageKeyLarge?: string;
 	imageKeySmall?: string;
+	hidden?: boolean;
+	published?: boolean;
 }
 
 type EEvent = EventProperties | undefined | null

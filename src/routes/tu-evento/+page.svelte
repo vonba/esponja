@@ -37,7 +37,7 @@
     </p>
   </div>
 
-  <EditEvent showTitle={false} showCloseButton={false} {venues} event={null}  />
+  <EditEvent showAdminOptions={false} showTitle={false} showCloseButton={false} {venues} event={null}  />
 </div>
 
 <style lang="scss">

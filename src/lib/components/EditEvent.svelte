@@ -10,6 +10,7 @@
 
 	export let showTitle = true
 	export let showCloseButton = true
+	export let showAdminOptions = true
 	export let venues: [Venue] | []
 	export let event: EventProperties | null
 	if (!event) {
@@ -26,6 +27,7 @@
 			description: '',
 			ticketLink: '',
 			priceCents: 0,
+			hidden: false,
 		}
 	}
 
@@ -230,6 +232,19 @@
 				/>
 			</div>
 		</fieldset>
+
+		{#if showAdminOptions}
+			<div class="inputContainer flex alignCenter">
+				<input
+					type="checkbox"
+					bind:checked={event.hidden}
+					id="hidden"
+				/>
+				<label for="hidden" class="inline">
+					Borrador (no visible)
+				</label>
+			</div>
+		{/if}
 
 		{#if message}
 			<p>{message}</p>

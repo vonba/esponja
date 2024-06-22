@@ -9,17 +9,25 @@ import { eventColumns } from '$lib/server/queries';
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
-	// const showUnpublished = !!event.params.moderate
-	const showUnpublished = false
-	console.log(event.params)
+	// const showUnpublished = !!event.params.showUnpublished
+	// const showHidden = !!event.params.showHidden
+	const searchParams = event.url.searchParams;
+	const published = searchParams.get('showUnpublished') ? '1=1' : 'published = false';
+	const hidden = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
+	const dateConstraint = searchParams.get('showPastEvents') ? '1=1' : 'start_date > NOW()';
 
 	let result;
 	try {
 		result = await query(`SELECT ${eventColumns}
-		FROM events WHERE hidden = false AND published = true ORDER BY start_date ASC`);
+			FROM events
+			WHERE ${hidden} AND ${published}
+			AND ${dateConstraint}
+			ORDER BY start_date ASC`);
 	} catch (err) {
-		error(503, 'Database error')
+		console.log(err)
+		error(503, 'Database error');
 	}
+
 
 	const formattedRows = result.rows.map(row => {
 		return {
@@ -49,12 +57,14 @@ export const PUT: RequestHandler = async event => {
 		}
 	}
 
+	// Get existing event
+	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published FROM events WHERE id = ${eventUpdate.id}`);
+	if (!existingEventResult.rowCount) error(404, 'Event not found')
+	
 	// Only admins can edit other users' events
-	// TODO: get existing event
-	// TODO: check what the user id of the event is
-	// if (user.role !== 'admin' && user.id !== existingEvent.id) {
-	// 	error(401, 'Unauthorized')
-	// }
+	if (user.role !== 'admin' && user.id !== (existingEventResult.rows[0]).id) {
+		error(401, 'Unauthorized')
+	}
 
 	// Update event
 	try {

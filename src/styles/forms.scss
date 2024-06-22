@@ -6,6 +6,10 @@ form {
   label {
     text-transform: uppercase;
     font-weight: bold;
+
+    &.inline {
+      display: inline;
+    }
   }
 }
 
@@ -17,7 +21,10 @@ textarea {
   padding: calc(0.5 * var(--spacing)) var(--spacing);
   background-color: var(--colorOffWhite);
   border-radius: var(--borderRadius);
-  width: 100%;
+
+  &:not([type="checkbox"]) {
+    width: 100%;
+  }
 
   &:focus {
     outline: 1px solid var(--colorGreen);
@@ -38,6 +45,17 @@ textarea {
     &::-webkit-calendar-picker-indicator {
       background-image: url('/icon-clock-green.svg');
     }
+  }
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  background-color: var(--colorOffWhite);
+  height: 20px;
+
+  &:checked {
+    background-image: url('/icon-cross-green.svg');
+    background-size: contain;
   }
 }
 
@@ -68,5 +86,9 @@ fieldset {
     display: block;
     width: 100%;
     margin-bottom: calc(0.5 * var(--spacing));
+  }
+
+  &.flex.alignCenter label {
+    margin-bottom: 0;
   }
 }
