@@ -58,6 +58,7 @@ interface VenueProperties {
   addressline2?: string;
   postcode?: string;
   city?: string;
+  state?: string;
   hidden: boolean;
 }
 

@@ -1,16 +1,14 @@
 <script lang="ts">
-	import type { PageData } from './$types'
 	import { goto } from '$app/navigation'
 	import { fade } from 'svelte/transition';
-
 	import EditUser from '$lib/components/EditUser.svelte';
 	import Tabs from '$lib/components/Tabs.svelte'
 	import Users from '$lib/components/Users.svelte'
-	import Venues from '$lib/components/Venues.svelte'
 	import { loginSession } from '../../stores'
 	import EButton from '$lib/components/EButton.svelte'
 	import AdminEvents from '$lib/components/AdminEvents.svelte'
 	import AdminLogo from '$lib/components/AdminLogo.svelte'
+	import AdminVenues from '$lib/components/AdminVenues.svelte'
 
 
 	// Component props
@@ -54,7 +52,7 @@
 		</div>
 	{:else if activeTab === 1}
 		<div in:fade>
-			<Venues venues={data.venues} />
+			<AdminVenues venues={data.venues} />
 		</div>
 	{:else if activeTab === 2 && user?.role === 'admin'}
 		<div in:fade>

@@ -103,6 +103,14 @@ p a {
   }
 }
 
+.mb {
+  margin-bottom: var(--spacing);
+}
+
+.mt {
+  margin-top: var(--spacing);
+}
+
 .emptyList {
   text-align: center;
   padding: 40px;

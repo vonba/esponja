@@ -89,6 +89,7 @@ CREATE TABLE public.venues (
   addressline2 character varying(255) COLLATE pg_catalog."default",
   postcode character varying(20) COLLATE pg_catalog."default",
   city character varying(100) COLLATE pg_catalog."default",
+  state character varying(100) COLLATE pg_catalog."default",
   country character varying(100) COLLATE pg_catalog."default",
   hidden boolean NOT NULL DEFAULT false,
   CONSTRAINT venues_pkey PRIMARY KEY (id)
@@ -428,11 +429,12 @@ DECLARE
   input_addressline2 varchar(255) := TRIM((input->>'addressline2')::varchar);
   input_postcode varchar(20) := TRIM((input->>'postcode')::varchar);
   input_city varchar(100) := TRIM((input->>'city')::varchar);
+  input_state varchar(100) := TRIM((input->>'state')::varchar);
   input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO venues (name, slug, addressline1, addressline2, postcode, city, hidden)
-    VALUES (input_name, input_slug, input_addressline1, input_addressline2, input_postcode, input_city, input_hidden)
+    INSERT INTO venues (name, slug, addressline1, addressline2, postcode, city, state, hidden)
+    VALUES (input_name, input_slug, input_addressline1, input_addressline2, input_postcode, input_city, input_state, input_hidden)
     RETURNING id INTO new_id;
   ELSE
     UPDATE venues SET
@@ -442,6 +444,7 @@ BEGIN
       addressline2 = input_addressline2,
       postcode = input_postcode,
       city = input_city,
+      state = input_state,
       hidden = input_hidden
     WHERE id = input_id;
   END IF;
@@ -460,6 +463,7 @@ CALL upsert_venue('{
   "addressline2": "Sta María la Ribera",
   "postcode": "06400",
   "city": "Ciudad de México",
+  "state": "Ciudad de México",
   "hidden": false
 }', null);
 CALL upsert_venue('{
@@ -469,6 +473,7 @@ CALL upsert_venue('{
   "addressline2": "La Merced",
   "postcode": "06090",
   "city": "Ciudad de México",
+  "state": "Ciudad de México",
   "hidden": false
 }', null);
 CALL upsert_venue('{
@@ -478,6 +483,7 @@ CALL upsert_venue('{
   "addressline2": "Colonia Condesa",
   "postcode": "06140",
   "city": "Ciudad de México",
+  "state": "Ciudad de México",
   "hidden": false
 }', null);
 CALL upsert_venue('{
@@ -487,6 +493,7 @@ CALL upsert_venue('{
   "addressline2": "San Miguel Chapultepec I Secc,",
   "postcode": "11850",
   "city": "Ciudad de México",
+  "state": "Ciudad de México",
   "hidden": false
 }', null);
 CALL upsert_venue('{
@@ -496,6 +503,7 @@ CALL upsert_venue('{
   "addressline2": "Sta María la Ribera",
   "postcode": "06400",
   "city": "Ciudad de México",
+  "state": "Ciudad de México",
   "hidden": false
 }', null);
 

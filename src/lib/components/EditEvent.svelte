@@ -274,6 +274,7 @@
 	:global(button.eventImageWrapper) {
 		width: 100%;
 		position: relative;
+		margin-top: var(--spacing);
 	}
 
 	.editEvent {
@@ -283,10 +284,6 @@
 
 	input#eventImage {
 		display: none;
-	}
-
-	:global(button.eventImageWrapper) {
-		margin-top: var(--spacing);
 	}
 
 	.buttons {

@@ -10,11 +10,13 @@
 	if (!venue) {
 		venue = {
 			id: 0,
+			slug: '',
 			name: '',
 			addressline1: '',
 			addressline2: '',
 			postcode: '',
-			city: '',
+			city: 'Ciudad de México',
+			state: 'Ciudad de México',
 			hidden: false,
 		}
 	}
@@ -78,48 +80,39 @@
 	</h2>
 
 	<form id="venueForm" autocomplete="off" novalidate class="mt-3">
-		<div class="mb-3">
-			<label class="form-label" for="name">Nombre</label>
+		<div class="inputContainer">
+			<label for="name">Nombre</label>
 			<input
 				bind:this={focusedField}
 				bind:value={venue.name}
-				class="form-control"
 				id="name"
 				required
-				placeholder="Nombre"
 			/>
 			<div class="invalidFeedback">Se requiere el nombre</div>
 		</div>
 
-		<div class="mb-3">
-			<label class="form-label" for="addressline1">Dirección</label>
+		<div class="inputContainer">
+			<label for="addressline1">Dirección</label>
 			<input
 				bind:value={venue.addressline1}
-				class="form-control"
 				id="addressline1"
+				required
+				class="mb"
+				placeholder="Calle y número"
 			/>
+			<div class="invalidFeedback">Se requiere la dirección</div>
 			<input
 				bind:value={venue.addressline2}
-				class="form-control"
 				id="addressline2"
+				placeholder="Colonia o similar"
 			/>
 		</div>
 
-		<div class="mb-3">
-			<label class="form-label" for="postcode">Código postal</label>
+		<div class="inputContainer">
+			<label for="postcode">Código postal</label>
 			<input
 				bind:value={venue.postcode}
-				class="form-control"
 				id="postcode"
-			/>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label" for="postcode">Ciudad</label>
-			<input
-				bind:value={venue.city}
-				class="form-control"
-				id="city"
 			/>
 		</div>
 
@@ -127,7 +120,7 @@
 			<p>{message}</p>
 		{/if}
 
-		<div class="buttons">
+		<div class="buttons flex">
 			<EButton type="button" on:click={update} disabled={loading} class="large">
 				{#if loading}
 					Cargando...
@@ -143,4 +136,10 @@
 </div>
 
 <style lang="scss">
+	@import "$lib/sass/variables";
+
+	.editVenue {
+		max-width: $mediaM;
+		margin: 20px auto;
+	}
 </style>
