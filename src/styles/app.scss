@@ -132,7 +132,7 @@ p a {
 
 .message {
   text-align: center;
-  padding: 20px;
+  padding: var(--double) var(--spacing);
   margin: var(--spacing);
 }
 

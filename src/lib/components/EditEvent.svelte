@@ -11,8 +11,6 @@
 	
 	// TODO: add price input field
 	// TODO: add ticket link input field
-	// TODO: add option to create new venue (for logged in users)
-	// TODO: add option to add address instead of venue (line1, line2, city, state)
 
 	const dispatch = createEventDispatcher();
 
@@ -54,7 +52,7 @@
 	let isConfirmedToPublish = false
 	let showCreateVenue = false
 	let newVenueAdded = false
-	let showCustomAddress = event.addressLine1
+	let showCustomAddress = !!event.addressLine1
 	const isNewEvent = event?.id === 0
 
 	// Observables
@@ -93,8 +91,9 @@
 				const formData = new FormData();
 				for (const key in event) {
 					if (event.hasOwnProperty(key)) {
-						// Ignore TypeScript error here, this is correct
-						formData.append(key, event[key]);
+						// Having to do some freaky typescript here to suppress warnings :(
+						// We are just copying each value from event to formData
+						formData.append(key, event[key as keyof EventProperties] as unknown as string);
 					}
 				}
 

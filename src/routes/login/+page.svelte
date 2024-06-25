@@ -4,7 +4,6 @@
 	import { page } from '$app/stores'
 	import { loginSession } from '../../stores'
 	import { focusOnFirstError } from '$lib/focus'
-	// import { initializeGoogleAccounts, renderGoogleButton } from '$lib/google'
 	import EButton from '$lib/components/EButton.svelte'
 	import ButtonLink from '$lib/components/ButtonLink.svelte'
 
@@ -76,7 +75,7 @@
 
 <div class="loginWrapper">
 	<form id="signIn" autocomplete="on" novalidate>
-		<h1>Bienvenidx</h1>
+		<h1 class="">Bienvenidx</h1>
 
 		<fieldset>
 			<div class="inputContainer">
@@ -89,7 +88,7 @@
 					placeholder="Correo electrónico"
 					autocomplete="email"
 				/>
-				<div class="invalidFeedback">Introducir correo electrónico</div>
+				<div class="invalidFeedback">Se requiere el correo electrónico</div>
 			</div>
 			<div class="inputContainer">
 				<label for="password">Password</label>
@@ -114,8 +113,10 @@
 			<p class="text-danger">{message}</p>
 		{/if}
 		
-		<EButton on:click={login}>Ingresar</EButton>
-		<ButtonLink href="/info">Cancelar</ButtonLink>
+		<div class="flex">
+			<EButton on:click={login} class="large">Ingresar</EButton>
+			<ButtonLink href="/info" class="large">Cancelar</ButtonLink>
+		</div>
 	</form>
 </div>
 
