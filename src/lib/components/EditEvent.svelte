@@ -5,14 +5,23 @@
 	import EButton from './EButton.svelte'
 	import { getImageURL } from '$lib/file'
 	import { toSlug } from '$lib/strings'
+	import { fade } from 'svelte/transition'
 	
+	// TODO: add price input field
+	// TODO: add ticket link input field
+	// TODO: add option to create new venue (for logged in users)
+	// TODO: add option to add address instead of venue (line1, line2, city, state)
+
 	const dispatch = createEventDispatcher();
 
+	// Props
 	export let showTitle = true
 	export let showCloseButton = true
 	export let showAdminOptions = true
-	export let venues: [Venue] | []
-	export let event: EventProperties | null
+	export let venues: [VenueProperties] | []
+	export let event: EEvent
+	
+	// Default event
 	if (!event) {
 		event = {
 			id: 0,
@@ -28,15 +37,31 @@
 			ticketLink: '',
 			priceCents: 0,
 			hidden: false,
+			published: true,
 		}
 	}
 
+	// States
 	let focusedField: HTMLInputElement
 	let message: string
 	let error = false
 	let loading = false
 	let eventImageFile: HTMLInputElement | null = null
-	let isEventImageSelected = false;
+	let isEventImageSelected = false
+	let isSlugManuallyEdited = false
+	let isConfirmedToPublish = false
+	const isNewEvent = event?.id === 0
+
+	// Observables
+	// Convert name to slug, unless slug has been manually edited
+	$: if(isNewEvent && !isSlugManuallyEdited) event.slug = toSlug(event.name)
+
+	// ====== HANDLERS ======
+
+	// Focus first field when loading
+	onMount(() => {
+		focusedField.focus()
+	})
 
 	// Function to handle file selection
 	function handleFileChange() {
@@ -47,12 +72,7 @@
 		}
 	}
 
-	const isNewEvent = event?.id === 0
-
-	onMount(() => {
-		focusedField.focus()
-	})
-
+	// Handle form submit
 	async function update() {
 		message = ''
 		const form = <HTMLFormElement>document.getElementById('eventForm')
@@ -99,8 +119,36 @@
 		}
 	}
 
-	// TODO: allow editing URL field
-	$: if(isNewEvent) event.slug = toSlug(event.name)
+	// Handle manual editing of slug
+	function handleSlugInput(e: Event) {
+		isSlugManuallyEdited = true;
+		const input = e.target as HTMLInputElement;
+		if (event) event.slug = input.value;
+	}
+
+	// Delete event permanently
+	const handleDeleteEvent = async (event: EventProperties) => {
+		const body = JSON.stringify({id: event.id})
+		try {
+			const res = await fetch("/api/v1/event", {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body,
+			})
+			const reply = await res.json()
+			message = reply.message
+			if (res.ok) {
+				dispatch('deleted', { reply })
+			} else {
+				error = true
+			}
+			loading = false
+		} catch (error) {
+			message = 'Servidor no disponible'
+		}
+	}
 
 </script>
 
@@ -115,21 +163,63 @@
 		</h2>
 	{/if}
 
-	<form id="eventForm" autocomplete="off" novalidate enctype="multipart/form-data">
+	{#if !isNewEvent && !event.published}
+		<p>
+			<i>
+				<strong>¡Ojo!</strong> Este evento fue creado por el público. Puede ser spam o tener datos incorrectos.
+				Si tienes dudas, bórralo o comunícate con el creador.
+			</i>
+		</p>
+	{/if}
+
+	<form id="eventForm" class={showAdminOptions ? '' : 'public'} autocomplete="off" novalidate enctype="multipart/form-data">
 		<fieldset disabled={loading}>
 			<div class="inputContainer">
-				<label for="name">Nombre</label>
+				<label for="name">Nombre del evento</label>
 				<input
 					bind:this={focusedField}
 					bind:value={event.name}
 					id="name"
 					required
-					placeholder="Nombre"
+					maxlength="255"
 				/>
 				<div class="invalidFeedback">Se requiere el nombre</div>
 			</div>
 
-			<div class="inputContainer">
+			{#if !showAdminOptions}
+				<div class="inputContainer">
+					<label for="name">Tu nombre</label>
+					<input
+						bind:value={event.submitterName}
+						id="name"
+						required
+						maxlength="255"
+					/>
+					<div class="invalidFeedback">Se requiere tu nombre</div>
+				</div>
+
+				<div class="inputContainer">
+					<label for="name">Tu correo</label>
+					<input
+						type="email"
+						bind:value={event.submitterEmail}
+						id="name"
+						required
+						maxlength="255"
+					/>
+					<div class="invalidFeedback">Se requiere tu correo</div>
+				</div>
+			{/if}
+
+			{#if showAdminOptions && event.submitterName}
+				<p>
+					<strong>Creado por</strong><br />
+					{event.submitterName}<br />
+					<a href="mailto:{event.submitterEmail}">{event.submitterEmail}</a>
+				</p>
+			{/if}
+
+			<div class="inputContainer url">
 				<label for="name">URL</label>
 				{#if !isNewEvent}
 					<p><i>Evita cambiar el URL después de publicar el evento</i></p>
@@ -137,10 +227,12 @@
 				<div class="flex alignCenter">
 					<b>esponja.mx/evento/</b>
 					<input
-						bind:value={event.slug}
+						value={event.slug}
+						on:input={handleSlugInput}
 						id="slug"
 						required
 						placeholder="URL"
+						maxlength="120"
 					/>
 				</div>
 				<div class="invalidFeedback">Se requiere un URL</div>
@@ -233,7 +325,7 @@
 			</div>
 		</fieldset>
 
-		{#if showAdminOptions}
+		{#if showAdminOptions && (event.published || isConfirmedToPublish)}
 			<div class="inputContainer flex alignCenter">
 				<input
 					type="checkbox"
@@ -246,27 +338,40 @@
 			</div>
 		{/if}
 
-		{#if message}
-			<p>{message}</p>
+		{#if !isNewEvent && !event.published && !isConfirmedToPublish}
+			<div class="confirmBeforePublishing justifyCenter" in:fade>
+				<h2>¿Quieres borrar este evento?</h2>
+				<p>Este evento fue creado a través del formulario público. Si algo no está bien, aquí lo puedes borrar de forma permanente.</p>
+				<div class="flex justifyCenter">
+					<EButton on:click={() => handleDeleteEvent(event)} class="large">Borrar</EButton>
+					<EButton on:click={() => isConfirmedToPublish = true} class="large">No borrar</EButton>
+				</div>
+			</div>
 		{/if}
-		
-		<div class="buttons">
-			<EButton type="button" on:click={update} disabled={loading} class="large">
-				{#if loading}
-					Cargando...
-				{:else}
-					Guardar
+
+		{#if message}
+			<p class="message">{message}</p>
+		{/if}
+
+		{#if event.published || isConfirmedToPublish}
+			<div class="buttons" in:fade>
+				<EButton type="button" on:click={update} disabled={loading} class="large">
+					{#if loading}
+						Cargando...
+					{:else}
+						Guardar
+					{/if}
+				</EButton>
+				{#if showCloseButton}
+				<EButton type="button" on:click={() => dispatch('cancel')} class="large">
+					Cerrar
+				</EButton>
 				{/if}
-			</EButton>
-			{#if showCloseButton}
-			<EButton type="button" on:click={() => dispatch('cancel')} class="large">
-				Cerrar
-			</EButton>
-			{/if}
-		</div>
+			</div>
+		{/if}
+
 	</form>
 </div>
-
 
 <style lang="scss">
 	@import "$lib/sass/variables";
@@ -302,5 +407,19 @@
 		img {
 			float: left;
 		}
+	}
+
+	form.public {
+		.url {
+			visibility: hidden;
+			height: 0;
+			overflow: hidden;
+		}
+	}
+
+	.confirmBeforePublishing {
+		border: 1px solid var(--colorGreen);
+		border-radius: var(--borderRadius);
+		padding: calc(2 * var(--spacing));
 	}
 </style>

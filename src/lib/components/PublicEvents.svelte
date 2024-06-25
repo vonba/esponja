@@ -14,10 +14,9 @@
   export let startDate: string | null
   export let endDate: string | null
   export let searchString = ''
+  export let displayMode = 'grid'
 
   // State
-  export let displayMode = 'grid'
-  // let isSearchVisible = false
   let showEditEvent = false
   let editEvent: EventProperties | null = null
   let user: User;

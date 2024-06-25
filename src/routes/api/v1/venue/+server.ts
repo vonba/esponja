@@ -2,11 +2,16 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 
+// Possible query parameters:
+// showHidden=true : include venues with hidden=true
 export const GET: RequestHandler = async event => {
+	// Set query constraints
+	const searchParams = event.url.searchParams;
+	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
+	
 	let result;
 	try {
-		// TODO: decide if/how to display hidden venues
-		result = await query('SELECT * FROM venues WHERE hidden = false ORDER BY name ASC');
+		result = await query(`SELECT * FROM venues WHERE ${hiddenConstraint} ORDER BY name ASC`);
 	} catch (err) {
 		error(503, 'Database error')
 	}

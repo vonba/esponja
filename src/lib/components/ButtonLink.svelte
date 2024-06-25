@@ -53,4 +53,20 @@
       background-image: url('/icon-info-green.svg');
     }
   }
+
+  a.large {
+    line-height: 1.5;
+    height: auto;
+    font-weight: bold;
+    font-style: italic;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  @media (max-width: 450px) {
+    a.large {
+			display: block;
+			width: 100%;
+		}
+  }
 </style>

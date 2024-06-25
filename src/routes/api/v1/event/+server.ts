@@ -5,8 +5,15 @@ import { query } from '$lib/server/db'
 import { PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns } from '$lib/server/queries';
+import sanitizeHtml from 'sanitize-html';
+import { truncateAndAppend } from '$lib/strings'
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
+
+// Possible query parameters:
+// showHidden=true : include events with hidden=true
+// showUnpublished=true : include events with published=false
+// showOnlyPastEvents=true : include events in the past
 
 export const GET: RequestHandler = async event => {
 
@@ -14,11 +21,11 @@ export const GET: RequestHandler = async event => {
 	const searchParams = event.url.searchParams;
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
-	const dateConstraint = searchParams.get('showPastEvents') ? '1=1' : 'start_date > NOW()';
+	const dateConstraint = searchParams.get('showOnlyPastEvents') ? 'start_date < CURRENT_DATE' : 'start_date >= CURRENT_DATE';
 
 	let result;
 	try {
-		result = await query(`SELECT ${eventColumns}
+		result = await query(`SELECT ${eventColumns} 
 			FROM events
 			WHERE ${hiddenConstraint} AND ${publishedConstraint}
 			AND ${dateConstraint}
@@ -27,7 +34,6 @@ export const GET: RequestHandler = async event => {
 		console.log('Error loading events', err)
 		error(503, 'Database error');
 	}
-
 
 	const formattedRows = result.rows.map(row => {
 		return {
@@ -39,6 +45,25 @@ export const GET: RequestHandler = async event => {
 	})
 
 	return json(formattedRows);
+}
+
+export const DELETE: RequestHandler = async event => {
+	const { user } = event.locals
+	if (!user) error(401, 'Unauthorized')
+
+	const requestBody = await event.request.json()
+	const eventId = requestBody.id
+
+	// Delete unpublished event permanently from database
+	try {
+		await query(`DELETE FROM events WHERE published = false AND id = ${eventId}`);
+	} catch (err) {
+		error(503, 'Database error');
+	}
+
+	return json({
+		message: 'Evento borrado permanentemente'
+	})
 }
 
 export const PUT: RequestHandler = async event => {
@@ -60,15 +85,36 @@ export const PUT: RequestHandler = async event => {
 	// Get existing event
 	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published FROM events WHERE id = ${eventUpdate.id}`);
 	if (!existingEventResult.rowCount) error(404, 'Event not found')
-	
+	const existingEvent =  existingEventResult.rows[0]
+		
 	// Only admins can edit other users' events
-	if (user.role !== 'admin' && user.id !== (existingEventResult.rows[0]).id) {
+	if (user.role !== 'admin' && user.id !== existingEvent.user_id) {
 		error(401, 'Unauthorized')
 	}
 
+	// Check for slug duplicates
+	const sameSlugResult = await query(`SELECT id FROM events WHERE slug = '${eventUpdate.slug}' AND id != ${existingEvent.id}`);
+	if (sameSlugResult.rowCount) {
+		// If slug already exists will add a "-2" at the end
+		eventUpdate.slug = truncateAndAppend(eventUpdate.slug)
+	}
+
+	// Remove any HTML
+	eventUpdate.name = sanitizeHtml(eventUpdate.name);
+	eventUpdate.description = sanitizeHtml(eventUpdate.description);
+	eventUpdate.ticketLink = sanitizeHtml(eventUpdate.ticketLink);
+	
+	// Set status to published
+	eventUpdate.published = true
+
+	// Correct null values
+	const queryBody = JSON.stringify(eventUpdate)
+		.replace(/"null"/g, 'null')
+		.replace(/"undefined"/g, 'null');
+
 	// Update event
 	try {
-		await query(`CALL upsert_event($1, $2);`, [JSON.stringify(eventUpdate).replaceAll('"null"', 'null'), null])
+		await query(`CALL upsert_event($1, $2);`, [queryBody, null])
 	} catch (err) {
 		console.log('Error updating event', err)
 		error(503, 'Database error')
@@ -96,8 +142,18 @@ export const POST: RequestHandler = async event => {
 		}
 	}
 
-	// TODO: remove any HTML from description, name, ticketLink
-	
+	// Check for slug duplicates
+	const sameSlugResult = await query(`SELECT id FROM events WHERE slug = '${eventCreate.slug}'`);
+	if (sameSlugResult.rowCount) {
+		// If slug already exists will add a "-2" at the end
+		eventCreate.slug = truncateAndAppend(eventCreate.slug)
+	}
+
+	// Remove any HTML
+	eventCreate.name = sanitizeHtml(eventCreate.name);
+	eventCreate.description = sanitizeHtml(eventCreate.description);
+	eventCreate.ticketLink = sanitizeHtml(eventCreate.ticketLink);
+
 	// Create event
 	let eventId
 	let needsModeration = true
@@ -109,10 +165,17 @@ export const POST: RequestHandler = async event => {
 		eventCreate.userId = null
 		eventCreate.published = false
 	}
+	const queryBody = JSON.stringify(eventCreate)
+		.replace(/"null"/g, 'null')
+		.replace(/"undefined"/g, 'null');
 
 	try {
 		// Creates new event (id = 0)
-		const dbResult = await query(`CALL upsert_event($1, $2);`, [JSON.stringify(eventCreate), null])
+		const dbResult = await query(
+			`CALL upsert_event($1, $2);`, 
+			// Correct formatting of null values
+			[queryBody, null]
+		)
 		eventId = dbResult.rows[0].new_id;
 		if (!eventId) throw new Error ('Error creating event (id)')
 	} catch (err) {

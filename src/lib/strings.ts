@@ -28,9 +28,22 @@ export function toSlug(input: string) {
   slug = slug.replace(/^-+|-+$/g, '');
 
   // Ensure the slug does not exceed 80 characters
-  if (slug.length > 80) {
-      slug = slug.substring(0, 80).replace(/-+$/g, ''); // Avoid trailing hyphens after truncation
+  if (slug.length > 120) {
+      slug = slug.substring(0, 120).replace(/-+$/g, ''); // Avoid trailing hyphens after truncation
   }
 
   return slug;
+}
+
+export function truncateAndAppend(input: string): string {
+  const maxLength = 118;
+  const suffix = "-2";
+
+  // If the input length is greater than the maxLength, truncate it and add the suffix
+  if (input.length > maxLength) {
+    return input.substring(0, maxLength) + suffix;
+  }
+
+  // Otherwise, just append the suffix
+  return input + suffix;
 }

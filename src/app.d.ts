@@ -81,6 +81,8 @@ interface EventProperties {
 	imageKeySmall?: string;
 	hidden?: boolean;
 	published?: boolean;
+	submitterName?: string;
+	submitterEmail?: string;
 }
 
 type EEvent = EventProperties | undefined | null
@@ -122,6 +124,12 @@ type SingleEventPageData = {
 
 type SuggestEventPageData = {
 	venues: [VenueProperties] | []
+}
+
+type SingleVenuePageData = {
+	user: User,
+	venue: VenueProperties,
+	events: EventProperties[],
 }
 
 

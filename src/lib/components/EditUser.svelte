@@ -7,6 +7,7 @@
 	
 	const dispatch = createEventDispatcher();
 
+	export let showCloseButton = true
 	export let user: User;
 	if (!user) {
 		user = {
@@ -19,8 +20,8 @@
 			hidden: false,
 		}
 	}
-	const isNewUser = user.id === 0
-	const isOwnUser = !isNewUser && user.id === $loginSession?.id
+	$: isNewUser = user.id === 0
+	$: isOwnUser = !isNewUser && user.id === $loginSession?.id
 
 	let focusedField: HTMLInputElement
 	let message: string
@@ -58,7 +59,11 @@
 					$loginSession = JSON.parse(JSON.stringify(user))
 				}
 				if (res.ok) {
-					// TODO: empty the password fields
+					if (user) {
+						// Reset password fields to be sure
+						user.password = ''
+						confirmPassword.value = ''
+					}
 					dispatch('saved', { reply })
 				}
 			} catch (error) {
@@ -164,9 +169,11 @@
 			<EButton type="button" class="large" on:click={update}>
 				Guardar
 			</EButton>
-			<EButton type="button" class="large" on:click={() => dispatch('cancel')}>
-				Cancelar
-			</EButton>
+			{#if showCloseButton}
+				<EButton type="button" class="large" on:click={() => dispatch('cancel')}>
+					Cancelar
+				</EButton>
+			{/if}
 		</div>
 	</form>
 </div>

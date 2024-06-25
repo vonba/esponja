@@ -6,13 +6,14 @@
   <a href="/" class="exit">Sitio público</a>
 </header>
 
-<style>
+<style lang="scss">
+  @import "$lib/sass/variables";
+
   .adminLogo {
     width: 100%;
     padding: var(--spacing);
     background-color: var(--colorGreen);
     color: var(--colorOffWhite);
-    text-align: center;
     text-transform: uppercase;
     font-weight: bold;
   }

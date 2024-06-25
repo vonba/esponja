@@ -1,20 +1,13 @@
 <script lang="ts">
-	import { invalidateAll } from "$app/navigation"
 	import ButtonLink from "$lib/components/ButtonLink.svelte"
 	import EButton from "$lib/components/EButton.svelte"
-	import EditVenue from "$lib/components/EditVenue.svelte"
   import PublicLogo from "$lib/components/PublicLogo.svelte"
-	import { fade } from "svelte/transition"
 	import { likedEventsPopupVisible } from "../../../stores"
 	import PublicVenue from "$lib/components/PublicVenue.svelte"
 
-  type SingleVenuePageData = {
-    user: User,
-    venue: {venue: VenueProperties, events: [EventProperties] | []},
-  }
   export let data: SingleVenuePageData
-  const events = data.venue.events
-  const venue = data.venue.venue
+  const events = data.events
+  const venue = data.venue
   
   const showLikedEvents = () => {
     likedEventsPopupVisible.set(true);

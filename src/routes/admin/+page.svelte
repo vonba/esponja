@@ -18,7 +18,6 @@
 	// Tabs
   let activeTab = 0
 	const setActiveTab = (t: number) => activeTab = t
-	
 	let titles = ['Eventos', 'Foros', null, 'Cuenta']
 	if (user?.role === 'admin') {
 		titles = ['Eventos', 'Foros', 'Usuarios', 'Cuenta']
@@ -60,7 +59,10 @@
 		</div>
 	{:else if activeTab === 3}
 		<div in:fade class="center">
-			<EditUser user={data.user} />
+			<EditUser 
+				user={data.user}
+				showCloseButton={false}
+			/>
 
 			<div class="logoutWrapper alignCenter">
 				<p class="mt">¿Quieres salir de tu cuenta?</p>

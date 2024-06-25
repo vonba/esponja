@@ -7,7 +7,7 @@
 </script>
 
 
-<div class="publicVenue">
+<div class="publicVenue {events.length ? '' : 'noEvents'}">
   
   <div class="map">
     <div class="venueHeader">
@@ -37,6 +37,7 @@
         {#each events as event}
           <EventSummary {event} {venue} />
         {/each}
+
       {/if}
     </ul>
   </div> 
@@ -88,12 +89,14 @@
 
   .publicVenue {
     @media (min-width: $mediaL) {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing);
-
-      .events {
-        margin-top: 20px;
+      &:not(.noEvents) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing);
+  
+        .events {
+          margin-top: 20px;
+        }
       }
     }    
   }

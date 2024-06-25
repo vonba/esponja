@@ -1,9 +1,19 @@
 <script lang="ts">
 	import EditEvent from "$lib/components/EditEvent.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
+	import { loginSession } from "../../stores"
   
+  // Props
   export let data: SuggestEventPageData
   const { venues } = data
+
+  // States
+  let eventSaved = false;
+
+  let user: User;
+  loginSession.subscribe(value => {
+    user = value;
+  });
 </script>
 
 <svelte:head>
@@ -32,20 +42,52 @@
     </p>
   
     <p>
-      Si organizas eventos regularmente, o si tienes conocimientos que quieres compartir, escríbenos a <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+      Si organizas eventos regularmente, o si eres una de esas personas que siempre saben dónde están los buenos toquines, escríbenos a <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
       para solicitar tu cuenta de administrador, con la cual podrás libremente publicar y modificar eventos en Esponja.
+    </p>
+
+    <p>
+      <i>
+        ¿Ya tienes tu cuenta?<br />
+        Por favor usa la <a href="/admin">administración</a> para agregar tus eventos.
+      </i>
     </p>
   </div>
 
-  <EditEvent showAdminOptions={false} showTitle={false} showCloseButton={false} {venues} event={null}  />
+  {#if eventSaved}
+    <div class="eventSaved">
+      <h2>¡Gracias!</h2>
+      <p>
+        Tue evento fue guardado y pronto lo revisaremos.
+        Si se publica, te llegará una notificación al correo que proporcionaste.
+      </p>
+    </div>
+
+  {:else}
+    {#if user}
+      <div class="emptyList">
+        <h2>Ya tienes cuenta</h2>
+          Puedes agregar eventos desde la <a href="/admin">administración</a>
+      </div>
+
+    {:else}
+      <EditEvent 
+        showAdminOptions={false} 
+        showTitle={false} 
+        showCloseButton={false} 
+        {venues} 
+        event={null}
+        on:saved={() => eventSaved = true}
+      />
+    {/if}
+
+  {/if}
 </div>
 
 <style lang="scss">
   @import "$lib/sass/variables";
 
   h1 {
-    /* margin-top: 20px; */
-    /* padding: var(--spacing); */
     margin-bottom: 20px;
   }
 
@@ -77,5 +119,11 @@
         padding: 20px;
       }
     }
+  }
+
+  .eventSaved {
+    border: 1px solid var(--colorGreen);
+    border-radius: var(--borderRadius);
+    padding: var(--spacing);
   }
 </style>

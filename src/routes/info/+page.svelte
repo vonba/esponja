@@ -27,16 +27,12 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 		<h2>¿Quieres publicar un evento?</h2>
 		<p>
 			Ingresa los datos del evento aquí.<br /><br />
-			<ButtonLink class="largeButton" href="/tu-evento">Cuéntanos</ButtonLink>
+			<ButtonLink class="large" href="/tu-evento">Cuéntanos</ButtonLink>
 		</p>
 		
 		<h2>Contacto</h2>
 		<p>
-			¿Tienes dudas? ¿Quieres ayudar a mantener Esponja actualizado? Nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
-		</p>
-	
-		<p>
-			<a href="/admin">Soy admin</a>
+			¿Tienes dudas? ¿Quieres ayudar a mantener Esponja actualizado para que aproveche toda la comunidad artística de tus conocimientos? Nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
 		</p>
 	</div>
 </section>
@@ -59,7 +55,7 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 
 			@media (max-width: $mediaL) {
 				&:first-of-type {
-					margin-bottom: 0;
+					margin-bottom: 2em;
 				}
 			}
 		}
@@ -69,7 +65,7 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 			margin-bottom: 2em;
 
 			img {
-				max-height: 80vh;
+				max-height: 400px;
 			}
 		}
 
@@ -78,15 +74,11 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 				position: absolute;
 				top: 4em;
 				left: 45em;
+
+				img {
+					max-height: 80vh;
+				}
 			}
 		}
 	}
-
-	@media (max-width: 450px) {
-    :global(.largeButton) {
-			display: block;
-			width: 100%;
-			text-align: center;
-		}
-  }
 </style>

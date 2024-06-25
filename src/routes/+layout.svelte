@@ -55,7 +55,7 @@
 
 <style lang="scss">
 	* {
-		--footerHeight: 340px;
+		--footerHeight: 400px;
 	}
 
 	main {
@@ -68,7 +68,6 @@
 		padding: var(--spacing);
 		padding-top: 40px;
 		height: var(--footerHeight);
-		padding-bottom: 40px;
 		
 		img {
 			height: 40px;

@@ -92,7 +92,10 @@
     grid-template-columns: 1fr minmax(100px, 33%);
     gap: var(--spacing);
     min-height: calc(var(--itemHeight) + var(--spacing));
-    border-bottom: 1px solid var(--colorGreen);
+
+    @media (max-width: $mediaL) {
+      border-bottom: 1px solid var(--colorGreen);
+    }
 
     @media (min-width: $mediaL) {
       --itemHeight: 200px;

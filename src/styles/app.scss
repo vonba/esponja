@@ -94,7 +94,7 @@ p a {
   }
 }
 
-// ======= Utility classes ======
+// ======= Utility and generic classes ======
 
 .flex {
   display: flex;
@@ -103,8 +103,12 @@ p a {
   &.alignCenter {
     align-items: center;
   }
+  &.justifyCenter {
+    justify-content: center;
+  }
 }
 
+:not(.flex).justifyCenter,
 :not(.flex).alignCenter {
   text-align: center;
 }
@@ -122,6 +126,12 @@ p a {
   padding: 40px;
   border: 1px solid var(--colorGreen);
   border-radius: var(--borderRadius);
+  margin: var(--spacing);
+}
+
+.message {
+  text-align: center;
+  padding: 20px;
   margin: var(--spacing);
 }
 

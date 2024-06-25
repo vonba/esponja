@@ -109,7 +109,9 @@ CREATE TABLE public.events (
   user_id integer,
   venue_id integer,
   name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-  slug character varying(80) COLLATE pg_catalog."default" UNIQUE NOT NULL,
+  submitter_name character varying(255) COLLATE pg_catalog."default",
+  submitter_email character varying(255) COLLATE pg_catalog."default",
+  slug character varying(120) COLLATE pg_catalog."default" UNIQUE NOT NULL,
   start_date date NOT NULL,
   start_time time without time zone,
   end_date date,
@@ -380,8 +382,10 @@ DECLARE
   input_id integer := COALESCE((input->>'id')::integer,0);
   input_user_id integer := (input->>'userId')::integer;
   input_venue_id integer := (input->>'venueId')::integer;
-  input_name varchar(100) := TRIM((input->>'name')::varchar);
-  input_slug varchar(100) := TRIM((input->>'slug')::varchar);
+  input_name varchar(255) := TRIM((input->>'name')::varchar);
+  input_submitter_name varchar(255) := TRIM((input->>'submitterName')::varchar);
+  input_submitter_email varchar(255) := TRIM((input->>'submitterEmail')::varchar);
+  input_slug varchar(120) := TRIM((input->>'slug')::varchar);
   input_start_date date := (input->>'startDate')::date;
   input_start_time time := (input->>'startTime')::time;
   input_end_date date := (input->>'endDate')::date;
@@ -394,14 +398,16 @@ DECLARE
   input_image_key_small varchar(255) := TRIM((input->>'imageKeySmall')::varchar);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO events (user_id, venue_id, name, slug, start_date, start_time, end_date, end_time, description, ticket_link, hidden, published, image_key_large, image_key_small)
-    VALUES (input_user_id, input_venue_id, input_name, input_slug, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden, input_published, input_image_key_large, input_image_key_small)
+    INSERT INTO events (user_id, venue_id, name, submitter_name, submitter_email, slug, start_date, start_time, end_date, end_time, description, ticket_link, hidden, published, image_key_large, image_key_small)
+    VALUES (input_user_id, input_venue_id, input_name, input_submitter_name, input_submitter_email, input_slug, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_hidden, input_published, input_image_key_large, input_image_key_small)
     RETURNING id INTO new_id;
   ELSE
     UPDATE events SET
       user_id = input_user_id,
       venue_id = input_venue_id,
       name = input_name,
+      submitter_name = input_submitter_name,
+      submitter_email = input_submitter_email,
       slug = input_slug,
       start_date = input_start_date,
       start_time = input_start_time,
@@ -424,7 +430,7 @@ AS $BODY$
 DECLARE
   input_id integer := COALESCE((input->>'id')::integer,0);
   input_name varchar(100) := TRIM((input->>'name')::varchar);
-  input_slug varchar(100) := TRIM((input->>'slug')::varchar);
+  input_slug varchar(120) := TRIM((input->>'slug')::varchar);
   input_addressline1 varchar(255) := TRIM((input->>'addressline1')::varchar);
   input_addressline2 varchar(255) := TRIM((input->>'addressline2')::varchar);
   input_postcode varchar(20) := TRIM((input->>'postcode')::varchar);
