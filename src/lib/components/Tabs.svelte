@@ -28,7 +28,7 @@
   header {
     display: flex;
     width: 100%;
-    gap: calc(2 * var(--spacing));
+    gap: var(--double);
     background-color: var(--colorGreen);
     color: var(--colorOffWhite);
     padding: var(--spacing);

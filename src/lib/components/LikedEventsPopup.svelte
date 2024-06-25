@@ -120,7 +120,7 @@
 
         display: grid;
         grid-template-columns: 1fr 30% 3em;
-        gap: calc(2 * var(--spacing));
+        gap: var(--double);
         height: var(--itemHeight);
         margin-bottom: var(--spacing);
         align-items: center;

@@ -129,8 +129,8 @@
 		form {
 			border: 1px solid var(--colorGreen);
 			border-radius: var(--borderRadius);
-			padding: calc(2 * var(--spacing));
-			margin: calc(2 * var(--spacing));
+			padding: var(--double);
+			margin: var(--double);
 			width: 100%;
 			max-width: 20em;
 		}

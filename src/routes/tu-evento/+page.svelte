@@ -94,11 +94,15 @@
   .editEventWrapper {
     max-width: $mediaM;
     border-top: 1px solid var(--colorGreen);
-    padding: 20px var(--spacing);
+    padding: 20px 0;
     margin-top: 20px;
 
     p {
       text-align: justify;
+    }
+
+    .intro {
+      padding: var(--spacing);
     }
 
     @media (min-width: $mediaL) {
@@ -107,9 +111,7 @@
       grid-template-columns: minmax(33%, $mediaM) minmax(33%, $mediaM) 1fr;
 
       .intro {
-        /* padding: calc(2 * var(--spacing)); */
-        padding-left: 0;
-        padding-right: 30px;
+        padding-right: var(--double);
       }
 
       :global(.editEvent) {

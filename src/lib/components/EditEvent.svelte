@@ -154,7 +154,7 @@
 
 <div class="editEvent">
 	{#if showTitle}
-		<h2>
+		<h2 class="title">
 			{#if isNewEvent}
 				Nuevo evento
 			{:else}
@@ -385,6 +385,14 @@
 	.editEvent {
 		max-width: $mediaM;
 		margin: 20px auto;
+		padding: var(--spacing);
+	}
+
+	.title {
+		text-transform: uppercase;
+		padding-bottom: var(--spacing);
+		margin-bottom: 1em;
+		border-bottom: 1px solid var(--colorGreen);
 	}
 
 	input#eventImage {
@@ -395,8 +403,8 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: var(--spacing);
-		margin-top: calc(2 * var(--spacing));
-		margin-bottom: calc(2 * var(--spacing));
+		margin-top: var(--double);
+		margin-bottom: var(--double);
 	}
 
 	.imageWrapper {
@@ -420,6 +428,6 @@
 	.confirmBeforePublishing {
 		border: 1px solid var(--colorGreen);
 		border-radius: var(--borderRadius);
-		padding: calc(2 * var(--spacing));
+		padding: var(--double);
 	}
 </style>

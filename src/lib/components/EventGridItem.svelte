@@ -177,7 +177,7 @@
     @media (min-width: $mediaM) {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: calc(2 * var(--spacing));
+      gap: var(--double);
       margin: 0 auto;
     }
     
@@ -208,7 +208,7 @@
 
     .actions {
       position: relative;
-      margin-bottom: calc(2 * var(--spacing));
+      margin-bottom: var(--double);
     }
   }
 </style>

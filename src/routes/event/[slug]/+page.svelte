@@ -120,7 +120,7 @@
     --eventColumns: 1;
     list-style: none;
     padding: var(--spacing);
-    margin: calc(2 * var(--spacing)) 0 0 0;
+    margin: var(--double) 0 0 0;
     border-top: 1px solid var(--colorGreen);
     
     @media (min-width: $mediaM) {
@@ -138,7 +138,7 @@
     }
     
     h2 {
-      padding: calc(2 * var(--spacing)) var(--spacing);
+      padding: var(--double) var(--spacing);
       border-bottom: 1px solid var(--colorGreen);
       font-size: var(--fsTitleBig);
     }

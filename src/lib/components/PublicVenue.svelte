@@ -48,7 +48,7 @@
 
   .venueHeader {
     padding: var(--spacing);
-    /* padding-top: calc(2 * var(--spacing)); */
+    /* padding-top: var(--double); */
     margin: var(--spacing) 0;
     display: flex;
     align-items: center;
