@@ -109,7 +109,7 @@ interface HomePageData {
 
 type SingleEventPageData = {
 	user: User,
-	event: {event: EEvent, relatedEvents: [EventProperties] | []},
+	event: {event: EventProperties, relatedEvents: [EventProperties] | []},
 	venues: [VenueProperties] | []
 }
 

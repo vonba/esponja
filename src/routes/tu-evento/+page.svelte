@@ -24,35 +24,37 @@
 
 
 <div class="editEventWrapper">
-  <div class="intro">
-    <h1>Agregar tu evento</h1>
-  
-    <p>
-      Si hay un evento de música alternativa en la CDMX que sientas que deberíamos publicar, ¡cuéntanos por acá! 
-    </p>
-    <p>
-      Por ejemplo:<br />
-      •Si eres artista y vas a tocar<br />
-      •Si vas a un concierto que no está publicado en Esponja<br />
-      •Si estás organizando cualquier evento relacionado con la música alternativa y lo quieres visibilizar
-    </p>
-  
-    <p>
-      No garantizamos que se va a publicar, pero vamos a considerar todos los eventos que se nos manden a través de este formulario.
-    </p>
-  
-    <p>
-      Si organizas eventos regularmente, o si eres una de esas personas que siempre saben dónde están los buenos toquines, escríbenos a <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
-      para solicitar tu cuenta de administrador, con la cual podrás libremente publicar y modificar eventos en Esponja.
-    </p>
+  {#if !eventSaved}
+    <div class="intro">
+      <h1>Agregar tu evento</h1>
+    
+      <p>
+        Si hay un evento de música alternativa en la CDMX que sientas que deberíamos publicar, ¡cuéntanos por acá! 
+      </p>
+      <p>
+        Por ejemplo:<br />
+        •Si eres artista y vas a tocar<br />
+        •Si vas a un concierto que no está publicado en Esponja<br />
+        •Si estás organizando cualquier evento relacionado con la música alternativa y lo quieres visibilizar
+      </p>
+    
+      <p>
+        No garantizamos que se va a publicar, pero vamos a considerar todos los eventos que se nos manden a través de este formulario.
+      </p>
+    
+      <p>
+        Si organizas eventos regularmente, o si eres una de esas personas que siempre saben dónde están los buenos toquines, escríbenos a <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+        para solicitar tu cuenta de administrador, con la cual podrás libremente publicar y modificar eventos en Esponja.
+      </p>
 
-    <p>
-      <i>
-        ¿Ya tienes tu cuenta?<br />
-        Por favor usa la <a href="/admin">administración</a> para agregar tus eventos.
-      </i>
-    </p>
-  </div>
+      <p>
+        <i>
+          ¿Ya tienes tu cuenta?<br />
+          Por favor usa la <a href="/admin">administración</a> para agregar tus eventos.
+        </i>
+      </p>
+    </div>
+  {/if}
 
   {#if eventSaved}
     <div class="eventSaved">
@@ -141,8 +143,10 @@
   }
 
   .eventSaved {
+    margin: var(--spacing);
     border: 1px solid var(--colorGreen);
     border-radius: var(--borderRadius);
-    padding: var(--spacing);
+    text-align: center;
+    padding: var(--double);
   }
 </style>

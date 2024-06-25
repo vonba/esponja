@@ -91,13 +91,6 @@
         </p>
       {/if}
 
-      {#if event.price}
-        <p class="price">
-          ${event.price}
-          {#if event.priceMax} – ${event.priceMax}{/if}
-        </p>
-      {/if}
-
       <div class="description">
         <p>{@html formatDescription(event.description)}</p>
       </div>
@@ -106,6 +99,13 @@
         <p class="ticketLink flex alignCenter">
           <img src="/icon-ticket-green.svg" alt="Entrada" />
           <a href={event.ticketLink}>Comprar boletos</a>
+        </p>
+      {/if}
+
+      {#if event.price}
+        <p class="price">
+          ${event.price}
+          {#if event.priceMax} – ${event.priceMax}{/if}
         </p>
       {/if}
     </div>
@@ -210,11 +210,14 @@
     }
 
     .description,
-    .ticketLink,
     .price {
       display: block;
     }
-        
+
+    .ticketLink {
+      display: flex;
+    }
+    
     .contentWrapper {
       padding: var(--spacing);
       padding-left: 0;

@@ -7,6 +7,7 @@ import { S3_BUCKET } from '$env/static/private';
 import { eventColumns } from '$lib/server/queries';
 import sanitizeHtml from 'sanitize-html';
 import { toSlug, truncateAndAppend } from '$lib/strings'
+import { sendModerationNotification } from '$lib/server/mail'
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
@@ -56,6 +57,7 @@ export const DELETE: RequestHandler = async event => {
 
 	// Delete unpublished event permanently from database
 	try {
+		// TODO: delete images from AWS
 		await query(`DELETE FROM events WHERE published = false AND id = ${eventId}`);
 	} catch (err) {
 		error(503, 'Database error');
@@ -189,7 +191,11 @@ export const POST: RequestHandler = async event => {
 	await doFileUpload(formData, eventId)
 
 	if (needsModeration) {
-		// TODO: send email notification
+		sendModerationNotification(
+			eventCreate.name,
+			eventCreate.submitterName,
+			eventCreate.submitterEmail
+		)
 	}
 
 	return json({

@@ -1,6 +1,6 @@
 import { createTransport } from 'nodemailer';
 // import SMTPTransport = require('nodemailer/lib/smtp-transport');
-import { MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, DOMAIN, MAIL_FROM } from '$env/static/private'
+import { MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, DOMAIN, MAIL_FROM, MAIL_NOTIFICATIONS_TO } from '$env/static/private'
 
 const transport = createTransport({
   host: MAIL_HOST,
@@ -57,6 +57,31 @@ function getStyledLink(text: string, link: string): string {
 
 async function sendMail(data: {to: string, from: string, subject: string, html: string}) {
   await transport.sendMail(data).catch((reason: string) => console.log('error', `Error sending email: ${reason}`));
+}
+
+export async function sendModerationNotification(
+  eventName: string,
+  submitterName: string,
+  submitterEmail: string,
+): Promise<void> {
+  await sendMail({
+    to: MAIL_NOTIFICATIONS_TO,
+    from: MAIL_FROM,
+    subject: `Evento en espera: ${eventName}`,
+    html: getFormattedEmail(`
+        <h2>¡Hola!</h2>
+        <p>
+					El siguiente evento se acaba de crear:<br />
+          ${eventName}
+				</p>
+        <p>
+          Creado por: ${submitterName} (${getStyledLink(submitterEmail, `mailto:${submitterEmail}`)})
+        </p>
+				<p>
+          ${getStyledButton('Ir a admin', `${DOMAIN}/admin`)}
+				</p>
+    `),
+  });
 }
 
 export async function sendPasswordResetEmail(

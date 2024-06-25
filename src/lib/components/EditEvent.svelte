@@ -181,7 +181,7 @@
 	<form id="eventForm" class={showAdminOptions ? '' : 'public'} autocomplete="off" novalidate enctype="multipart/form-data">
 		<fieldset disabled={loading}>
 			<div class="inputContainer">
-				<label for="name">Nombre del evento</label>
+				<label for="name">Nombre del evento *</label>
 				<input
 					bind:this={focusedField}
 					bind:value={event.name}
@@ -194,7 +194,7 @@
 
 			{#if !showAdminOptions}
 				<div class="inputContainer">
-					<label for="name">Tu nombre</label>
+					<label for="name">Tu nombre *</label>
 					<input
 						bind:value={event.submitterName}
 						id="name"
@@ -205,7 +205,7 @@
 				</div>
 
 				<div class="inputContainer">
-					<label for="name">Tu correo</label>
+					<label for="name">Tu correo *</label>
 					<input
 						type="email"
 						bind:value={event.submitterEmail}
@@ -226,7 +226,7 @@
 			{/if}
 
 			<div class="inputContainer url">
-				<label for="name">URL</label>
+				<label for="name">URL *</label>
 				{#if !isNewEvent}
 					<p><i>Evita cambiar el URL después de publicar el evento</i></p>
 				{/if}
@@ -245,7 +245,7 @@
 			</div>
 
 			<div class="inputContainer image">
-				<label for="image">Imagen</label>
+				<label for="image">Imagen *</label>
 				<p>Recomendamos una imagen con poco texto</p>
 				{#if event.imageKeyLarge}
 					<div class="imageWrapper">
@@ -266,13 +266,14 @@
 					type="file"
 					id="eventImage"
 					placeholder="Nombre"
+					required
 					bind:this={eventImageFile}
 					on:change={handleFileChange}
 				/>
 			</div>
 			
 			<div class="inputContainer date">
-				<label for="startDate">Inicia</label>
+				<label for="startDate">Inicia *</label>
 				<div class="flex">
 					<input
 						type="date"
@@ -310,7 +311,7 @@
 	
 			<div class="inputContainer venue">
 				{#if !showCustomAddress}
-					<label for="venueId">Foro</label>
+					<label for="venueId">Foro *</label>
 					<select
 						bind:value={event.venueId}
 						id="venueId"
@@ -382,30 +383,65 @@
 						<div class="invalidFeedback">Se requiere el código postal</div>
 					</div>
 
-					<EButton class="icon close" on:click={(e) => {
+					<EButton class="close" on:click={(e) => {
 						e.preventDefault()
 						event.addressLine1 = ''
 						event.addressLine2 = ''
 						event.addressPostCode = ''
 						showCustomAddress = false
 					}}>
-						Occultar dirección
+						Quitar dirección
 					</EButton>
 				</div>
 			{/if}
 
-			<div class="inputContainer">
-				<label for="name">Descripción</label>
+			<div class="inputContainer description">
+				<label for="name">Descripción *</label>
 				<textarea
 					rows=8
 					bind:value={event.description}
 					id="description"
+					required
 					placeholder="¡Cuéntanos! Puedes incluir ligas en la descripción."
+				/>
+			</div>
+
+			<div class="inputContainer price">
+				<label for="price">Precio</label>
+				<p>Si existe un rango de precios, puedes ingresar el mínimo y el máximo.</p>
+				<div class="flex">
+					<input
+						bind:value={event.price}
+						type="number"
+						min="1"
+						max="999999"
+						id="price"
+						placeholder="Precio (mínimo)"
+					/>
+					<input
+						bind:value={event.priceMax}
+						type="number"
+						min="1"
+						max="999999"
+						placeholder="Precio (máximo)"
+					/>
+				</div>
+			</div>
+
+			<div class="inputContainer ticketLink">
+				<label for="price">Link para comprar boletos</label>
+				<input
+					bind:value={event.ticketLink}
+					id="ticketLink"
+					placeholder="Precio (mínimo)"
 				/>
 			</div>
 		</fieldset>
 
 		{#if showAdminOptions && (event.published || isConfirmedToPublish)}
+			<p>
+				Si aún estás revisando el evento, lo puedes guardar como borrador. Los borradores no están visible al público.
+			</p>
 			<div class="inputContainer flex alignCenter">
 				<input
 					type="checkbox"

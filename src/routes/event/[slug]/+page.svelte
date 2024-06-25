@@ -17,6 +17,7 @@
   $: event = data.event.event
   $: relatedEvents = data.event.relatedEvents
   $: venue = venues.find(v => v.id === event?.venueId)
+  $: unmoderated = !event.published
 
   // State
   let showEditEvent = false
@@ -41,9 +42,10 @@
 </script>
 
 <svelte:head>
-  <title>{event 
-    ? `${event.name} el ${formatDate(event.startDate)} ${venue ? `en ${venue?.name}` : ''}` 
-    : 'No encontrado'}
+  <title>
+    {event.name} {venue ? `en ${venue?.name}` : ''}
+    | {formatDate(event.startDate)} 
+    | Esponja
   </title>
 </svelte:head>
 
@@ -92,10 +94,12 @@
     {/if}
 
   {:else}
+    <!-- NOTE: should most likely never reach this point, instead the 404 page is loaded -->
     <p class="emptyList">
       <strong>No encontrado</strong><br />
       No encontramos el evento que buscas. ¿Pegaste mal el link?
     </p>
+
   {/if}
 {/if}
 
