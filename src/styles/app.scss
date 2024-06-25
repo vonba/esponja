@@ -109,8 +109,8 @@ p a {
   }
 }
 
-:not(.flex).justifyCenter,
-:not(.flex).alignCenter {
+:not(.flex,.overlay).justifyCenter,
+:not(.flex,.overlay).alignCenter {
   text-align: center;
 }
 
@@ -146,6 +146,11 @@ p a {
   background-color: var(--colorOffWhite);
   padding: var(--spacing);
   overflow-y: auto;
+
+  &.alignCenter {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .no-hover {

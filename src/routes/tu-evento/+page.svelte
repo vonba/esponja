@@ -92,7 +92,6 @@
   }
 
   .editEventWrapper {
-    max-width: $mediaM;
     border-top: 1px solid var(--colorGreen);
     padding: 20px 0;
     margin-top: 20px;
@@ -103,6 +102,24 @@
 
     .intro {
       padding: var(--spacing);
+    }
+
+    :global(.editEvent) {
+      max-width: unset;
+      width: 100%;
+    }
+
+    @media (max-width: $mediaL) {
+      .intro,
+      :global(.editEvent) {
+        max-width: $mediaM;
+      }
+      
+      :global(.editEvent) {
+        // Avoid centering the form
+        margin-left: 0;
+        margin-right: 0;
+      }
     }
 
     @media (min-width: $mediaL) {

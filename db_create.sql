@@ -113,6 +113,7 @@ CREATE TABLE public.events (
   submitter_email character varying(255) COLLATE pg_catalog."default",
   address_line1 character varying(255) COLLATE pg_catalog."default",
   address_line2 character varying(255) COLLATE pg_catalog."default",
+  address_post_code character varying(20) COLLATE pg_catalog."default",
   address_city character varying(255) COLLATE pg_catalog."default",
   address_state character varying(255) COLLATE pg_catalog."default",
   address_country character varying(255) COLLATE pg_catalog."default",
@@ -124,6 +125,7 @@ CREATE TABLE public.events (
   description text COLLATE pg_catalog."default",
   ticket_link character varying(255) COLLATE pg_catalog."default",
   price NUMERIC(8, 2),
+  price_max NUMERIC(8, 2),
   image_key_large VARCHAR(255),
   image_key_small VARCHAR(255),
   hidden boolean NOT NULL DEFAULT false,
@@ -392,6 +394,7 @@ DECLARE
   input_submitter_email varchar(255) := TRIM((input->>'submitterEmail')::varchar);
   input_address_line1 varchar(255) := TRIM((input->>'addressLine1')::varchar);
   input_address_line2 varchar(255) := TRIM((input->>'addressLine2')::varchar);
+  input_address_post_code varchar(20) := TRIM((input->>'addressPostCode')::varchar);
   input_address_city varchar(255) := TRIM((input->>'addressCity')::varchar);
   input_address_state varchar(255) := TRIM((input->>'addressState')::varchar);
   input_address_country varchar(255) := TRIM((input->>'addressCountry')::varchar);
@@ -403,14 +406,15 @@ DECLARE
   input_description text := TRIM((input->>'description')::text);
   input_ticket_link varchar(255) := TRIM((input->>'ticketLink')::varchar);
   input_price NUMERIC(10, 2) := (input->>'price')::NUMERIC(10, 2);
+  input_price_max NUMERIC(10, 2) := (input->>'price_max')::NUMERIC(10, 2);
   input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);
   input_published boolean := COALESCE((input->>'published')::boolean, false);
   input_image_key_large varchar(255) := TRIM((input->>'imageKeyLarge')::varchar);
   input_image_key_small varchar(255) := TRIM((input->>'imageKeySmall')::varchar);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO events (user_id, venue_id, name, submitter_name, submitter_email, address_line1, address_line2, address_city, address_state, address_country, slug, start_date, start_time, end_date, end_time, description, ticket_link, price, hidden, published, image_key_large, image_key_small)
-    VALUES (input_user_id, input_venue_id, input_name, input_submitter_name, input_submitter_email, input_address_line1, input_address_line2, input_address_city, input_address_state, input_address_country, input_slug, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_price, input_hidden, input_published, input_image_key_large, input_image_key_small)
+    INSERT INTO events (user_id, venue_id, name, submitter_name, submitter_email, address_line1, address_line2, address_post_code, address_city, address_state, address_country, slug, start_date, start_time, end_date, end_time, description, ticket_link, price, price_max, hidden, published, image_key_large, image_key_small)
+    VALUES (input_user_id, input_venue_id, input_name, input_submitter_name, input_submitter_email, input_address_line1, input_address_line2, input_address_post_code, input_address_city, input_address_state, input_address_country, input_slug, input_start_date, input_start_time, input_end_date, input_end_time, input_description, input_ticket_link, input_price, input_price_max, input_hidden, input_published, input_image_key_large, input_image_key_small)
     RETURNING id INTO new_id;
   ELSE
     UPDATE events SET
@@ -421,6 +425,7 @@ BEGIN
       submitter_email = input_submitter_email,
       address_line1 = input_address_line1,
       address_line2 = input_address_line2,
+      address_post_code = input_address_post_code,
       address_city = input_address_city,
       address_state = input_address_state,
       address_country = input_address_country,
@@ -432,6 +437,7 @@ BEGIN
       description = input_description,
       ticket_link = input_ticket_link,
       price = input_price,
+      price_max = input_price_max,
       hidden = input_hidden,
       published = input_published,
       image_key_large = input_image_key_large,
@@ -533,7 +539,7 @@ CALL upsert_venue('{
 
 CALL upsert_event('{
   "userId": 1,
-  "venueId": 2,
+  "venueId": null,
   "name": "Fusce finibus dapibus ante a tristique",
   "slug": "fusce-finibus-dapibus-ante-a-tristique",
   "startDate": "2024-06-28",
@@ -543,10 +549,14 @@ CALL upsert_event('{
   "description": "Sed congue sit amet velit nec eleifend. Aliquam sodales mollis nunc, vel faucibus neque finibus nec. Duis ac mi sit amet mi fermentum rutrum scelerisque sit amet urna. Proin ac felis ex. Proin lacus nisl, consequat ac sollicitudin vitae, convallis sit amet lacus. Fusce finibus dapibus ante a tristique. Sed volutpat ultrices risus, efficitur auctor tortor fermentum vitae. Ut ultrices lorem nisl. Nunc a purus nisi. Integer tempor nibh vel aliquet sollicitudin. Aenean at tristique mauris. Aliquam lectus turpis, tincidunt id leo vitae, dapibus tempor sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur finibus lacinia enim vel cursus. Aliquam sit amet nunc risus.",
   "ticketLink": "http://example.com/in-blandit-dolor-aliquam-quis?abc=123",
   "price": 150,
+  "price_max": 200,
   "imageKeyLarge": "event-1-1718256781535.jpg",
   "imageKeySmall": "event-1-1718256784343.jpg",
   "hidden": false,
-  "published": true
+  "published": true,
+  "addressLine1": "Calle Esponja 11",
+  "addressLine2": "Obrera",
+  "addressPostCode": "12345"
 }', null);
 CALL upsert_event('{
   "userId": 1,
@@ -559,7 +569,8 @@ CALL upsert_event('{
   "endTime": "01:00:00",
   "description": "Quisque at erat vitae magna placerat tincidunt in in dolor. Morbi scelerisque elit at odio ultrices lacinia. Donec iaculis nec ligula ac vehicula. In ultricies in turpis nec elementum. Vivamus quis laoreet tellus, in sodales nulla. Fusce ullamcorper turpis in ligula sodales, eu tincidunt justo bibendum. Vivamus sagittis lorem quam, a vestibulum sem accumsan id. Nulla dictum pellentesque accumsan. Suspendisse malesuada sem eu lorem condimentum, quis accumsan ante fermentum. In non odio non sem rhoncus ultricies. In ac pellentesque nunc. Aenean blandit egestas vestibulum. Integer nec pharetra risus",
   "ticketLink": "",
-  "price": 12.50,
+  "price": 200,
+  "price": 300,
   "imageKeyLarge": "event-3-1718327102820.jpg",
   "imageKeySmall": "event-3-1718327104329.jpg",
   "hidden": false,

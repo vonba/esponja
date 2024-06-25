@@ -5,7 +5,9 @@
 	import EButton from './EButton.svelte'
 	import { getImageURL } from '$lib/file'
 	import { toSlug } from '$lib/strings'
-	import { fade } from 'svelte/transition'
+	import { fade, slide } from 'svelte/transition'
+	import EditVenue from './EditVenue.svelte'
+	import { invalidateAll } from '$app/navigation'
 	
 	// TODO: add price input field
 	// TODO: add ticket link input field
@@ -26,7 +28,6 @@
 		event = {
 			id: 0,
 			userId: 0,
-			venueId: 1,
 			name: '',
 			slug: '',
 			startDate: (new Date()).toISOString().split('T')[0], // YYYY-MM-DD
@@ -35,9 +36,10 @@
 			endTime: undefined,
 			description: '',
 			ticketLink: '',
-			priceCents: 0,
+			price: 0,
 			hidden: false,
 			published: true,
+			addressLine1: '',
 		}
 	}
 
@@ -50,11 +52,16 @@
 	let isEventImageSelected = false
 	let isSlugManuallyEdited = false
 	let isConfirmedToPublish = false
+	let showCreateVenue = false
+	let newVenueAdded = false
+	let showCustomAddress = event.addressLine1
 	const isNewEvent = event?.id === 0
 
 	// Observables
 	// Convert name to slug, unless slug has been manually edited
 	$: if(isNewEvent && !isSlugManuallyEdited) event.slug = toSlug(event.name)
+	// If there's a custom address, unset the venue id
+	$: if(event.addressLine1) event.venueId = undefined
 
 	// ====== HANDLERS ======
 
@@ -238,9 +245,9 @@
 				<div class="invalidFeedback">Se requiere un URL</div>
 			</div>
 
-			<div class="inputContainer">
+			<div class="inputContainer image">
 				<label for="image">Imagen</label>
-				<i>Recomendamos que la imagen del evento tenga poco texto</i>
+				<p>Recomendamos una imagen con poco texto</p>
 				{#if event.imageKeyLarge}
 					<div class="imageWrapper">
 						<img src={getImageURL(event.imageKeyLarge)} alt="Imagen del evento" />
@@ -265,7 +272,7 @@
 				/>
 			</div>
 			
-			<div class="inputContainer">
+			<div class="inputContainer date">
 				<label for="startDate">Inicia</label>
 				<div class="flex">
 					<input
@@ -284,7 +291,7 @@
 				<div class="invalidFeedback">Se requiere una fecha de inicio</div>
 			</div>
 
-			<div class="inputContainer">
+			<div class="inputContainer date">
 				<label for="endDate">Termina</label>
 				<div class="flex">
 					<input
@@ -302,17 +309,91 @@
 				</div>
 			</div>
 	
-			<div class="inputContainer">
-				<label for="venueId">Foro</label>
-				<select
-					bind:value={event.venueId}
-					id="venueId"
-				>
-					{#each venues as venue (venue?.id)}
-						<option value={venue?.id}>{venue?.name}</option>
-					{/each}
-				</select>
+			<div class="inputContainer venue">
+				{#if !showCustomAddress}
+					<label for="venueId">Foro</label>
+					<select
+						bind:value={event.venueId}
+						id="venueId"
+					>
+						{#each venues as venue (venue?.id)}
+							<option value={venue?.id}>{venue?.name}</option>
+						{/each}
+					</select>
+				{/if}
+				
+				{#if newVenueAdded}
+					<p class="mt">
+						Ya se agregó el nuevo foro
+					</p>
+
+				{:else if !showCustomAddress}
+					<p class="mt">¿No encuentras el foro que buscas?</p>
+					<div class="flex alignCenter">
+						{#if showAdminOptions}
+							<EButton
+								on:click={(e) => {
+									e.preventDefault()
+									showCreateVenue = true
+								}}
+							>
+								Nuevo foro
+							</EButton>
+						{/if}
+						<EButton on:click={(e) => {
+							e.preventDefault()
+							showCustomAddress = true
+						}}>
+							Introducir dirección
+						</EButton>
+					</div>
+				{/if}
+
 			</div>
+
+			{#if showCustomAddress}
+				<div class="customAddress" in:fade out:slide>
+					<div class="inputContainer">
+						<label for="addressLine1">Dirección</label>
+						<input
+							bind:value={event.addressLine1}
+							id="addressLine1"
+							class="mb"
+							required
+							maxlength="255"
+							placeholder="Calle y número"
+						/>
+						<div class="invalidFeedback">Se requiere la primera línea</div>
+						<input
+							bind:value={event.addressLine2}
+							id="addressLine2"
+							maxlength="255"
+							placeholder="(Opcional)"
+						/>
+					</div>
+
+					<div class="inputContainer">
+						<label for="addressLine1">Código postal</label>
+						<input
+							bind:value={event.addressPostCode}
+							id="addressPostCode"
+							maxlength="20"
+							required
+						/>
+						<div class="invalidFeedback">Se requiere el código postal</div>
+					</div>
+
+					<EButton class="icon close" on:click={(e) => {
+						e.preventDefault()
+						event.addressLine1 = ''
+						event.addressLine2 = ''
+						event.addressPostCode = ''
+						showCustomAddress = false
+					}}>
+						Occultar dirección
+					</EButton>
+				</div>
+			{/if}
 
 			<div class="inputContainer">
 				<label for="name">Descripción</label>
@@ -320,7 +401,7 @@
 					rows=8
 					bind:value={event.description}
 					id="description"
-					placeholder="¡Cuéntanos!"
+					placeholder="¡Cuéntanos! Puedes incluir ligas en la descripción."
 				/>
 			</div>
 		</fieldset>
@@ -373,6 +454,24 @@
 	</form>
 </div>
 
+{#if showCreateVenue}
+  <div in:fade class="overlay alignCenter">
+    <EditVenue 
+      venue={null} 
+      on:saved={(reply) => {
+        invalidateAll();
+				const newId = reply?.detail?.reply?.newId
+				if (newId) {
+					event.venueId = newId
+					newVenueAdded = true
+				}
+        showCreateVenue = false
+      }}
+      on:cancel={() => showCreateVenue = false}
+    />
+  </div>
+{/if}
+
 <style lang="scss">
 	@import "$lib/sass/variables";
 
@@ -380,6 +479,13 @@
 		width: 100%;
 		position: relative;
 		margin-top: var(--spacing);
+	}
+
+	form {
+		p {
+			font-style: italic;
+			margin-bottom: 0.5em;
+		}
 	}
 
 	.editEvent {
@@ -429,5 +535,20 @@
 		border: 1px solid var(--colorGreen);
 		border-radius: var(--borderRadius);
 		padding: var(--double);
+	}
+
+	.customAddress {
+		border: 1px solid var(--colorGreen);
+		border-radius: var(--borderRadius);
+		padding: var(--spacing);
+		margin-bottom: var(--spacing);
+		position: relative;
+		padding-top: var(--double);
+		
+		:global(.close) {
+			position: absolute;
+			top: var(--spacing);
+			right: var(--spacing);
+		}
 	}
 </style>

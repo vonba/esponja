@@ -6,7 +6,7 @@ import { PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns } from '$lib/server/queries';
 import sanitizeHtml from 'sanitize-html';
-import { truncateAndAppend } from '$lib/strings'
+import { toSlug, truncateAndAppend } from '$lib/strings'
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
@@ -93,6 +93,7 @@ export const PUT: RequestHandler = async event => {
 	}
 
 	// Check for slug duplicates
+	eventUpdate.slug = toSlug(eventUpdate.slug)
 	const sameSlugResult = await query(`SELECT id FROM events WHERE slug = '${eventUpdate.slug}' AND id != ${existingEvent.id}`);
 	if (sameSlugResult.rowCount) {
 		// If slug already exists will add a "-2" at the end
@@ -143,6 +144,7 @@ export const POST: RequestHandler = async event => {
 	}
 
 	// Check for slug duplicates
+	eventCreate.slug = toSlug(eventCreate.slug)
 	const sameSlugResult = await query(`SELECT id FROM events WHERE slug = '${eventCreate.slug}'`);
 	if (sameSlugResult.rowCount) {
 		// If slug already exists will add a "-2" at the end

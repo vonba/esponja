@@ -21,7 +21,7 @@
 		}
 	}
 	
-	let focusedField: HTMLInputElement
+	let venueFocusedField: HTMLInputElement
 	let message: string
 	let error = false
 	let loading = false
@@ -29,11 +29,11 @@
 	const isNewVenue = venue.id === 0
 
 	onMount(() => {
-		focusedField.focus()
+		venueFocusedField.focus()
 	})
 
 	async function update() {
-		message = ''
+		let message
 		const form = <HTMLFormElement>document.getElementById('venueForm')
 
 		if (form.checkValidity()) {
@@ -83,7 +83,7 @@
 		<div class="inputContainer">
 			<label for="name">Nombre</label>
 			<input
-				bind:this={focusedField}
+				bind:this={venueFocusedField}
 				bind:value={venue.name}
 				id="name"
 				required

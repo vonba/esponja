@@ -82,9 +82,32 @@
         </p>
       {/if}
 
+      {#if !venue && event.addressLine1}
+        <p class="venue">
+          <img src="/icon-venue-green.svg" alt="venue" />
+          {event.addressLine1}<br />
+          {#if event.addressLine2}{event.addressLine2}<br />{/if}
+          {#if event.addressPostCode}{event.addressPostCode}<br />{/if}
+        </p>
+      {/if}
+
+      {#if event.price}
+        <p class="price">
+          ${event.price}
+          {#if event.priceMax} – ${event.priceMax}{/if}
+        </p>
+      {/if}
+
       <div class="description">
         <p>{@html formatDescription(event.description)}</p>
       </div>
+
+      {#if event.ticketLink}
+        <p class="ticketLink flex alignCenter">
+          <img src="/icon-ticket-green.svg" alt="Entrada" />
+          <a href={event.ticketLink}>Comprar boletos</a>
+        </p>
+      {/if}
     </div>
   </li>
 {/if}
@@ -109,6 +132,11 @@
         font-size: var(--fsTitleBig);
       }
     }
+  }
+
+  .ticketLink,
+  .price {
+    display: none;
   }
 
   .actions {
@@ -180,11 +208,13 @@
       gap: var(--double);
       margin: 0 auto;
     }
-    
-    .description {
+
+    .description,
+    .ticketLink,
+    .price {
       display: block;
     }
-    
+        
     .contentWrapper {
       padding: var(--spacing);
       padding-left: 0;

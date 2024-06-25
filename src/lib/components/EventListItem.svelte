@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { formatDate, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
-	import { formatDescription } from "$lib/strings"
   import EButton from "./EButton.svelte"
   
   export let event: EventProperties
@@ -27,12 +26,23 @@
       </div>
     </div>
 
-    <p class="venue">
-      <img src="/icon-venue-green.svg" alt="Foro" />
-      <a href="/venue/{venue?.slug}">
-        {venue?.name}
-      </a>
-    </p>
+    {#if venue}
+      <p class="venue">
+        <img src="/icon-venue-green.svg" alt="venue" />
+        <a href="/venue/{venue.slug}">
+          {venue.name}
+        </a>
+      </p>
+    {/if}
+
+    {#if !venue && event.addressLine1}
+      <p class="venue">
+        <img src="/icon-venue-green.svg" alt="venue" />
+        {event.addressLine1}<br />
+        {#if event.addressLine2}{event.addressLine2}<br />{/if}
+        {#if event.addressPostCode}{event.addressPostCode}<br />{/if}
+      </p>
+    {/if}
     
     <div class="actions">
       {#if handleLikeEvent}

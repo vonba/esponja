@@ -1,6 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
+import { toSlug } from '$lib/strings';
 
 // Possible query parameters:
 // showHidden=true : include venues with hidden=true
@@ -25,15 +26,17 @@ export const PUT: RequestHandler = async event => {
 		
 	const venueUpdate = await event.request.json()
 
+	// TODO: check slug is unique
+
 	try {
 		await query(`CALL upsert_venue($1, $2);`, [JSON.stringify(venueUpdate), null])
 	} catch (err) {
 		console.log('Error updating venue', err)
-		error(503, 'Database error')
+		error(503, 'No se pudo actualizar el foro')
 	}
 
 	return json({
-		message: 'Successfully updated venue.'
+		message: 'Foro actualizado'
 	})
 }
 
@@ -42,17 +45,23 @@ export const POST: RequestHandler = async event => {
 	if (!user) error(401, 'Unauthorized')
 		
 	const venueCreate = await event.request.json()
+	const newSlug = toSlug(venueCreate.name)
+	venueCreate.slug = newSlug
+	// TODO: check slug is unique
 
+	let newId
 	try {
 		// Creates new venue (id = 0)
-		await query(`CALL upsert_venue($1, $2);`, [0, JSON.stringify(venueCreate), null])
+		const dbResult = await query(`CALL upsert_venue($1, $2);`, [JSON.stringify(venueCreate), null])
+		newId = dbResult.rows[0].new_id;
 	} catch (err) {
 		console.log('Error creating venue', err)
-		error(503, 'Database error')
+		error(503, 'No se pudo crear el foro')
 	}
 
 	return json({
-		message: 'Successfully created venue.'
+		message: 'Nuevo foro creado',
+		newId
 	})
 }
 

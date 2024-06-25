@@ -66,8 +66,8 @@ type Venue = VenueProperties | undefined | null
 
 interface EventProperties {
   id: number;
-  userId: number;
-  venueId: number;
+  userId?: number;
+  venueId?: number;
   name: string;
 	slug: string;
   startDate: string; // ISO 8601 date format
@@ -76,13 +76,20 @@ interface EventProperties {
   endTime?: string; // ISO 8601 time format
   description?: string;
   ticketLink?: string;
-  priceCents?: number;
+  price?: number;
+  priceMax?: number;
 	imageKeyLarge?: string;
 	imageKeySmall?: string;
 	hidden?: boolean;
 	published?: boolean;
 	submitterName?: string;
 	submitterEmail?: string;
+	addressLine1?: string;
+	addressLine2?: string;
+	addressPostCode?: string;
+	addressCity?: string;
+	addressState?: string;
+	addressCountry?: string;
 }
 
 type EEvent = EventProperties | undefined | null
