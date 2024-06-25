@@ -7,22 +7,6 @@ declare namespace App {
 	interface Locals {
 		user: User
 	}
-
-	// interface Platform {}
-
-	interface PrivateEnv {
-		// $env/static/private
-		DATABASE_URL: string
-		DOMAIN: string
-		JWT_SECRET: string
-		SENDGRID_KEY: string
-		SENDGRID_SENDER: string
-	}
-
-	interface PublicEnv {
-		// $env/static/public
-		PUBLIC_GOOGLE_CLIENT_ID: string
-	}
 }
 
 interface AuthenticationResult {
