@@ -149,7 +149,7 @@
     --eventColumns: 1;
     list-style: none;
     padding: var(--spacing);
-    margin: var(--double) 0 0 0;
+    margin: var(--spacing) 0 0 0;
     border-top: 1px solid var(--colorGreen);
     
     @media (min-width: $mediaM) {

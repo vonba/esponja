@@ -9,7 +9,7 @@
 
 <div class="publicVenue {events.length ? '' : 'noEvents'}">
   
-  <div class="map">
+  <div class="mapWrapper">
     <div class="venueHeader">
       <img src="/icon-venue-green.svg" alt="Foro" />
       <h2>
@@ -17,17 +17,15 @@
       </h2>
     </div>
 
+    <div class="address">
+      {venue.addressline1}
+      {#if venue.addressline2}
+        , {venue.addressline2}
+      {/if}
+    </div>
+
     {#if venue.addressline1}  
       <Map {venue} />
-
-      <div class="address">
-        <strong>Dirección</strong><br />
-        {venue.addressline1}
-        {#if venue.addressline2}
-          <br />
-          {venue.addressline2}
-        {/if}
-      </div>
     {/if}
   </div>
 
@@ -47,17 +45,13 @@
   @import "$lib/sass/variables";
 
   .venueHeader {
-    padding: var(--spacing);
-    /* padding-top: var(--double); */
     margin: var(--spacing) 0;
     display: flex;
     align-items: center;
     gap: var(--spacing);
-    /* border-top: 1px solid var(--colorGreen); */
 
     img {
       height: var(--fsTitleBig);
-      /* margin-top: -5px; */
     }
     
     h2 {
@@ -66,12 +60,12 @@
     }
   }
 
-  .map {
-    padding: var(--spacing);
-    padding-top: 0;
-    border: 1px solid var(--colorGreen);
-    border-radius: var(--borderRadius);
+  .mapWrapper {
     margin: var(--spacing);
+  }
+
+  :global(.map) {
+    border-radius: var(--borderRadius);
   }
 
   .events {
@@ -82,12 +76,13 @@
 
   .address {
     padding-top: 0;
-    margin-top: var(--spacing);
-    font-size: var(--fsTitleMedium);
-    text-align: right;
+    margin: var(--spacing) 0;
   }
 
   .publicVenue {
+    border-top: 1px solid var(--colorGreen);
+    margin-top: var(--spacing);
+
     @media (min-width: $mediaL) {
       &:not(.noEvents) {
         display: grid;
@@ -95,7 +90,14 @@
         gap: var(--spacing);
   
         .events {
-          margin-top: 20px;
+          padding-top: var(--double);
+        }
+        
+        .mapWrapper {
+          border-right: 1px solid var(--colorGreen);
+          margin: 0 var(--spacing);
+          padding: var(--spacing) 0;          
+          padding-right: var(--double);
         }
       }
     }    
