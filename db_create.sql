@@ -55,7 +55,7 @@ CREATE TABLE public.users (
   password character varying(80) COLLATE pg_catalog."default",
   first_name character varying(20) COLLATE pg_catalog."default" NOT NULL,
   last_name character varying(20) COLLATE pg_catalog."default" NOT NULL,
-  hidden boolean NOT NULL DEFAULT false,
+  blocked boolean NOT NULL DEFAULT false,
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_email_unique UNIQUE (email)
     deferrable initially immediate
@@ -334,13 +334,13 @@ DECLARE
   input_password varchar(80) := COALESCE((input->>'password')::varchar, '');
   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
-  input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);
+  input_blocked boolean := COALESCE((input->>'blocked')::boolean, false);
 BEGIN
   IF input_id = 0 THEN
-    INSERT INTO users (role, email, password, first_name, last_name, hidden)
+    INSERT INTO users (role, email, password, first_name, last_name, blocked)
     VALUES (
 	  input_role, input_email, crypt(input_password, gen_salt('bf', 8)),
-	  input_first_name, input_last_name, input_hidden);
+	  input_first_name, input_last_name, input_blocked);
   ELSE
     UPDATE users SET
 	  role = input_role,
@@ -351,7 +351,7 @@ BEGIN
 	  END,
 	  first_name = input_first_name,
 	  last_name = input_last_name,
-    hidden = input_hidden
+    blocked = input_blocked
 	WHERE id = input_id;
   END IF;
 END;

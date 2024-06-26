@@ -107,6 +107,8 @@ export const PUT: RequestHandler = async event => {
 	eventUpdate.description = sanitizeHtml(eventUpdate.description);
 	eventUpdate.ticketLink = sanitizeHtml(eventUpdate.ticketLink);
 	
+	// TODO: if event published is changing to true, send email to submitterEmail
+
 	// Set status to published
 	eventUpdate.published = true
 

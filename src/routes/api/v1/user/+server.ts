@@ -2,14 +2,21 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 
+// Possible query parameters:
+// showBlocked=true : include users with blocked=true
 export const GET: RequestHandler = async event => {
 	const { user } = event.locals
+	if (!user || user.role !== 'admin') error(401, 'Unauthorized')
 
-	if (!user) error(401, 'Unauthorized')
+	// Set query constraints
+	const searchParams = event.url.searchParams;
+	const blockedConstraint = searchParams.get('showBlocked') ? '1=1' : 'blocked = false';
 
 	let result;
 	try {
-		result = await query('SELECT id, email, role, hidden, first_name AS "firstName", last_name AS "lastName" FROM users WHERE hidden = false ORDER BY first_name ASC');
+		result = await query(`SELECT 
+			id, email, role, blocked, first_name AS "firstName", last_name AS "lastName" 
+			FROM users WHERE ${blockedConstraint} ORDER BY first_name ASC`);
 	} catch (err) {
 		console.log(err)
 		error(503, 'Database error')

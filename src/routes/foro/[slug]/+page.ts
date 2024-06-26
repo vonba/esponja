@@ -1,4 +1,4 @@
-import { error } from "@sveltejs/kit";
+import { error, type HttpError } from "@sveltejs/kit";
 
 export const load = async ({params, fetch}) => {
 	const venueId = params.slug
@@ -12,14 +12,19 @@ export const load = async ({params, fetch}) => {
 			method: 'GET'
 		});
 		if (!venueResponse.ok) {
-			throw new Error('Failed to fetch single venue');
+			error(venueResponse.status)
 		}
 		const { venue, events } = await venueResponse.json()
 		returnValue.venue = venue
 		returnValue.events = events
 
 	} catch (err) {
-		error(503, 'Database error')
+		const errorObj = err as HttpError;
+		if (errorObj.status) {
+			throw error(errorObj.status, errorObj.body?.message || 'Error fetching event');
+		} else {
+			throw error(503, 'Database error');
+		}
 	}
 
 	return returnValue;

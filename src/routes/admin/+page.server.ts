@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPage
 	}
 
 	// Fetch venues
-	const venueResponse = await fetch('/api/v1/venue', {
+	const venueResponse = await fetch('/api/v1/venue?showHidden=true', {
 		method: 'GET'
 	});
 	if (!venueResponse.ok) {
@@ -37,7 +37,7 @@ export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPage
 
 	if ('admin' === user.role) {
 		// Fetch users from the API
-		const userResponse = await fetch('/api/v1/user', {
+		const userResponse = await fetch('/api/v1/user?showBlocked=true', {
 			method: 'GET'
 		});
 		if (!userResponse.ok) {

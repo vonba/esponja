@@ -17,7 +17,7 @@
 			lastName: '',
 			password: '',
 			email: '',
-			hidden: false,
+			blocked: false,
 		}
 	}
 	$: isNewUser = user.id === 0
@@ -160,6 +160,21 @@
 			/>
 			<div class="invalidFeedback">Se requiere el apellido</div>
 		</div>
+
+		<div class="inputContainer flex alignCenter">
+			<input
+				type="checkbox"
+				bind:checked={user.blocked}
+				id="hidden"
+			/>
+			<label for="hidden">
+				Bloquear
+			</label>
+		</div>
+
+		{#if user.blocked}
+			Al bloquear un usuario, este ya no podrá ingresar.
+		{/if}
 
 		{#if message}
 			<p>{message}</p>

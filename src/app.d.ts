@@ -29,7 +29,7 @@ interface UserProperties {
 	firstName?: string
 	lastName?: string
 	email?: string
-	hidden: boolean
+	blocked: boolean
 }
 
 type User = UserProperties | undefined | null
