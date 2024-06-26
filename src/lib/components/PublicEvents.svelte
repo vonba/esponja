@@ -9,6 +9,7 @@
   import { likedEventsStore, toggleLikedEvent } from '$lib/likedEvents';
 
   // Props
+  export let eventTimeWindow = 'todo'
   export let events: [EventProperties] | []
   export let venues: [VenueProperties] | []
   export let startDate: string | null
@@ -77,7 +78,20 @@
     </ul>
     {#if !filteredEvents.length}
       <p class="emptyList">
-        No hay eventos para las fechas seleccionadas
+        {#if eventTimeWindow === 'hoy'}
+          No hay eventos hoy
+        {:else if eventTimeWindow === 'manana'}
+          No hay eventos mañana
+        {:else if eventTimeWindow === 'semana'}
+          No hay eventos esta semana
+        <!-- {:else if eventTimeWindow === 'mes'}
+          No hay eventos este mes -->
+        {:else}
+          No hay ningún evento por el momento 😥<br />
+          Pero tú nos puedes ayudar, <a href="/tu-evento">agregando el tuyo</a>
+          <br />
+          También nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
+        {/if}
       </p>
     {/if}
   </div>

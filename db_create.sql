@@ -189,13 +189,13 @@ BEGIN
   WITH user_authenticated AS (
     SELECT users.id, role, first_name, last_name
     FROM users
-    WHERE email = input_email AND password = crypt(input_password, password) LIMIT 1
+    WHERE email = input_email AND blocked = false AND password = crypt(input_password, password) LIMIT 1
   )
   SELECT json_build_object(
 	'statusCode', CASE WHEN (SELECT COUNT(*) FROM user_authenticated) > 0 THEN 200 ELSE 401 END,
 	'status', CASE WHEN (SELECT COUNT(*) FROM user_authenticated) > 0
-	  THEN 'Login successful.'
-	  ELSE 'Invalid username/password combination.'
+	  THEN 'login-success'
+	  ELSE 'login-fail'
 	END,
 	'user', CASE WHEN (SELECT COUNT(*) FROM user_authenticated) > 0
 	  THEN (SELECT json_build_object(

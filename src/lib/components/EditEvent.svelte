@@ -433,7 +433,6 @@
 				<input
 					bind:value={event.ticketLink}
 					id="ticketLink"
-					placeholder="Precio (mínimo)"
 				/>
 			</div>
 		</fieldset>

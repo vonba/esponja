@@ -129,6 +129,7 @@
 
 <section id="homePage">
 	<PublicEvents 
+		{eventTimeWindow}
 		events={data.events} 
 		venues={data.venues} 
 		startDate={eventFilterDateStart} 

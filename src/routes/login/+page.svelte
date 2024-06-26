@@ -7,8 +7,10 @@
 	import EButton from '$lib/components/EButton.svelte'
 	import ButtonLink from '$lib/components/ButtonLink.svelte'
 
+	// States
 	let focusedField: HTMLInputElement
 	let message: string
+	let loading = false
 	const credentials: Credentials = {
 		email: '',
 		password: ''
@@ -20,6 +22,7 @@
 		const form = <HTMLFormElement>document.getElementById('signIn')
 
 		if (form.checkValidity()) {
+			loading = true
 			try {
 				await loginLocal(credentials)
 			} catch (err) {
@@ -28,6 +31,7 @@
 					message = err.message
 				}
 			}
+			loading = false
 		} else {
 			form.classList.add('.validationErrors')
 			focusOnFirstError(form)
@@ -52,6 +56,7 @@
 				loginSession.set(fromEndpoint.user)
 				const { role } = fromEndpoint.user
 				const referrer = $page.url.searchParams.get('referrer')
+
 				if (referrer) {
 					goto(referrer)
 				} else {
@@ -62,7 +67,9 @@
 			}
 		} catch (err) {
 			if (err instanceof Error) {
-				console.error('Login error', err)
+				let message = err.message
+				if ('login-fail' === err.message) message = 'No pudimos autenticar el usuario'
+				throw new Error(message)
 			}
 		}
 	}
@@ -77,7 +84,7 @@
 	<form id="signIn" autocomplete="on" novalidate>
 		<h1 class="">Bienvenidx</h1>
 
-		<fieldset>
+		<fieldset disabled={loading}>
 			<div class="inputContainer">
 				<label for="email">Correo electrónico</label>
 				<input
@@ -110,12 +117,14 @@
 		</p>
 
 		{#if message}
-			<p class="text-danger">{message}</p>
+			<p class="loginMessage">{message}</p>
 		{/if}
 		
 		<div class="flex">
-			<EButton on:click={login} class="large">Ingresar</EButton>
-			<ButtonLink href="/info" class="large">Cancelar</ButtonLink>
+			<EButton on:click={login} disabled={loading} class="large">
+				{loading ? 'Cargando...' : 'Ingresar'}
+			</EButton>
+			<ButtonLink href="/" class="large">Cancelar</ButtonLink>
 		</div>
 	</form>
 </div>
@@ -135,5 +144,9 @@
 			width: 100%;
 			max-width: 20em;
 		}
+	}
+
+	.loginMessage {
+		font-weight: bold;
 	}
 </style>

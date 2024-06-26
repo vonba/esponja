@@ -1,6 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
+import { PRODUCTION } from '$env/static/private'
 
 export const POST: RequestHandler = async event => {
 	const { cookies } = event
@@ -41,18 +42,18 @@ export const POST: RequestHandler = async event => {
 
 	const { authenticationResult }: { authenticationResult: AuthenticationResult } = result.rows[0]
 
-	if (!authenticationResult.user)
+	if (!authenticationResult.user) {
 		// includes when a user tries to register an existing email account with wrong password
 		error(authenticationResult.statusCode, authenticationResult.status)
+	}
 
-	// if (slug !== 'register') {
-	// 	// Ensures hooks.server.ts:handle() will not delete session cookie
-	// 	event.locals.user = authenticationResult.user
-	// 	cookies.set('session', authenticationResult.sessionId, {
-	// 		httpOnly: true,
-	// 		sameSite: 'lax',
-	// 		path: '/'
-	// 	})
-	// }
+	// Ensures hooks.server.ts:handle() will not delete session cookie
+	event.locals.user = authenticationResult.user
+	cookies.set('session', authenticationResult.sessionId, {
+		httpOnly: true,
+		sameSite: 'lax',
+		secure: PRODUCTION === 'true',
+		path: '/'
+	})
 	return json({ message: authenticationResult.status, user: authenticationResult.user })
 }

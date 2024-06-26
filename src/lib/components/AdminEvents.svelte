@@ -151,6 +151,7 @@
 
 <style lang="scss">
   @import "$lib/sass/variables";
+  
   .tools {
     display: flex;
     justify-content: space-between;
