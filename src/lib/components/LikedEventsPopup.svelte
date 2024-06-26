@@ -34,7 +34,7 @@
               <li class="event" in:fade out:fade>
                 <div class="eventContentWrapper">
                   <h2>
-                    <a href="/event/{event.slug}">{event.name}</a>
+                    <a href="/evento/{event.slug}">{event.name}</a>
                   </h2>
               
                   <div class="datesWrapper flex">
@@ -45,7 +45,7 @@
                   </div>
                 </div>
               
-                <a href="/event/{event.slug}">
+                <a href="/evento/{event.slug}">
                   <div class="imageWrapper">
                     {#if event.imageKeySmall && event.imageKeyLarge}
                     
@@ -105,6 +105,7 @@
       align-items: center;
       
       .events {
+        width: 100%;
         max-width: 40em;
         flex-grow: 1;
         list-style: none;
@@ -119,7 +120,7 @@
         --itemHeight: 150px;
 
         display: grid;
-        grid-template-columns: 1fr 30% 3em;
+        grid-template-columns: 1fr 30% 2em;
         gap: var(--double);
         height: var(--itemHeight);
         margin-bottom: var(--spacing);

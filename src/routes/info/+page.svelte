@@ -34,6 +34,13 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 		<p>
 			¿Tienes dudas? ¿Quieres ayudar a mantener Esponja actualizado para que aproveche toda la comunidad artística de tus conocimientos? Nos puedes contactar en <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
 		</p>
+
+		<h2>Créditos</h2>
+		<p>
+			Desarrollo por <a href="https://balthazaurus.com">Balthazaurus</a><br />
+			Diseño por Balthazaurus y Leyla Udimamedova<br />
+			Ilustraciones por Ksenia Kirsta
+		</p>
 	</div>
 </section>
 

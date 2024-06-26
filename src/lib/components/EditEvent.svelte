@@ -85,7 +85,7 @@
 		if (form.checkValidity()) {
 			const url = '/api/v1/event'
 			const method = isNewEvent ? 'POST' : 'PUT'
-
+			
 			try {
 				// Convert event object to form data
 				const formData = new FormData();
@@ -266,7 +266,7 @@
 					type="file"
 					id="eventImage"
 					placeholder="Nombre"
-					required
+					required={isNewEvent}
 					bind:this={eventImageFile}
 					on:change={handleFileChange}
 				/>

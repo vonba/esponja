@@ -6,13 +6,15 @@
   export let setDisplayMessage: Function
 </script>
 
-<div class="message" in:fade out:slide>
-        <h2>
-          {displayMessage}
-          &nbsp;
-          <EButton on:click={() => setDisplayMessage('')} class="large">Ok</EButton>
-        </h2>
-      </div>
+{#if displayMessage}
+  <div class="message" in:fade out:slide>
+    <h2>
+      {displayMessage}
+      &nbsp;
+      <EButton on:click={() => setDisplayMessage('')} class="large">Ok</EButton>
+    </h2>
+  </div>
+{/if}
 
 <style lang="scss">
   .message {

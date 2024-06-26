@@ -7,29 +7,41 @@
   import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { fade } from "svelte/transition"
 	import { likedEventsPopupVisible, loginSession } from "../../../stores"
+	import { likedEventsStore, toggleLikedEvent } from "$lib/likedEvents"
 	import { formatDate } from "$lib/dateTime"
 	import EventSummary from "$lib/components/EventSummary.svelte"
-	import { toggleLikedEvent } from "$lib/likedEvents"
+	import Notification from "$lib/components/Notification.svelte"
 
+  // Props
   export let data: SingleEventPageData
+  
+  // Observables
   let venues, event, relatedEvents, venue
   $: venues = data.venues
   $: event = data.event.event
   $: relatedEvents = data.event.relatedEvents
   $: venue = venues.find(v => v.id === event?.venueId)
   $: unmoderated = !event.published
+  $: likedEvents = $likedEventsStore;
 
   // State
   let showEditEvent = false
   let editEvent: EventProperties | null = null
+
+  // Display message
+  let displayMessage = ''
+  const setDisplayMessage = (str: string) => displayMessage = str
   
+
+  // Handlers
+
   const showLikedEvents = () => {
     likedEventsPopupVisible.set(true);
     document.body.classList.add('popupVisible');
   }
 
   const handleLikeEvent = (event: EventProperties) => {
-    toggleLikedEvent(event);
+    toggleLikedEvent(event)
   }
 
   const handleEditEvent = $loginSession?.role === 'admin'
@@ -72,14 +84,19 @@
       on:saved={() => {
         invalidateAll();
         showEditEvent = false
+        setDisplayMessage('Evento actualizado')
       }}
       on:cancel={() => showEditEvent = false}
     />
   </div>
 {:else}
   {#if event}
+    {#if unmoderated}
+      <h2 class="unpublishedWarning">Prevista de evento no publicado</h2>
+    {/if}
+    <Notification {displayMessage} {setDisplayMessage} />
     <ul class="eventWrapper">
-      <EventGridItem isSingle={true} {event} {venues} {handleLikeEvent} {handleEditEvent} />
+      <EventGridItem isSingle={true} {event} {venues} {handleLikeEvent} {handleEditEvent} isLiked={likedEvents.some(e => e.id === event.id)} />
     </ul>
 
     {#if relatedEvents.length && venue}
@@ -111,6 +128,14 @@
     justify-content: space-between;
   }
 
+  .unpublishedWarning {
+    text-align: center;
+    border-top: 1px solid var(--colorGreen);
+    margin-top: var(--spacing);
+    padding-top: var(--spacing);
+    margin-bottom: calc(-1 * var(--spacing));
+  }
+  
   #pageNavigation {
     margin-top: var(--spacing);
     padding: var(--spacing);
@@ -135,6 +160,7 @@
   .relatedEventsWrapper {
     max-width: $singleEventMaxWidth;
     margin: 0 auto;
+    border-top: 1px solid var(--colorGreen);
     
     @media (min-width: $singleEventMaxWidth) {
       border: 1px solid var(--colorGreen);

@@ -9,7 +9,7 @@
 <li class="eventSummary">
   <div class="contentWrapper">
     <h2>
-      <a href="/event/{event.slug}">{event.name}</a>
+      <a href="/evento/{event.slug}">{event.name}</a>
     </h2>
 
     <div class="datesWrapper">
@@ -21,13 +21,13 @@
 
     <p class="venue">
       <img src="/icon-venue-green.svg" alt="Foro" />
-      <a href="/venue/{venue?.slug}">
+      <a href="/foro/{venue?.slug}">
         {venue?.name}
       </a>
     </p>
   </div>
 
-  <a href="/event/{event.slug}">
+  <a href="/evento/{event.slug}">
     <div class="imageWrapper">
       {#if event.imageKeySmall && event.imageKeyLarge}
       

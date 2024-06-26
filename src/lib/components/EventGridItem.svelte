@@ -19,7 +19,7 @@
 
 {#if event}
   <li class="eventGridItem {isSingle ? 'isSingle' : ''}">
-    <a href="/event/{event.slug}">
+    <a href="/evento/{event.slug}">
       <div class="imageWrapper">
         {#if event.imageKeySmall && event.imageKeyLarge}
         
@@ -36,7 +36,7 @@
     <div class="contentWrapper">
       <header>
         <h2>
-          <a href="/event/{event.slug}">
+          <a href="/evento/{event.slug}">
             {event.name}
           </a>
         </h2>
@@ -76,7 +76,7 @@
       {#if venue}
         <p class="venue">
           <img src="/icon-venue-green.svg" alt="venue" />
-          <a href="/venue/{venue.slug}">
+          <a href="/foro/{venue.slug}">
             {venue.name}
           </a>
         </p>
@@ -92,6 +92,7 @@
       {/if}
 
       <div class="description">
+        <p><strong>Acerca del evento</strong></p>
         <p>{@html formatDescription(event.description)}</p>
       </div>
 
@@ -104,8 +105,8 @@
 
       {#if event.price}
         <p class="price">
-          ${event.price}
-          {#if event.priceMax} – ${event.priceMax}{/if}
+          ${Math.floor(event.price)}
+          {#if event.priceMax} – ${Math.floor(event.priceMax)}{/if}
         </p>
       {/if}
     </div>
@@ -212,6 +213,11 @@
     .description,
     .price {
       display: block;
+    }
+
+    .description {
+      margin-top: 40px;
+      text-align: justify;
     }
 
     .ticketLink {

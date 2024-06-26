@@ -51,18 +51,6 @@
     }
     : null
 
-  // const toggleSearch = () => {
-  //   isSearchVisible = !isSearchVisible
-  //   searchString = ''
-  // }
-
-  // const handleSearchChange = (newSearchString: string) => searchString = newSearchString
-
-  // const showLikedEvents = () => {
-  //   likedEventsPopupVisible.set(true);
-  //   document.body.classList.add('popupVisible');
-  // }
-
 </script>
 {#if showEditEvent}
   <div in:fade class="overlay">
@@ -78,33 +66,6 @@
   </div>
 {:else}
   <div class="publicEvents" in:fade>
-    <!-- <div class="tools">
-      <div class="viewOptions">
-        <EButton 
-          class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
-          on:click={() => displayMode = 'grid'}
-          disabled={displayMode === 'grid'}
-        >Grid</EButton>
-        <EButton 
-          class="icon list {displayMode === 'list' ? 'selected' : ''}"
-          on:click={() => displayMode = 'list'}
-          disabled={displayMode === 'list'}
-        >List</EButton>
-      </div>
-
-      <nav id="pageNavigation">
-        <EButton 
-          on:click={() => showLikedEvents()}
-          class="saveFilled icon"
-        >
-          Guardados
-        </EButton>
-        <ButtonLink href="/info" class="info icon">
-          Info
-        </ButtonLink>
-        <SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
-      </nav>
-    </div> -->
     <ul class="events {displayMode}">
       {#each filteredEvents as event (event.id)}
         {#if displayMode === 'list'}
@@ -113,12 +74,12 @@
           <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} isLiked={likedEvents.some(e => e.id === event.id)} />
         {/if}
       {/each}
-      {#if !filteredEvents.length}
-        <p class="emptyList">
-          No hay eventos para las fechas seleccionadas
-        </p>
-      {/if}
     </ul>
+    {#if !filteredEvents.length}
+      <p class="emptyList">
+        No hay eventos para las fechas seleccionadas
+      </p>
+    {/if}
   </div>
 {/if}
 
