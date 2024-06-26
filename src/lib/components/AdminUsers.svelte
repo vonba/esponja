@@ -4,11 +4,20 @@
 	import EditUser from "./EditUser.svelte"
 	import EButton from "./EButton.svelte"
 
-  export let users: UserProperties[]
+  // Props
+  export let users: UserProperties[] | []
 
+  // States
   let showCreateUser = false
   let showEditUser = false
   let editUser: User = null;
+  let filterMode = 'unblocked'
+
+    // Observables
+  $: filteredUsers = users.filter(
+    user => filterMode === 'blocked' ? user.blocked : !user.blocked
+  )
+  $: blockedCount = users.filter(u => u.blocked).length
 
   const roleLabels = {
     'admin': 'Administrador',
@@ -48,11 +57,25 @@
 {:else}
   <div in:fade>
     <div class="tools">
+      <div class="statusOptions flex">
+        <EButton
+          on:click={() => filterMode='unblocked'}
+          class={filterMode === 'unblocked' ? 'selected' : ''}
+        >
+          Con acceso
+        </EButton>
+        <EButton
+          on:click={() => filterMode='blocked'}
+          class={filterMode === 'blocked' ? 'selected' : ''}
+        >
+          Sin acceso ({blockedCount})
+        </EButton>
+      </div>
       <EButton on:click={() => showCreateUser = true}>Nuevo usuario</EButton>
     </div>
 
     <ul class="users">
-      {#each users as user (user.id)}
+      {#each filteredUsers as user (user.id)}
         <li>
           <strong>
             {user.firstName} {user.lastName}<br />
@@ -73,6 +96,11 @@
         </li>
       {/each}
     </ul>
+    {#if !filteredUsers.length}
+      <div class="emptyList">
+        No hay usuarios del tipo seleccionado
+      </div>
+    {/if}
   </div>
   
 {/if}
@@ -83,7 +111,7 @@
 .tools {
   padding: var(--spacing);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   border-bottom: 1px solid var(--colorGreen);
 }
 
@@ -95,11 +123,23 @@ ul.users {
   li {
     padding: var(--spacing);
     margin-bottom: var(--spacing);
+
+    .actions {
+      margin-top: var(--spacing);
+    }
+  }
+
+  @media (min-width: $mediaM) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   @media (min-width: $mediaL) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  @media (min-width: $mediaXL) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
 </style>

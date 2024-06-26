@@ -7,7 +7,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <header class="publicLogo {frontPage ? '' : 'notFrontPage'}" on:click role="navigation">
   <a href="/todo">
-    <img src="/esponja-symbol.svg" alt="Esponja" class="esponjaSymbol" />
+    <img src="/esponja-symbol2.svg" alt="Esponja" class="esponjaSymbol" />
   </a>
   <a href="/todo">
     <img src="/esponja-logo.svg" alt="Esponja" class="esponjaLogo" />

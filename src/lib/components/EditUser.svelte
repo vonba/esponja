@@ -4,6 +4,7 @@
 	import { loginSession } from '../../stores'
 	import {createEventDispatcher} from 'svelte';
 	import EButton from './EButton.svelte'
+	import { roleLabels } from '$lib/roles'
 	
 	const dispatch = createEventDispatcher();
 
@@ -22,6 +23,10 @@
 	}
 	$: isNewUser = user.id === 0
 	$: isOwnUser = !isNewUser && user.id === $loginSession?.id
+	let loggedInUser: User;
+  loginSession.subscribe(value => {
+    loggedInUser = value;
+  });
 
 	let focusedField: HTMLInputElement
 	let message: string
@@ -62,12 +67,12 @@
 					if (user) {
 						// Reset password fields to be sure
 						user.password = ''
-						confirmPassword.value = ''
+						if (confirmPassword) confirmPassword.value = ''
 					}
 					dispatch('saved', { reply })
 				}
 			} catch (error) {
-				message = 'API unavailable'
+				message = 'No se pudo guardar el usuario'
 			}
 		} else {
 			form.classList.add('validationErrors')
@@ -106,6 +111,20 @@
 			/>
 			<div class="invalidFeedback">Se requiere dirección de correo electrónico</div>
 		</div>
+
+		{#if !isOwnUser && loggedInUser?.role === 'admin'}
+			<div class="inputContainer venue">
+				<label for="role">Papel</label>
+				<select
+					bind:value={user.role}
+					id="role"
+				>
+					{#each Object.entries(roleLabels) as [role, label]}
+						<option value={role}>{label}</option>
+					{/each}
+				</select>
+			</div>
+		{/if}
 		
 		{#if isNewUser || isOwnUser}
 			<div class="inputContainer">
@@ -161,19 +180,21 @@
 			<div class="invalidFeedback">Se requiere el apellido</div>
 		</div>
 
-		<div class="inputContainer flex alignCenter">
-			<input
-				type="checkbox"
-				bind:checked={user.blocked}
-				id="hidden"
-			/>
-			<label for="hidden">
-				Bloquear
-			</label>
-		</div>
+		{#if !isOwnUser}
+			<div class="inputContainer flex alignCenter">
+				<input
+					type="checkbox"
+					bind:checked={user.blocked}
+					id="hidden"
+				/>
+				<label for="hidden">
+					Sin acceso
+				</label>
+			</div>
+		{/if}
 
 		{#if user.blocked}
-			Al bloquear un usuario, este ya no podrá ingresar.
+			<p>Al bloquear un usuario, este ya no podrá ingresar.</p>
 		{/if}
 
 		{#if message}

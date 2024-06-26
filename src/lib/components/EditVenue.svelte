@@ -116,6 +116,17 @@
 			/>
 		</div>
 
+		<div class="inputContainer flex alignCenter">
+			<input
+				type="checkbox"
+				bind:checked={venue.hidden}
+				id="hidden"
+			/>
+			<label for="hidden">
+				Ocultado (no visible)
+			</label>
+		</div>
+
 		{#if message}
 			<p>{message}</p>
 		{/if}

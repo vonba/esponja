@@ -29,27 +29,48 @@ export const PUT: RequestHandler = async event => {
 	const { user } = event.locals
 	const userUpdate = await event.request.json()
 
-	if (!user) error(401, 'Unauthorized (not signed in)')
+	// Only admins
+	if (!user || user.role !== 'admin') error(401, 'Unauthorized')
 	
-		// Only admins can update other users
-	if (user.id !== userUpdate.id && user.role !== 'admin') {
-		error(401, 'Unauthorized (not permitted to edit users)')
-	}
-	
-	// Prevent changing role of own user
-	if (user.id === userUpdate.id && user.role !== userUpdate.role) {
-		error(401, 'Unauthorized (privilege esc)')
+	// Prevent changing role or status of your own user (privilege escalation)
+	if (
+		user.id === userUpdate.id 
+		&& (user.role !== userUpdate.role || user.blocked !== userUpdate.blocked)
+	) {
+		error(401, 'Check your privilege')
 	}
 
 	try {
-		await query(`CALL update_user($1, $2);`, [userUpdate.id, JSON.stringify(userUpdate)])
+		await query(`CALL upsert_user($1);`, [JSON.stringify(userUpdate)])
 	} catch (err) {
 		console.log('Error updating user', err)
 		error(503, 'Database error')
 	}
 
 	return json({
-		message: 'Successfully updated user profile.'
+		message: 'Usuario actualizado'
+	})
+}
+
+export const POST: RequestHandler = async event => {
+	const { user } = event.locals
+	const userCreate = await event.request.json()
+
+	// Only admins
+	if (!user || user.role !== 'admin') error(401, 'Unauthorized')
+	
+	// Can only create editors
+	userCreate.role = 'editor'
+
+	try {
+		await query(`CALL upsert_user($1);`, [JSON.stringify(userCreate)])
+	} catch (err) {
+		console.log('Error creating user', err)
+		error(503, 'Database error')
+	}
+
+	return json({
+		message: 'Nuevo usuario creado'
 	})
 }
 

@@ -32,7 +32,7 @@
 
 <footer id="siteFooter">
 	<div class="contentWrapper">
-		<img src="/esponja-logo-offwhite.svg" alt="Esponja logo" />
+		<img src="/esponja-symbol3-offwhite.png" alt="Esponja logo" />
 	
 		<p>
 			Esponja es una plataforma gratuita y sin fines de lucro 
@@ -55,7 +55,7 @@
 
 <style lang="scss">
 	* {
-		--footerHeight: 400px;
+		--footerHeight: 460px;
 	}
 
 	main {
@@ -70,7 +70,7 @@
 		height: var(--footerHeight);
 		
 		img {
-			height: 40px;
+			height: 120px;
 			margin: 20px 0;
 		}
 

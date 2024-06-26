@@ -33,7 +33,7 @@
 		})
 		if (res.ok) {
 			loginSession.set(undefined) // delete loginSession.user from
-			goto('/login')
+			goto('/')
 		} else console.error(`Logout not successful: ${res.statusText} (${res.status})`)
 	}
 </script>

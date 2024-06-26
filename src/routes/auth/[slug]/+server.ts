@@ -23,9 +23,6 @@ export const POST: RequestHandler = async event => {
 			case 'login':
 				sql = `SELECT authenticate($1) AS "authenticationResult";`
 				break
-			case 'register':
-				sql = `SELECT register($1) AS "authenticationResult";`
-				break
 			default:
 				error(404, 'Invalid endpoint.')
 		}
@@ -34,8 +31,8 @@ export const POST: RequestHandler = async event => {
 		const body = await event.request.json()
 
 		// While client checks for these to be non-null, register() in the database does not
-		if (slug == 'register' && (!body.email || !body.password || !body.firstName || !body.lastName))
-			error(400, 'Please supply all required fields: email, password, first and last name.')
+		// if (slug == 'register' && (!body.email || !body.password || !body.firstName || !body.lastName))
+		// 	error(400, 'Please supply all required fields: email, password, first and last name.')
 
 		result = await query(sql, [JSON.stringify(body)])
 	} catch (err) {
@@ -48,14 +45,14 @@ export const POST: RequestHandler = async event => {
 		// includes when a user tries to register an existing email account with wrong password
 		error(authenticationResult.statusCode, authenticationResult.status)
 
-	if (slug !== 'register') {
-		// Ensures hooks.server.ts:handle() will not delete session cookie
-		event.locals.user = authenticationResult.user
-		cookies.set('session', authenticationResult.sessionId, {
-			httpOnly: true,
-			sameSite: 'lax',
-			path: '/'
-		})
-	}
+	// if (slug !== 'register') {
+	// 	// Ensures hooks.server.ts:handle() will not delete session cookie
+	// 	event.locals.user = authenticationResult.user
+	// 	cookies.set('session', authenticationResult.sessionId, {
+	// 		httpOnly: true,
+	// 		sameSite: 'lax',
+	// 		path: '/'
+	// 	})
+	// }
 	return json({ message: authenticationResult.status, user: authenticationResult.user })
 }

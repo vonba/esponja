@@ -1,6 +1,6 @@
 <script>
 	import ButtonLink from "$lib/components/ButtonLink.svelte"
-import PublicLogo from "$lib/components/PublicLogo.svelte"
+	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { fade } from "svelte/transition"
 
 </script>
@@ -38,8 +38,8 @@ import PublicLogo from "$lib/components/PublicLogo.svelte"
 		<h2>Créditos</h2>
 		<p>
 			Desarrollo por <a href="https://balthazaurus.com">Balthazaurus</a><br />
-			Diseño por Balthazaurus y Leyla Udimamedova<br />
-			Ilustraciones por Ksenia Kirsta
+			Diseño por Simon Balthazar y Leyla Udimamedova<br />
+			Ilustración por Ksenia Kirsta
 		</p>
 	</div>
 </section>

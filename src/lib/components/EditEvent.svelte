@@ -448,7 +448,7 @@
 					bind:checked={event.hidden}
 					id="hidden"
 				/>
-				<label for="hidden" class="inline">
+				<label for="hidden">
 					Borrador (no visible)
 				</label>
 			</div>
