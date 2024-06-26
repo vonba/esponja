@@ -1,6 +1,7 @@
 import { createTransport } from 'nodemailer';
 // import SMTPTransport = require('nodemailer/lib/smtp-transport');
 import { MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, DOMAIN, MAIL_FROM, MAIL_NOTIFICATIONS_TO } from '$env/static/private'
+import { getImageURL } from '$lib/file';
 
 const transport = createTransport({
   host: MAIL_HOST,
@@ -22,6 +23,9 @@ function getFormattedEmail(text: string): string {
           <title>Esponja</title>
       </head>
       <body style="margin: 0; color: #007E68; font-family: 'Open Sans', 'Arial', sans-serif; background-color: #FFFDF7; text-align: center;">
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
+          <img src="${DOMAIN}/esponja-symbol3.png" alt="Esponja" height="40" />
+        </div>
         <div style="display: inline-block; text-align: left; max-width: 40em; margin: 1em 0.5em; padding: 1em; border: 1px solid #007E68; border-radius: 5px; padding: 1em;">
           ${text}
         </div>
@@ -59,10 +63,40 @@ async function sendMail(data: {to: string, from: string, subject: string, html: 
   await transport.sendMail(data).catch((reason: string) => console.log('error', `Error sending email: ${reason}`));
 }
 
+export async function sendModerationSuccessfulNotification(
+  submitterName: string,
+  submitterEmail: string,
+  eventName: string,
+  eventSlug: string,
+  eventImageKeySmall: string,
+): Promise<void> {
+  await sendMail({
+    to: submitterEmail,
+    from: MAIL_FROM,
+    subject: `Tu evento: ${eventName}`,
+    html: getFormattedEmail(`
+        <h2>¡Hola ${submitterName}!</h2>
+        <p>
+					Tu evento ${eventName} ya está publicado en
+          ${getStyledLink('este URL', `${DOMAIN}/evento/${eventSlug}`)}
+				</p>
+        <p>
+          <br />
+          <img src="${getImageURL(eventImageKeySmall)}" alt="Imagen del evento" height="400" />
+          <br /><br />
+        </p>
+				<p>
+          ¡Gracias por tu ayuda!
+				</p>
+    `),
+  });
+}
+
 export async function sendModerationNotification(
   eventName: string,
   submitterName: string,
   submitterEmail: string,
+  eventImageKeySmall: string | null,
 ): Promise<void> {
   await sendMail({
     to: MAIL_NOTIFICATIONS_TO,
@@ -74,6 +108,11 @@ export async function sendModerationNotification(
 					El siguiente evento se acaba de crear:<br />
           ${eventName}
 				</p>
+        <p>
+          <br />
+          <img src="${eventImageKeySmall ? getImageURL(eventImageKeySmall) : ''}" alt="Imagen del evento" height="400" />
+          <br /><br />
+        </p>
         <p>
           Creado por: ${submitterName} (${getStyledLink(submitterEmail, `mailto:${submitterEmail}`)})
         </p>

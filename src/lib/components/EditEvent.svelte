@@ -8,9 +8,6 @@
 	import { fade, slide } from 'svelte/transition'
 	import EditVenue from './EditVenue.svelte'
 	import { invalidateAll } from '$app/navigation'
-	
-	// TODO: add price input field
-	// TODO: add ticket link input field
 
 	const dispatch = createEventDispatcher();
 

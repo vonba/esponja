@@ -39,7 +39,7 @@
 		<p>
 			Desarrollo por <a href="https://balthazaurus.com">Balthazaurus</a><br />
 			Diseño por Simon Balthazar y Leyla Udimamedova<br />
-			Ilustración por Ksenia Kirsta
+			Ilustración por <a href="https://linktr.ee/sexy.primes">Ksenia Kirsta</a>
 		</p>
 	</div>
 </section>
@@ -52,15 +52,17 @@
 	}
 
 	.pageContent {
+		border-top: 1px solid var(--colorGreen);
 		padding: var(--spacing);
-		margin-top: 4em;
+		padding-top: var(--double);
+		margin-top: var(--spacing);
 		
 		p {
 			max-width: 40em;
 			text-align: justify;
 			margin-bottom: 4em;
 
-			@media (max-width: $mediaL) {
+			@media (max-width: $mediaM) {
 				&:first-of-type {
 					margin-bottom: 2em;
 				}
@@ -72,19 +74,41 @@
 			margin-bottom: 2em;
 
 			img {
-				max-height: 400px;
+				max-height: 200px;
 			}
 		}
 
-		@media (min-width: $mediaL) {
+		/* @media (min-width: $mediaM) {
 			.imageWrapper {
-				position: absolute;
-				top: 4em;
-				left: 45em;
-
 				img {
 					max-height: 80vh;
 				}
+			}
+		} */
+		@media (min-width: 830px) {
+			.imageWrapper {
+				position: fixed;
+				top: 140px;
+				right: 2em;
+
+				img {
+					max-height: 300px;
+				}
+			}
+		}
+
+		@media (min-width: 1100px) {
+			.imageWrapper {
+				img {
+					max-height: 80vh;
+				}
+			}
+		}
+
+		@media (min-width: 1300px) {
+			.imageWrapper {
+				right: unset;
+				left: 47em;
 			}
 		}
 	}

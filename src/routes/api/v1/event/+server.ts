@@ -7,7 +7,7 @@ import { S3_BUCKET } from '$env/static/private';
 import { eventColumns } from '$lib/server/queries';
 import sanitizeHtml from 'sanitize-html';
 import { toSlug, truncateAndAppend } from '$lib/strings'
-import { sendModerationNotification } from '$lib/server/mail'
+import { sendModerationNotification, sendModerationSuccessfulNotification } from '$lib/server/mail'
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
@@ -107,7 +107,17 @@ export const PUT: RequestHandler = async event => {
 	eventUpdate.description = sanitizeHtml(eventUpdate.description);
 	eventUpdate.ticketLink = sanitizeHtml(eventUpdate.ticketLink);
 	
-	// TODO: if event published is changing to true, send email to submitterEmail
+	// If event was not published, it will be now
+	const wasApproved = !existingEvent.published
+	if (wasApproved) {
+		sendModerationSuccessfulNotification(
+			eventUpdate.submitterName,
+			eventUpdate.submitterEmail,
+			eventUpdate.name,
+			eventUpdate.slug,
+			eventUpdate.imageKeySmall,
+		)
+	}
 
 	// Set status to published
 	eventUpdate.published = true
@@ -190,13 +200,14 @@ export const POST: RequestHandler = async event => {
 	}
 
 	// Upload file (this also updates event with image key)
-	await doFileUpload(formData, eventId)
+	const fileUploadResult = await doFileUpload(formData, eventId)
 
 	if (needsModeration) {
 		sendModerationNotification(
 			eventCreate.name,
 			eventCreate.submitterName,
-			eventCreate.submitterEmail
+			eventCreate.submitterEmail,
+			fileUploadResult?.fileKeySmall ? fileUploadResult.fileKeySmall : null
 		)
 	}
 
@@ -205,7 +216,7 @@ export const POST: RequestHandler = async event => {
 	})
 }
 
-const doFileUpload = async (formData: FormData, eventId: number): Promise<void> => {
+const doFileUpload = async (formData: FormData, eventId: number): Promise<void | {fileKeyLarge: string, fileKeySmall: string}> => {
 	try {		
 		// Get file from form data
 		const file = formData.get('eventImage') as File;
@@ -262,6 +273,8 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void> 
 
 		// Update the event with the image URL
 		await query(`UPDATE events SET image_key_large = $1, image_key_small = $2 WHERE id = $3;`, [fileKeyLarge, fileKeySmall, eventId]);
+
+		return { fileKeyLarge, fileKeySmall }
 
 	} catch (err) {
 		console.log('Error uploading event image', err)
