@@ -2,7 +2,7 @@
 	import { formatDate, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
 	import EButton from "./EButton.svelte"
-	import { formatDescription } from "$lib/strings"
+	import { capitalizeFirstChar, formatDescription } from "$lib/strings"
 
   // Props
   export let event: EventProperties
@@ -62,9 +62,9 @@
       <div class="datesWrapper">
         <img src="/icon-date-green.svg" alt="calendar" />
         <div class="dates">
-          {#if event.startDate}{formatDate(event.startDate)}{/if} 
+          {#if event.startDate}{capitalizeFirstChar(formatDate(event.startDate))}{/if} 
           {#if event.startTime}{formatTime(event.startTime)}{/if}
-          {#if event.endDate && event.endDate !== event.startDate}<br />{formatDate(event.endDate)}{/if}
+          {#if event.endDate && event.endDate !== event.startDate}<br />{capitalizeFirstChar(formatDate(event.endDate))}{/if}
           {#if event.endTime}
             {#if !event.endDate || event.endDate === event.startDate} – {/if}
             {formatTime(event.endTime)}
@@ -149,10 +149,6 @@
       height: 2em;
     }
   }
-
-  .eventGridItem {
-    /* padding: var(--spacing); */
-  }
   
   .description {
     display: none;
@@ -171,6 +167,11 @@
       object-position: center top;
       height: 100%;
       width: 100%;
+      transition: transform 0.5s;
+
+      &:hover {
+        transform: scale(1.025);
+      }
     }
   }
 

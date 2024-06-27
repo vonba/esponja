@@ -7,6 +7,7 @@
 	import { invalidateAll } from "$app/navigation"
 	import EditEvent from "./EditEvent.svelte"
   import { likedEventsStore, toggleLikedEvent } from '$lib/likedEvents';
+	import { formatDate, formatDateShort } from "$lib/dateTime"
 
   // Props
   export let eventTimeWindow = 'todo'
@@ -67,6 +68,17 @@
   </div>
 {:else}
   <div class="publicEvents" in:fade>
+    
+    {#if startDate && endDate}
+    <div class="dateRangeDisplay">
+        {#if startDate === endDate}
+          {filteredEvents.length} evento{filteredEvents.length > 1 ? 's' : ''} el {formatDateShort(startDate)}
+        {:else}
+          {filteredEvents.length} evento{filteredEvents.length > 1 ? 's' : ''} entre {formatDateShort(startDate)} y {formatDateShort(endDate)}
+        {/if}
+      </div>
+    {/if}
+
     <ul class="events {displayMode}">
       {#each filteredEvents as event (event.id)}
         {#if displayMode === 'list'}
@@ -99,6 +111,10 @@
 
 <style lang="scss">
   @import "$lib/sass/variables";
+
+  .dateRangeDisplay {
+    padding: 0 var(--spacing);
+  }
 
   ul.events {
     margin-top: 0;
