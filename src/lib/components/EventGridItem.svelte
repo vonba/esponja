@@ -119,6 +119,13 @@
 
   h2 a {
     text-decoration: none;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--colorGreen);
+        color: var(--colorOffWhite);
+      }
+    }
   }
 
   header {
@@ -167,10 +174,12 @@
       object-position: center top;
       height: 100%;
       width: 100%;
-      transition: transform 0.5s;
+      transition: opacity 0.75s;
 
-      &:hover {
-        transform: scale(1.025);
+      @media (hover: hover) {
+        &:hover {
+          opacity: 0.8;
+        }
       }
     }
   }
@@ -187,7 +196,7 @@
     margin-bottom: var(--spacing);
 
     img {
-      margin-top: 3px;
+      margin-top: 2px;
     }
   }
 
