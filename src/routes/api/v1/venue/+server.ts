@@ -26,8 +26,6 @@ export const PUT: RequestHandler = async event => {
 		
 	const venueUpdate = await event.request.json()
 
-	// TODO: check slug is unique
-
 	try {
 		await query(`CALL upsert_venue($1, $2);`, [JSON.stringify(venueUpdate), null])
 	} catch (err) {
@@ -47,7 +45,6 @@ export const POST: RequestHandler = async event => {
 	const venueCreate = await event.request.json()
 	const newSlug = toSlug(venueCreate.name)
 	venueCreate.slug = newSlug
-	// TODO: check slug is unique
 
 	let newId
 	try {

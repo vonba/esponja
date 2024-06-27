@@ -174,11 +174,11 @@
       object-position: center top;
       height: 100%;
       width: 100%;
-      transition: opacity 0.75s;
+      transition: border 0.5s;
 
       @media (hover: hover) {
         &:hover {
-          opacity: 0.8;
+          border: 2px solid var(--colorGreen);
         }
       }
     }

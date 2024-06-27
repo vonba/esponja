@@ -83,6 +83,13 @@
 
   h2 a {
     text-decoration: none;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--colorGreen);
+        color: var(--colorOffWhite);
+      }
+    }
   }
 
   h2 {
@@ -124,6 +131,12 @@
       object-position: top;
       height: 100%;
       width: 100%;
+
+      @media (hover: hover) {
+        &:hover {
+          border: 2px solid var(--colorGreen);
+        }
+      }
     }
   }
 

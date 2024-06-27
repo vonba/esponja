@@ -247,36 +247,36 @@ $BODY$;
 ALTER FUNCTION public.get_session(uuid) OWNER TO auth;
 
 -- NOTE: unused function for register, currently we are not allowing anyone to register
--- CREATE OR REPLACE FUNCTION public.register(
--- 	input json,
--- 	OUT user_session json)
---     RETURNS json
---     LANGUAGE 'plpgsql'
---     COST 100
---     VOLATILE PARALLEL UNSAFE
--- AS $BODY$
--- DECLARE
---   input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
---   input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
---   input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
---   input_password varchar(80) := (input->>'password')::varchar;
--- BEGIN
---   PERFORM id FROM users WHERE email = input_email;
---   IF NOT FOUND THEN
---     INSERT INTO users(role, password, email, first_name, last_name)
---       VALUES('contributor', crypt(input_password, gen_salt('bf', 8)), input_email, input_first_name, input_last_name)
---       RETURNING
---         json_build_object(
---           'sessionId', create_session(users.id),
---           'user', json_build_object('id', users.id, 'role', 'contributor', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'optOut', false)
---         ) INTO user_session;
---   ELSE -- user is registering account that already exists so set sessionId and user to null so client can let them know
---   	SELECT authenticate(input) INTO user_session;
---   END IF;
--- END;
--- $BODY$;
+CREATE OR REPLACE FUNCTION public.register(
+	input json,
+	OUT user_session json)
+    RETURNS json
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+  input_email varchar(80) := LOWER(TRIM((input->>'email')::varchar));
+  input_first_name varchar(20) := TRIM((input->>'firstName')::varchar);
+  input_last_name varchar(20) := TRIM((input->>'lastName')::varchar);
+  input_password varchar(80) := (input->>'password')::varchar;
+BEGIN
+  PERFORM id FROM users WHERE email = input_email;
+  IF NOT FOUND THEN
+    INSERT INTO users(role, password, email, first_name, last_name)
+      VALUES('contributor', crypt(input_password, gen_salt('bf', 8)), input_email, input_first_name, input_last_name)
+      RETURNING
+        json_build_object(
+          'sessionId', create_session(users.id),
+          'user', json_build_object('id', users.id, 'role', 'contributor', 'email', input_email, 'firstName', input_first_name, 'lastName', input_last_name, 'optOut', false)
+        ) INTO user_session;
+  ELSE -- user is registering account that already exists so set sessionId and user to null so client can let them know
+  	SELECT authenticate(input) INTO user_session;
+  END IF;
+END;
+$BODY$;
 
--- ALTER FUNCTION public.register(json) OWNER TO auth;
+ALTER FUNCTION public.register(json) OWNER TO auth;
 
 -- NOTE: unused function, currently we are not allowing gmail sessions
 -- CREATE OR REPLACE FUNCTION public.start_gmail_user_session(
