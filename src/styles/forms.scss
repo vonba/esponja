@@ -22,6 +22,10 @@ textarea {
   background-color: var(--colorOffWhite);
   border-radius: var(--borderRadius);
 
+  &.invalid {
+    border-color: red;
+  }
+
   &:not([type="checkbox"]) {
     width: 100%;
   }

@@ -17,6 +17,8 @@
   let editEvent: EventProperties | null = null
   let displayMode = 'list'
   let filterMode = 'published'
+  let loading = false
+  let message = ''
 
   // Observables
   $: filteredEvents = events.filter(event => {
@@ -36,6 +38,35 @@
     editEvent = event
     showEditEvent = true
   }
+
+  // Delete event permanently
+	const handleDeleteEvent = async (event: EventProperties) => {
+		if (!event.hidden && event.published) {
+			setDisplayMessage('No se permite borrar los eventos publicados')
+		}
+    
+    if (!confirm('Borrar de forma permanente este evento y sus imagenes?')) return
+
+    const body = JSON.stringify({id: event.id})
+		try {
+      loading = true
+			const res = await fetch("/api/v1/event", {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body,
+			})
+			const reply = await res.json()
+			setDisplayMessage(reply.message)
+			if (res.ok) {
+				invalidateAll()
+			}
+			loading = false
+		} catch (error) {
+			setDisplayMessage('Servidor no disponible')
+		}
+	}
 
   // Display message
   let displayMessage = ''
@@ -134,9 +165,19 @@
     <ul class="events {displayMode}">
       {#each filteredEvents as event (event?.id)}
         {#if displayMode === 'list'}
-          <EventListItem {event} {venues} {handleEditEvent} />
+          <EventListItem 
+            {event} 
+            {venues} 
+            {handleEditEvent} 
+            handleDeleteEventPermanently={event.hidden ? handleDeleteEvent : null}
+          />
         {:else}
-          <EventGridItem {event} {venues} {handleEditEvent} />
+          <EventGridItem 
+            {event} 
+            {venues} 
+            {handleEditEvent} 
+            handleDeleteEventPermanently={event.hidden ? handleDeleteEvent : null}
+          />
         {/if}
       {/each}
     </ul>
@@ -157,7 +198,7 @@
     justify-content: space-between;
     padding: var(--spacing);
 
-    .newEvent {
+    :global(.newEvent) {
       flex-grow: 0;
     }
 
@@ -169,7 +210,7 @@
         order: 2;
       }
 
-      .newEvent {
+      :global(.newEvent) {
         width: 100%;
         order: 1;
       }
@@ -216,7 +257,7 @@
 
   ul.events {
     list-style: none;
-    padding: 0;
+    padding: var(--spacing);
     margin-top: 0;
     border-top: 1px solid var(--colorGreen);
     --eventColumns: 1;

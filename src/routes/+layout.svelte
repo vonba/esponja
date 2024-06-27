@@ -68,6 +68,7 @@
 		padding: var(--spacing);
 		padding-top: 40px;
 		height: var(--footerHeight);
+		font-style: italic;
 		
 		img {
 			height: 120px;

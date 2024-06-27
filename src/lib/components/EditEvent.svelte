@@ -31,7 +31,7 @@
 			endTime: undefined,
 			description: '',
 			ticketLink: '',
-			price: 0,
+			price: undefined,
 			hidden: false,
 			published: true,
 			addressLine1: '',
@@ -131,8 +131,13 @@
 
 	// Delete event permanently
 	const handleDeleteEvent = async (event: EventProperties) => {
+		if (!event.hidden && event.published) {
+			message = 'No se permite borrar eventos publicados'
+		}
+
 		const body = JSON.stringify({id: event.id})
 		try {
+			loading = true
 			const res = await fetch("/api/v1/event", {
 				method: 'DELETE',
 				headers: {
@@ -262,11 +267,10 @@
 				<input
 					type="file"
 					id="eventImage"
-					placeholder="Nombre"
-					required={isNewEvent}
 					bind:this={eventImageFile}
 					on:change={handleFileChange}
 				/>
+				<div class="invalidFeedback">Se requiere una imagen</div>
 			</div>
 			
 			<div class="inputContainer date">
@@ -405,7 +409,7 @@
 
 			<div class="inputContainer price">
 				<label for="price">Precio</label>
-				<p>Si existe un rango de precios, puedes ingresar el mínimo y el máximo.</p>
+				<p>El precio máximo lo puedes utilizar si existe un rango de precios. Si no, omítalo.</p>
 				<div class="flex">
 					<input
 						bind:value={event.price}
@@ -413,7 +417,7 @@
 						min="1"
 						max="999999"
 						id="price"
-						placeholder="Precio (mínimo)"
+						placeholder="Precio (normal)"
 					/>
 					<input
 						bind:value={event.priceMax}
@@ -430,6 +434,7 @@
 				<input
 					bind:value={event.ticketLink}
 					id="ticketLink"
+					placeholder="https://example.com"
 				/>
 			</div>
 		</fieldset>
@@ -466,6 +471,7 @@
 		{/if}
 
 		{#if event.published || isConfirmedToPublish}
+			<div class="invalidFeedback">No se pudo guardar. Por favor revisa el formulario.</div>
 			<div class="buttons" in:fade>
 				<EButton type="button" on:click={update} disabled={loading} class="large">
 					{#if loading}
@@ -533,7 +539,10 @@
 	}
 
 	input#eventImage {
-		display: none;
+		width: 0;
+		height: 0;
+		border: none;
+		padding: 0;
 	}
 
 	.buttons {

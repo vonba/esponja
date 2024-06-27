@@ -2,7 +2,7 @@ import sharp from 'sharp'
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
-import { PutObjectCommand, s3Client } from '$lib/s3-config';
+import { DeleteObjectCommand, PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns } from '$lib/server/queries';
 import sanitizeHtml from 'sanitize-html';
@@ -33,7 +33,7 @@ export const GET: RequestHandler = async event => {
 			ORDER BY start_date ASC`);
 	} catch (err) {
 		console.log('Error loading events', err)
-		error(503, 'Database error');
+		error(503, 'Error de base de datos')
 	}
 
 	const formattedRows = result.rows.map(row => {
@@ -52,15 +52,21 @@ export const DELETE: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
 
-	const requestBody = await event.request.json()
-	const eventId = requestBody.id
+	const requestBody = await event.request.json() as EventProperties
+	const { id, imageKeyLarge, imageKeySmall } = requestBody
+
+	if (!id) error(503, 'Evento no especificado')
 
 	// Delete unpublished event permanently from database
 	try {
-		// TODO: delete images from AWS
-		await query(`DELETE FROM events WHERE published = false AND id = ${eventId}`);
+		// Delete the event permanently
+		await query(`DELETE FROM events WHERE (published = false OR hidden = true) AND id = ${id}`);
+
+		// Now delete the orphaned images
+		deleteFiles([imageKeyLarge, imageKeySmall])
 	} catch (err) {
-		error(503, 'Database error');
+		console.log('Error while deleting event', err)
+		error(503, 'Error de base de datos')
 	}
 
 	return json({
@@ -85,7 +91,9 @@ export const PUT: RequestHandler = async event => {
 	}
 
 	// Get existing event
-	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published FROM events WHERE id = ${eventUpdate.id}`);
+	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published, 
+		image_key_large AS "imageKeyLarge", image_key_small AS "imageKeySmall" 
+		FROM events WHERE id = ${eventUpdate.id}`);
 	if (!existingEventResult.rowCount) error(404, 'Event not found')
 	const existingEvent =  existingEventResult.rows[0]
 		
@@ -132,11 +140,15 @@ export const PUT: RequestHandler = async event => {
 		await query(`CALL upsert_event($1, $2);`, [queryBody, null])
 	} catch (err) {
 		console.log('Error updating event', err)
-		error(503, 'Database error')
+		error(503, 'Error de base de datos')
 	}
 	
 	// Upload file (this also updates event with image key)
 	await doFileUpload(formData, eventUpdate.id)
+
+	// If a new image was uploaded, delete the old ones
+	const imageWasUpdated = !!formData.get('eventImage')
+	deleteFiles([existingEvent.imageKeyLarge, existingEvent.imageKeySmall])
 
 	return json({
 		message: 'Successfully updated event.'
@@ -282,4 +294,21 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void |
 	}
 }
 
+// Function to delete images from S3
+async function deleteFiles(imageKeys: (string | undefined)[]) {
+  try {
+    for (const key of imageKeys) {
+			if (!key) continue
+      await s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: S3_BUCKET,
+          Key: key
+        })
+      );
+      console.log(`Deleted ${key} from S3`);
+    }
+  } catch (err) {
+    console.error("Error deleting images from S3", err);
+  }
+}
 

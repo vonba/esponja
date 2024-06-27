@@ -87,17 +87,18 @@
       &:not(.noEvents) {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: var(--spacing);
+        /* gap: var(--spacing); */
   
         .events {
-          padding-top: var(--double);
+          padding-top: var(--spacing);
+          padding-right: var(--spacing);
         }
         
         .mapWrapper {
           border-right: 1px solid var(--colorGreen);
           margin: 0 var(--spacing);
           padding: var(--spacing) 0;          
-          padding-right: var(--double);
+          padding-right: var(--spacing);
         }
       }
     }    

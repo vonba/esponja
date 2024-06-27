@@ -31,7 +31,7 @@ export const load = async ({params, fetch}) => {
 		if (errorObj.status) {
 			throw error(errorObj.status, errorObj.body?.message || 'Error fetching event');
 		} else {
-			throw error(503, 'Database error');
+			throw error(503, 'Error de base de datos');
 		}
 	}
 

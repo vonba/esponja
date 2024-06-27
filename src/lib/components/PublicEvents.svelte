@@ -103,7 +103,7 @@
   ul.events {
     margin-top: 0;
     list-style: none;
-    padding: 0;
+    padding: var(--spacing);
     margin-bottom: var(--spacing);
     --eventColumns: 1;
     
@@ -120,6 +120,7 @@
     &.grid {
       display: grid;
       grid-template-columns: repeat(var(--eventColumns), 1fr);
+      gap: var(--spacing);
     }
 
     @media (max-width: $mediaM) {

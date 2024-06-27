@@ -15,7 +15,7 @@ export const load = async ({params, fetch}) => {
 		returnValue.venues = await venueResponse.json();
 		
 	} catch (err) {
-		error(503, 'Database error')
+		error(503, 'Error de base de datos')
 	}
 
 	return returnValue;

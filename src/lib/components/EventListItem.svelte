@@ -7,7 +7,7 @@
   export let venues: [VenueProperties] | []
   export let handleEditEvent: Function | null = null
   export let handleLikeEvent: Function | null = null
-  export let handleShareEvent: Function | null = null
+  export let handleDeleteEventPermanently: Function | null = null
   export let isLiked = false
 
   const venue = venues.find(v => v.id === event.venueId)
@@ -46,13 +46,13 @@
     
     <div class="actions">
       {#if handleLikeEvent}
-      <EButton on:click={() => handleLikeEvent(event)}  class="icon {isLiked ? 'saveFilled' : 'saveOutline'}">
-        Guardar
+        <EButton on:click={() => handleLikeEvent(event)}  class="icon {isLiked ? 'saveFilled' : 'saveOutline'}">
+          Guardar
         </EButton>
       {/if}
-      {#if handleShareEvent}
-        <EButton on:click={() => handleShareEvent(event.id)} class="icon share">
-          Compartir
+      {#if handleDeleteEventPermanently}
+        <EButton on:click={() => handleDeleteEventPermanently(event)} class="icon delete">
+          Borrar
         </EButton>
       {/if}
       {#if handleEditEvent}

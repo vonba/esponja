@@ -2,7 +2,6 @@
 	import { formatDate, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
 	import EButton from "./EButton.svelte"
-	import { loginSession } from '$lib/../stores'
 	import { formatDescription } from "$lib/strings"
 
   // Props
@@ -10,7 +9,7 @@
   export let venues: [VenueProperties] | []
   export let handleEditEvent: Function | null = null
   export let handleLikeEvent: Function | null = null
-  export let handleShareEvent: Function | null = null
+  export let handleDeleteEventPermanently: Function | null = null
   export let isSingle = false
   export let isLiked = false
 
@@ -47,9 +46,9 @@
               Guardar
             </EButton>
           {/if}
-          {#if handleShareEvent}
-            <EButton on:click={() => handleShareEvent(event.id)} class="icon share">
-              Compartir
+          {#if handleDeleteEventPermanently}
+            <EButton on:click={() => handleDeleteEventPermanently(event)} class="icon delete">
+              Borrar
             </EButton>
           {/if}
           {#if handleEditEvent}
@@ -83,12 +82,14 @@
       {/if}
 
       {#if !venue && event.addressLine1}
-        <p class="venue">
+        <div class="venue">
           <img src="/icon-venue-green.svg" alt="venue" />
-          {event.addressLine1}<br />
-          {#if event.addressLine2}{event.addressLine2}<br />{/if}
-          {#if event.addressPostCode}{event.addressPostCode}<br />{/if}
-        </p>
+          <div class="address">
+            <span>{event.addressLine1}</span>
+            {#if event.addressLine2}<span>{event.addressLine2}</span>{/if}
+            {#if event.addressPostCode}<span>{event.addressPostCode}</span>{/if}
+          </div>
+        </div>
       {/if}
 
       <div class="description">
@@ -150,7 +151,7 @@
   }
 
   .eventGridItem {
-    padding: var(--spacing);
+    /* padding: var(--spacing); */
   }
   
   .description {
@@ -189,9 +190,13 @@
     }
   }
 
-
+  // Add separators between address components when they're on a single line
+  .address span:not(:first-of-type)::before {
+    display: inline;
+    content: '/ ';
+  }
   
-  // Viewing single event
+  // ====== Viewing single event ======
   .eventGridItem.isSingle {
     max-width: $singleEventMaxWidth;
     padding: 0;
@@ -208,6 +213,18 @@
       grid-template-columns: 1fr 1fr;
       gap: var(--double);
       margin: 0 auto;
+    }
+
+    // Put address components on separate lines
+    .address {
+      span {
+        display: block;
+
+        // Remove line separators
+        &:not(:first-of-type)::before {
+          display: none;
+        }
+      }
     }
 
     .description,

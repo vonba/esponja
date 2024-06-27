@@ -31,7 +31,7 @@ export const GET: RequestHandler = async event => {
 		}
 	} catch (err) {
 		console.log(err)
-		error(503, 'Database error')
+		error(503, 'Error de base de datos')
 	}
 
 	return json({venue, events});

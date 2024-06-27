@@ -19,7 +19,7 @@ export const GET: RequestHandler = async event => {
 			FROM users WHERE ${blockedConstraint} ORDER BY first_name ASC`);
 	} catch (err) {
 		console.log(err)
-		error(503, 'Database error')
+		error(503, 'Error de base de datos')
 	}
 
 	return json(result.rows);
@@ -44,7 +44,7 @@ export const PUT: RequestHandler = async event => {
 		await query(`CALL upsert_user($1);`, [JSON.stringify(userUpdate)])
 	} catch (err) {
 		console.log('Error updating user', err)
-		error(503, 'Database error')
+		error(503, 'Error de base de datos')
 	}
 
 	return json({
@@ -66,7 +66,7 @@ export const POST: RequestHandler = async event => {
 		await query(`CALL upsert_user($1);`, [JSON.stringify(userCreate)])
 	} catch (err) {
 		console.log('Error creating user', err)
-		error(503, 'Database error')
+		error(503, 'Error de base de datos')
 	}
 
 	return json({

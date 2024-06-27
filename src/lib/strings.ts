@@ -47,3 +47,8 @@ export function truncateAndAppend(input: string): string {
   // Otherwise, just append the suffix
   return input + suffix;
 }
+
+export function capitalizeFirstChar(str: string) {
+  if (!str) return str; // Handle empty or null strings
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
