@@ -33,7 +33,6 @@
 	})
 
 	async function update() {
-		let message
 		const form = <HTMLFormElement>document.getElementById('venueForm')
 
 		if (form.checkValidity()) {
@@ -128,7 +127,7 @@
 		</div>
 
 		{#if message}
-			<p>{message}</p>
+			<p class="message">{message}</p>
 		{/if}
 
 		<div class="buttons flex">
@@ -152,5 +151,9 @@
 	.editVenue {
 		max-width: $mediaM;
 		margin: 20px auto;
+	}
+
+	.message {
+		font-weight: bold;
 	}
 </style>

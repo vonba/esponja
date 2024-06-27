@@ -55,8 +55,11 @@ export const POST: RequestHandler = async event => {
 		const dbResult = await query(`CALL upsert_venue($1, $2);`, [JSON.stringify(venueCreate), null])
 		newId = dbResult.rows[0].new_id;
 	} catch (err) {
-		console.log('Error creating venue', err)
-		error(503, 'No se pudo crear el foro')
+		let message = 'No se pudo crear el foro'
+		if ((err as { routine?: string }).routine === '_bt_check_unique') {
+			message = "Ya existe el URL o nombre del foro";
+		}
+		error(503, message)
 	}
 
 	return json({
