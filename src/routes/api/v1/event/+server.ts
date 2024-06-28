@@ -18,6 +18,13 @@ const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
 
+	const { setHeaders } = event
+	const cacheSeconds = 60 * 4 // 4 hours
+	setHeaders({
+    "cache-control": `max-age=${cacheSeconds}`,
+		// Cache-Control: max-age=604800, stale-while-revalidate=86400
+  });
+
 	// Set query constraints
 	const searchParams = event.url.searchParams;
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';

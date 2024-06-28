@@ -46,13 +46,6 @@
         Si organizas eventos regularmente, o si eres una de esas personas que siempre saben dónde están los buenos toquines, escríbenos a <a href="mailto:hola@esponja.mx">hola@esponja.mx</a>
         para solicitar tu cuenta de administrador, con la cual podrás libremente publicar y modificar eventos en Esponja.
       </p>
-
-      <p>
-        <i>
-          ¿Ya tienes tu cuenta?<br />
-          Por favor usa la <a href="/admin">administración</a> para agregar tus eventos.
-        </i>
-      </p>
     </div>
   {/if}
 
@@ -77,6 +70,7 @@
         showAdminOptions={false} 
         showTitle={false} 
         showCloseButton={false} 
+        noFocusOnMount={true}
         {venues} 
         event={null}
         on:saved={() => eventSaved = true}

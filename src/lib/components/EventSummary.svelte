@@ -32,6 +32,7 @@
       {#if event.imageKeySmall && event.imageKeyLarge}
       
       <img 
+        loading="lazy"
         src={getImageURL(event.imageKeySmall)} 
         alt="Imagen del evento" 
       />

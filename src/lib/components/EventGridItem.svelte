@@ -23,6 +23,7 @@
         {#if event.imageKeySmall && event.imageKeyLarge}
         
         <img 
+          loading="lazy"
           src={getImageURL(event.imageKeySmall)} 
           sizes="(max-width: 500px) 100vw, (max-width: 600px) 30vw, (max-width: 1200px) 30vw, 1200px"
           srcset="{getImageURL(event.imageKeySmall)} 400w, {getImageURL(event.imageKeyLarge)} 1200w"

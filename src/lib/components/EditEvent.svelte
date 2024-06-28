@@ -17,6 +17,7 @@
 	export let showAdminOptions = true
 	export let venues: [VenueProperties] | []
 	export let event: EEvent
+	export let noFocusOnMount = false
 	
 	// Default event
 	if (!event) {
@@ -62,7 +63,7 @@
 
 	// Focus first field when loading
 	onMount(() => {
-		focusedField.focus()
+		if (!noFocusOnMount) focusedField.focus()
 	})
 
 	// Function to handle file selection

@@ -6,6 +6,13 @@ import { toSlug } from '$lib/strings';
 // Possible query parameters:
 // showHidden=true : include venues with hidden=true
 export const GET: RequestHandler = async event => {
+	const { setHeaders } = event
+	const cacheSeconds = 60 * 24 // 24 hours
+	setHeaders({
+    "cache-control": `max-age=${cacheSeconds}`,
+		// Cache-Control: max-age=604800, stale-while-revalidate=86400
+  });
+
 	// Set query constraints
 	const searchParams = event.url.searchParams;
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';

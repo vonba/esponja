@@ -6,6 +6,12 @@ import { eventColumns } from '$lib/server/queries'
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 export const GET: RequestHandler = async event => {
+	const { setHeaders } = event
+	const cacheSeconds = 60 * 4 // 4 hours
+	setHeaders({
+    "cache-control": `max-age=${cacheSeconds}`,
+  });
+
 	const slug = event.params.slug
 
 	let mainEventResult
