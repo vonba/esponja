@@ -106,7 +106,7 @@
   ul.events {
     margin-top: 0;
     list-style: none;
-    padding: var(--spacing);
+    padding: 0;
     margin-bottom: var(--spacing);
     display: grid;
     gap: var(--spacing);
@@ -127,6 +127,7 @@
     }
 
     &.grid {
+      padding: var(--spacing);
       grid-template-columns: repeat(var(--eventColumnsGrid), 1fr);
     }
     &.list {

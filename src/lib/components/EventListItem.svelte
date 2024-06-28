@@ -109,7 +109,7 @@
     gap: var(--spacing);
     min-height: calc(var(--itemHeight) + var(--spacing));
 
-    @media (max-width: $mediaL) {
+    @media (max-width: $mediaM) {
       border-bottom: 1px solid var(--colorGreen);
     }
 
