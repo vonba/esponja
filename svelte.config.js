@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-node'
+import adapter from '@sveltejs/adapter-vercel';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 
 const production = process.env.NODE_ENV === 'production'
@@ -18,9 +18,7 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		adapter: adapter({
-			out: 'build'
-		}),
+		adapter: adapter(),
 		csp: {
 			mode: 'auto',
 			directives: {
