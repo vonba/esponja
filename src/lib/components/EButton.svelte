@@ -6,6 +6,8 @@
 </button>
 
 <style lang="scss">
+  @import "$lib/sass/variables";
+
   button {
     background: var(--colorOffWhite);
     color: var(--colorGreen);
@@ -20,7 +22,7 @@
     line-height: 1;
     white-space: nowrap;
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         box-shadow: none;
         transform: translate(0, 0);

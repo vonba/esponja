@@ -73,7 +73,7 @@
       width: 3em;
       transition: all 0.5s;
 
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           background-color: var(--colorGreen);
           background-image: url('/icon-close-offwhite.svg');

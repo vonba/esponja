@@ -121,7 +121,7 @@
   h2 a {
     text-decoration: none;
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         background-color: var(--colorGreen);
         color: var(--colorOffWhite);
@@ -171,7 +171,7 @@
     margin-bottom: var(--spacing);
     transition: border 0.25s;
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         border: 2px solid var(--colorGreen);
       }
