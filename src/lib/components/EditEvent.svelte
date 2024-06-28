@@ -544,6 +544,7 @@
 		height: 0;
 		border: none;
 		padding: 0;
+		visibility: hidden;
 	}
 
 	.buttons {

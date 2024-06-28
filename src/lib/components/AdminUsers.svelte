@@ -34,7 +34,7 @@
         invalidateAll();
         showCreateUser = false
       }}
-      on:saved={() => {
+      on:cancel={() => {
         showCreateUser = false
       }}
     />

@@ -155,7 +155,9 @@ export const PUT: RequestHandler = async event => {
 
 	// If a new image was uploaded, delete the old ones
 	const imageWasUpdated = !!formData.get('eventImage')
-	deleteFiles([existingEvent.imageKeyLarge, existingEvent.imageKeySmall])
+	if (imageWasUpdated) {
+		deleteFiles([existingEvent.imageKeyLarge, existingEvent.imageKeySmall])
+	}
 
 	return json({
 		message: 'Successfully updated event.'
