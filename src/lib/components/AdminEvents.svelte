@@ -260,22 +260,29 @@
     padding: var(--spacing);
     margin-top: 0;
     border-top: 1px solid var(--colorGreen);
-    --eventColumns: 1;
+    display: grid;
+    gap: var(--spacing);
+    
+    --eventColumnsGrid: 1;
+    --eventColumnsList: 1;
     
     @media (min-width: $mediaM) {
-      --eventColumns: 2;
+      --eventColumnsGrid: 2;
+      --eventColumnsList: 2;
     }
     @media (min-width: $mediaL) {
-      --eventColumns: 3;
+      --eventColumnsGrid: 3;
     }
     @media (min-width: $mediaXL) {
-      --eventColumns: 4;
+      --eventColumnsList: 3;
+      --eventColumnsGrid: 4;
     }
 
     &.grid {
-      display: grid;
-      gap: 1em;
-      grid-template-columns: repeat(var(--eventColumns), 1fr);
+      grid-template-columns: repeat(var(--eventColumnsGrid), 1fr);
+    }
+    &.list {
+      grid-template-columns: repeat(var(--eventColumnsList), 1fr);
     }
 
     @media (min-width: $mediaL) {

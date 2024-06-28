@@ -105,7 +105,7 @@ export const PUT: RequestHandler = async event => {
 	const existingEvent =  existingEventResult.rows[0]
 		
 	// Only admins can edit other users' events
-	if (user.role !== 'admin' && user.id !== existingEvent.user_id) {
+	if (user.role !== 'admin' && user.id !== existingEvent.userId) {
 		error(401, 'Unauthorized')
 	}
 
@@ -125,13 +125,7 @@ export const PUT: RequestHandler = async event => {
 	// If event was not published, it will be now
 	const wasApproved = !existingEvent.published
 	if (wasApproved) {
-		sendModerationSuccessfulNotification(
-			eventUpdate.submitterName,
-			eventUpdate.submitterEmail,
-			eventUpdate.name,
-			eventUpdate.slug,
-			eventUpdate.imageKeySmall,
-		)
+		eventUpdate.userId = user.id // Assign to current user
 	}
 
 	// Set status to published
@@ -153,10 +147,23 @@ export const PUT: RequestHandler = async event => {
 	// Upload file (this also updates event with image key)
 	await doFileUpload(formData, eventUpdate.id)
 
+	// TODO: check that if file upload fails, no attempt to delete is made
+
 	// If a new image was uploaded, delete the old ones
 	const imageWasUpdated = !!formData.get('eventImage')
 	if (imageWasUpdated) {
 		deleteFiles([existingEvent.imageKeyLarge, existingEvent.imageKeySmall])
+	}
+
+	// Notify the uploader
+	if (wasApproved) {
+		sendModerationSuccessfulNotification(
+			eventUpdate.submitterName,
+			eventUpdate.submitterEmail,
+			eventUpdate.name,
+			eventUpdate.slug,
+			eventUpdate.imageKeySmall,
+		)
 	}
 
 	return json({

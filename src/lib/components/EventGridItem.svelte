@@ -163,7 +163,7 @@
   }
 
   .imageWrapper {
-    height: calc(100vw / var(--eventColumns) - var(--spacing) * var(--eventColumns));
+    height: calc(100vw / var(--eventColumnsGrid) - var(--spacing) * var(--eventColumnsGrid));
     width: 100%;
     border-radius: var(--borderRadius);
     overflow: hidden;

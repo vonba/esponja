@@ -295,6 +295,7 @@
 
 			<div class="inputContainer date">
 				<label for="endDate">Termina</label>
+				<p>(Opcional)</p>
 				<div class="flex">
 					<input
 						type="date"

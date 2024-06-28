@@ -38,9 +38,7 @@
     {#if !venue && event.addressLine1}
       <p class="venue">
         <img src="/icon-venue-green.svg" alt="venue" />
-        {event.addressLine1}<br />
-        {#if event.addressLine2}{event.addressLine2}<br />{/if}
-        {#if event.addressPostCode}{event.addressPostCode}<br />{/if}
+        {event.addressLine1}
       </p>
     {/if}
     
