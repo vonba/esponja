@@ -229,14 +229,14 @@ export const POST: RequestHandler = async event => {
 }
 
 // Resize image with Jimp
-async function processImage(arrayBuffer: ArrayBuffer): Promise<Buffer> {
+async function processImage(arrayBuffer: ArrayBuffer, width: number = 1200): Promise<Buffer> {
 	const imageBuffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
 
 	// Read the image from the buffer
 	const image = await Jimp.read(imageBuffer);
 
 	// Resize the image to a maximum width of 1200px, maintaining aspect ratio
-	image.resize(1200, Jimp.AUTO);
+	image.resize(width, Jimp.AUTO);
 
 	// Compress the image with quality 80
 	image.quality(80);
@@ -269,11 +269,7 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void |
 		const imageBuffer = await file.arrayBuffer();
 		
 		// Convert to large jpeg
-		// const processedImageLarge = await sharp(Buffer.from(imageBuffer))
-		// 	.resize({ width: 1200, withoutEnlargement: true }) // Max width 1200px
-		// 	.jpeg({ quality: 80 }) // JPEG compression
-		// 	.toBuffer();
-		const processedImageLarge = await processImage(imageBuffer);
+		const processedImageLarge = await processImage(imageBuffer, 1200);
 		const fileKeyLarge = `event-${eventId}-${Date.now()}.jpg`
 		let uploadResult = await s3Client.send(
 			new PutObjectCommand({
@@ -286,11 +282,7 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void |
 			console.log('S3 upload error', uploadResult)
 		}
 		// Convert to small jpeg
-		// const processedImageSmall = await sharp(Buffer.from(imageBuffer))
-		// 	.resize({ width: 400, withoutEnlargement: true }) // Max width 400px
-		// 	.jpeg({ quality: 80 }) // JPEG compression
-		// 	.toBuffer();
-		const processedImageSmall = await processImage(imageBuffer);
+		const processedImageSmall = await processImage(imageBuffer, 400);
 		const fileKeySmall = `event-${eventId}-${Date.now()}.jpg`
 		uploadResult = await s3Client.send(
 			new PutObjectCommand({

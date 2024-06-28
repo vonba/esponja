@@ -120,7 +120,7 @@ type SuggestEventPageData = {
 type SingleVenuePageData = {
 	user: User,
 	venue: VenueProperties,
-	events: EventProperties[],
+	events: [EventProperties] | [],
 }
 
 

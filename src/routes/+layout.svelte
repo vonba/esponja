@@ -3,10 +3,12 @@
 	import { beforeNavigate } from '$app/navigation'
 	import { loginSession } from '../stores'
 	import LikedEventsPopup from '$lib/components/LikedEventsPopup.svelte';
+	import { navigating } from '$app/stores'
 
 	// Global styles
 	import '../styles/app.scss'
 	import ButtonLink from '$lib/components/ButtonLink.svelte'
+	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
 
 	export let data: LayoutServerData
 
@@ -52,6 +54,10 @@
 		</p>
 	</div>
 </footer>
+
+{#if $navigating}
+	<LoadingIndicator />
+{/if}
 
 <style lang="scss">
 	* {

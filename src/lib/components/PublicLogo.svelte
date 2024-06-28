@@ -6,10 +6,10 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <header class="publicLogo {frontPage ? '' : 'notFrontPage'}" on:click role="navigation">
-  <a href="/todo">
+  <a href="/">
     <img src="/esponja-symbol2.svg" alt="Esponja" class="esponjaSymbol" />
   </a>
-  <a href="/todo">
+  <a href="/">
     <img src="/esponja-logo.svg" alt="Esponja" class="esponjaLogo" />
     <img src="/esponja-tagline.svg" alt="Eventos de música alternativa en la Ciudad de México" class="esponjaTagline" />
   </a>

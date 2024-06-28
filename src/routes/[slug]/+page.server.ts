@@ -25,6 +25,5 @@ export const load: PageServerLoad = async ({ locals, fetch }): Promise<HomePageD
 	}
 	returnValue.events = await eventResponse.json();
 
-
 	return returnValue
 }

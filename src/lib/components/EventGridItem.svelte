@@ -168,19 +168,19 @@
     overflow: hidden;
     background-color: var(--colorGreen);
     margin-bottom: var(--spacing);
+    transition: border 0.25s;
+
+    @media (hover: hover) {
+      &:hover {
+        border: 2px solid var(--colorGreen);
+      }
+    }
 
     img {
       object-fit: cover;
       object-position: center top;
       height: 100%;
       width: 100%;
-      transition: border 0.5s;
-
-      @media (hover: hover) {
-        &:hover {
-          border: 2px solid var(--colorGreen);
-        }
-      }
     }
   }
 
@@ -260,8 +260,16 @@
       height: auto;
       border-radius: 0;
       margin-bottom: 0;
-      padding: var(--spacing);
       background-color: transparent;
+      padding: var(--spacing);
+
+      @media (max-width: $mediaM) {
+        padding: 0;
+      }
+
+      &:hover {
+        border: none;
+      }
       
       img {
         object-fit: initial;

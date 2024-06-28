@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDate, formatTime } from "$lib/dateTime"
+	import { formatDate, formatDateShort, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
   import EButton from "./EButton.svelte"
   
@@ -22,7 +22,7 @@
     <div class="datesWrapper">
       <img src="/icon-date-green.svg" alt="Fecha" />
       <div class="dates">
-        {#if event.startDate}{formatDate(event.startDate)}{/if}{#if event.startTime}, {formatTime(event.startTime)}{/if}
+        {#if event.startDate}{formatDate(event.startDate)}{/if}
       </div>
     </div>
 

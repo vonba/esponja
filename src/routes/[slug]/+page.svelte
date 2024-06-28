@@ -15,7 +15,7 @@
 	export let data: HomePageData
 
 	// State
-	let eventTimeWindow: string | null
+	let eventTimeWindow: string | undefined
 	let eventFilterDateStart: string | null  // YYYY-MM-DD
 	let eventFilterDateEnd: string | null // YYYY-MM-DD
 	let slug = ''
@@ -26,7 +26,7 @@
 	// Date filters
 	const setEventTimeWindow = (newTimeWindow: string) => {
 		if (eventTimeWindow === newTimeWindow) {
-			eventTimeWindow = 'todo' // Unset filter by clicking already selected button
+			eventTimeWindow = '' // Unset filter by clicking already selected button
 		} else {
 			eventTimeWindow = newTimeWindow
 		}
@@ -56,7 +56,7 @@
 			setEventTimeWindow(slug)
 		} else {
 			// No default filter
-			setEventTimeWindow('todo')
+			setEventTimeWindow('')
 		}
   });
 
@@ -67,7 +67,7 @@
 </svelte:head>
 
 <section class="homeHeader">
-	<PublicLogo on:click={() => setEventTimeWindow('todo')} />
+	<PublicLogo on:click={() => setEventTimeWindow('')} />
 	
 	<nav id="eventsNavigation" class={isSearchVisible ? 'searchVisible' : ''}>
 		<EButton 
@@ -176,6 +176,22 @@
 
 			&.searchVisible {
 				max-width: 50em;
+			}
+		}
+
+		@media (max-width: $mediaM) {
+			&.searchVisible {
+				.viewOptions {
+					display: none;
+				}
+
+				.more {
+					width: 100%;
+
+					:global(.searchWrapper) {
+						flex-grow: 1;
+					}
+				}
 			}
 		}
 	}

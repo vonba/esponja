@@ -8,7 +8,7 @@
   import { likedEventsStore, toggleLikedEvent } from '$lib/likedEvents';
 
   // Props
-  export let eventTimeWindow = 'todo'
+  export let eventTimeWindow = ''
   export let events: [EventProperties] | []
   export let venues: [VenueProperties] | []
   export let startDate: string | null
