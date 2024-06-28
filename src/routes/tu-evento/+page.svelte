@@ -1,6 +1,7 @@
 <script lang="ts">
 	import EditEvent from "$lib/components/EditEvent.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
+	import { fade } from "svelte/transition"
 	import { loginSession } from "../../stores"
   
   // Props
@@ -23,7 +24,7 @@
 <PublicLogo />
 
 
-<div class="editEventWrapper">
+<div class="editEventWrapper" in:fade>
   {#if !eventSaved}
     <div class="intro">
       <h1>Agregar tu evento</h1>

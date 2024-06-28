@@ -15,7 +15,7 @@
     height: calc(1em + var(--spacing) + 2px);
     box-shadow: 2px 2px 0 var(--colorGreen);
     transform: translate(-2px, -2px);
-    transition: all 0.25s;
+    transition: transform 0.25s, background-color 0.5s, color 0.25s, box-shadow 0.25s;
     cursor: pointer;
     line-height: 1;
     white-space: nowrap;
@@ -34,7 +34,15 @@
     
     &.selected {
       color: var(--colorOffWhite);
-      background: var(--colorGreen);
+      background-color: var(--colorGreen);
+
+      &.cross {
+        background-image: url('/icon-close-offwhite.svg');
+        background-repeat: no-repeat;
+        padding-right: 20px;
+        background-size: 10px;
+        background-position: calc(100% - 5px) center;
+      }
     }
 
     &.large {
@@ -93,7 +101,6 @@
       &.list {
         background-image: url('/icon-list-offwhite.svg');
       }
-      
     }
   }
 </style>

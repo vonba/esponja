@@ -72,25 +72,25 @@
 	<nav id="eventsNavigation" class={isSearchVisible ? 'searchVisible' : ''}>
 		<EButton 
 			on:click={() => setEventTimeWindow('hoy')}
-			class={'hoy' === eventTimeWindow ? 'selected' : ''}
+			class={'hoy' === eventTimeWindow ? 'selected cross' : ''}
 		>
 			Hoy
 		</EButton>
 		<EButton 
 			on:click={() => setEventTimeWindow('manana')}
-			class={'manana' === eventTimeWindow ? 'selected' : ''}
+			class={'manana' === eventTimeWindow ? 'selected cross' : ''}
 		>
 			Mañana
 		</EButton>
 		<EButton 
 			on:click={() => setEventTimeWindow('semana')}
-			class={'semana' === eventTimeWindow ? 'selected' : ''}
+			class={'semana' === eventTimeWindow ? 'selected cross' : ''}
 		>
 			Esta semana
 		</EButton>
 		<EButton 
 			on:click={() => setEventTimeWindow('mes')}
-			class={'mes' === eventTimeWindow ? 'selected' : ''}
+			class={'mes' === eventTimeWindow ? 'selected cross' : ''}
 		>
 			Este mes
 		</EButton>
@@ -115,17 +115,23 @@
 					Guardados
 				</EButton>
 				<SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
-				<ButtonLink href="/info" class="info icon">
+				<!-- <ButtonLink href="/info" class="info icon">
 					Info
-				</ButtonLink>
+				</ButtonLink> -->
 			</div>
 		</div>
 	</nav>
 </section>
 
-<a href="/tu-evento" class="suggestEvent">
-	Agregar tu evento
-</a>
+<div class="links">
+	<a href="/info">
+		¿Qué es Esponja?
+	</a>
+		&nbsp; &nbsp;
+	<a href="/tu-evento">
+		Agregar tu evento
+	</a>
+</div>
 
 <section id="homePage">
 	<PublicEvents 
@@ -238,15 +244,22 @@
     }
   }
 
-	.suggestEvent {
+	.links {
 		position: fixed;
 		bottom: 0;
 		right: 0;
 		text-transform: uppercase;
 		font-style: italic;
-		text-decoration: none;
 		font-weight: bold;
 		z-index: 10;
+		
+		a {
+			text-decoration: none;
+			
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 		
 		// Small screens: banner at the bottom
 		@media (max-width: $mediaL) {
@@ -256,12 +269,8 @@
 			background-color: var(--colorGreen);
 			color: var(--colorOffWhite);
 			
-			@media (hover: hover) {
-				&:hover {
-					color: var(--colorGreen);
-					background-color: var(--colorOffWhite);
-					border-top: 1px solid var(--colorGreen);
-				}
+			a {
+				color: var(--colorOffWhite);
 			}
 		}
 		
@@ -270,12 +279,6 @@
 			bottom: unset;
 			top: var(--spacing);
 			right: var(--spacing);
-
-			@media (hover: hover) {
-				&:hover {
-					text-decoration: underline;
-				}
-			}
 		}
 	}
 </style>
