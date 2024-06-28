@@ -208,9 +208,10 @@
 			display: flex;
 			gap: var(--spacing);
 		}
+		display: flex;
+		gap: var(--spacing);
 
 		@media (max-width: $mediaM) {
-			display: flex;
 			width: 100%;
 			position: absolute;
 			right: 0;
@@ -237,10 +238,6 @@
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
       transform: translate(-6px, -2px);
-    }
-
-    @media (min-width: $mediaM) {
-      display: none;
     }
   }
 

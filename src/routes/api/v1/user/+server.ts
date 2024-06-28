@@ -29,8 +29,10 @@ export const PUT: RequestHandler = async event => {
 	const { user } = event.locals
 	const userUpdate = await event.request.json()
 
-	// Only admins
-	if (!user || user.role !== 'admin') error(401, 'Unauthorized')
+	if (!user) error(401, 'Prohibido')
+
+	// Prevent changing someone else's password
+	if (user.id !== userUpdate.id && userUpdate.password) error(401, 'Tú no')
 	
 	// Prevent changing role or status of your own user (privilege escalation)
 	if (
