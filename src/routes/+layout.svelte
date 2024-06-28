@@ -26,14 +26,6 @@
 	})
 </script>
 
-<!-- <svelte:head>
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:image" content={imageUrl} />
-  <meta property="og:url" content={url} />
-  <meta property="og:type" content="article" />
-</svelte:head> -->
-
 <main class="container">
 	<slot />
 </main>

@@ -11,6 +11,7 @@
 	import { formatDate } from "$lib/dateTime"
 	import EventSummary from "$lib/components/EventSummary.svelte"
 	import Notification from "$lib/components/Notification.svelte"
+	import { getImageURL } from "$lib/file"
 
   // Props
   export let data: SingleEventPageData
@@ -51,14 +52,22 @@
     }
     : null
 
+  const pageTitle = !event ? '' : `${event.name} ${venue ? `en ${venue?.name}` : ''}
+    | ${formatDate(event.startDate)} 
+    | Esponja`
+
 </script>
 
 <svelte:head>
   <title>
-    {event.name} {venue ? `en ${venue?.name}` : ''}
-    | {formatDate(event.startDate)} 
-    | Esponja
+    {pageTitle}
   </title>
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={event.description?.slice(0, 200)} />
+  {#if event.imageKeySmall}
+    <meta property="og:image" content={getImageURL(event.imageKeySmall)} />
+  {/if}
+  <meta property="og:type" content="event" />
 </svelte:head>
 
 <div class="pageHeaderWrapper">
