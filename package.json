@@ -26,7 +26,7 @@
 		"nodemailer": "^6.9.14",
 		"pg": "^8.11.5",
 		"sanitize-html": "^2.13.0",
-		"sharp": "^0.33.4"
+		"sharp": "^0.32.6"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^5.0.1",
