@@ -134,11 +134,6 @@
     &.list {
       grid-template-columns: repeat(var(--eventColumnsList), 1fr);
     }
-
-    @media (max-width: $mediaM) {
-      padding-top: calc(3 * var(--spacing));
-    }
-
   }
 
   :global(.viewOptions button:disabled) {

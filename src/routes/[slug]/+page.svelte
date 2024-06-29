@@ -74,7 +74,7 @@
 		});
 		if (!venueResponse.ok) {
 			loading = false
-			throw new Error('Failed to fetch venues');
+			throw new Error('Error en API de foros');
 		}
 		data.venues = await venueResponse.json();
 
@@ -84,7 +84,7 @@
 		});
 		if (!eventResponse.ok) {
 			loading = false
-			throw new Error('Failed to fetch events');
+			throw new Error('Error en API de eventos');
 		}
 		data.events = await eventResponse.json();
 		loading = false
@@ -242,7 +242,6 @@
 	}
 	
 	.smallButtons {
-
 		.more {
 			display: flex;
 			gap: var(--spacing);
@@ -258,6 +257,14 @@
 			justify-content: space-between;
 			background-color: var(--colorOffWhite);
 			padding: var(--spacing);
+			border-bottom: 1px solid var(--colorGreen);
+		}
+	}
+
+	#homePage {
+		@media (max-width: $mediaM) {
+			// To compensate for .smallButtons which has an absolute position
+			margin-top: 35px;
 		}
 	}
 
