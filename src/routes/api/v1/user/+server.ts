@@ -5,6 +5,12 @@ import { query } from '$lib/server/db'
 // Possible query parameters:
 // showBlocked=true : include users with blocked=true
 export const GET: RequestHandler = async event => {
+	const { setHeaders } = event
+	const cacheSeconds = 60 * 60 * 24 // 24 hours
+	setHeaders({
+    "Cache-Control": `max-age=${cacheSeconds}`,
+  });
+
 	const { user } = event.locals
 	if (!user || user.role !== 'admin') error(401, 'Unauthorized')
 

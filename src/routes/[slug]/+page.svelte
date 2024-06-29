@@ -70,7 +70,7 @@
 
 		// Fetch venues
 		const venueResponse = await fetch('/api/v1/venue', {
-			method: 'GET'
+			method: 'GET',
 		});
 		if (!venueResponse.ok) {
 			loading = false

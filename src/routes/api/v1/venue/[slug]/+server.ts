@@ -4,8 +4,13 @@ import { query } from '$lib/server/db'
 import { eventColumns } from '$lib/server/queries'
 
 export const GET: RequestHandler = async event => {
-	const slug = event.params.slug
+	const { setHeaders } = event
+	const cacheSeconds = 60 * 60 * 24 // 24 hours
+	setHeaders({
+    "Cache-Control": `max-age=${cacheSeconds}`,
+  });
 
+	const slug = event.params.slug
 	let venue, events
 
 	try {
