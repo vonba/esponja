@@ -20,8 +20,8 @@
 		<h2>¿Qué es Esponja?</h2>
 		<p>
 			Esponja es una plataforma <strong>gratuita</strong> y sin fines de lucro para publicar eventos de música alternativa en la Ciudad de México.
-			Fue realizada como un apoyo para <strong>la comunidad artística</strong> de la ciudad, y busca ser <strong>una alternativa</strong> a las redes sociales, 
-			para que lxs artistas y los foros puedan visibilizar sus eventos, sin depender de algoritmos con poca transparencia y sin tener que pagar por las publicaciones.
+			Fue realizada como un apoyo para <strong>la comunidad artística</strong> de la ciudad y busca ser <strong>una alternativa</strong> a las redes sociales, 
+			para que lxs artistas y los foros puedan visibilizar sus eventos – sin depender de algoritmos con poca transparencia y sin tener que pagar por las publicaciones.
 		</p>
 
 		<div class="imageWrapper">

@@ -14,7 +14,7 @@
   export let startDate: string | null
   export let endDate: string | null
   export let searchString = ''
-  export let displayMode = 'grid'
+  export let displayMode = 'list' // Default mode is list
 
   // State
   let showEditEvent = false
@@ -44,12 +44,13 @@
     toggleLikedEvent(event);
   }
 
-  const handleEditEvent = user && user.role === 'admin' 
+  // If user is logged in, provide an edit function
+  const handleEditEvent = user
     ? (event: EventProperties) => {
       editEvent = event
       showEditEvent = true
     }
-    : null
+    : null  
 
 </script>
 {#if showEditEvent}

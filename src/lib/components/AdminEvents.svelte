@@ -6,6 +6,7 @@
 	import EventListItem from "./EventListItem.svelte"
 	import EButton from "./EButton.svelte"
 	import EventGridItem from "./EventGridItem.svelte"
+	import { loginSession } from '../../stores'
 
   // Props
   export let events: [EventProperties] | []
@@ -18,10 +19,18 @@
   let displayMode = 'list'
   let filterMode = 'published'
   let loading = false
-  let message = ''
 
   // Observables
+  let loggedInUser: User;
+  loginSession.subscribe(value => {
+    loggedInUser = value;
+  });
   $: filteredEvents = events.filter(event => {
+    // For contributors, only show their own events
+    if (loggedInUser?.role === 'contributor') {
+      if (event.userId !== loggedInUser.id) return false
+    }
+    // Filter events by status
     if (filterMode === 'published') {
       return event.published && !event.hidden
     } else if (filterMode === 'hidden') {
@@ -29,6 +38,7 @@
     } else if (filterMode === 'unpublished') {
       return !event.published
     }
+    return true
   })
   $: unpublishedCount = events.filter(e => !e.published).length
   $: hiddenCount = events.filter(e => e.hidden).length

@@ -3,6 +3,7 @@
 	import { getImageURL } from "$lib/file"
 	import EButton from "./EButton.svelte"
 	import { capitalizeFirstChar, formatDescription } from "$lib/strings"
+	import { loginSession } from "../../stores"
 
   // Props
   export let event: EventProperties
@@ -12,6 +13,14 @@
   export let handleDeleteEventPermanently: Function | null = null
   export let isSingle = false
   export let isLiked = false
+
+  // Observables
+  let user: User;
+  loginSession.subscribe(value => {
+    user = value;
+  });
+  // For contributors, only allow editing own events
+  const allowEdit = user?.role !== 'contributor' || user?.id === event.userId
 
   const venue = venues.find(v => v.id === event.venueId)
 </script>
@@ -52,7 +61,7 @@
               Borrar
             </EButton>
           {/if}
-          {#if handleEditEvent}
+          {#if handleEditEvent && allowEdit}
             <EButton on:click={() => handleEditEvent(event)} class="icon edit">
               Modificar
             </EButton>
