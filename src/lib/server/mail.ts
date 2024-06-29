@@ -1,6 +1,7 @@
 import { createTransport } from 'nodemailer';
 // import SMTPTransport = require('nodemailer/lib/smtp-transport');
-import { MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, DOMAIN, MAIL_FROM, MAIL_NOTIFICATIONS_TO } from '$env/static/private'
+import { MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, MAIL_FROM, MAIL_NOTIFICATIONS_TO } from '$env/static/private'
+import { PUBLIC_DOMAIN } from '$env/static/public';
 import { getImageURL } from '$lib/file';
 
 const transport = createTransport({
@@ -24,7 +25,7 @@ function getFormattedEmail(text: string): string {
       </head>
       <body style="margin: 0; color: #007E68; font-family: 'Open Sans', 'Arial', sans-serif; background-color: #FFFDF7; text-align: center;">
         <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
-          <img src="${DOMAIN}/esponja-symbol3.png" alt="Esponja" height="40" />
+          <img src="${PUBLIC_DOMAIN}/esponja-symbol3.png" alt="Esponja" height="40" />
         </div>
         <div style="display: inline-block; text-align: left; max-width: 40em; margin: 1em 0.5em; padding: 1em; border: 1px solid #007E68; border-radius: 5px; padding: 1em;">
           ${text}
@@ -78,7 +79,7 @@ export async function sendModerationSuccessfulNotification(
         <h2>¡Hola ${submitterName}!</h2>
         <p>
 					Tu evento ${eventName} ya está publicado en
-          ${getStyledLink('este URL', `${DOMAIN}/evento/${eventSlug}`)}
+          ${getStyledLink('este URL', `${PUBLIC_DOMAIN}/evento/${eventSlug}`)}
 				</p>
         <p>
           <br />
@@ -117,7 +118,7 @@ export async function sendModerationNotification(
           Creado por: ${submitterName} (${getStyledLink(submitterEmail, `mailto:${submitterEmail}`)})
         </p>
 				<p>
-          ${getStyledButton('Ir a admin', `${DOMAIN}/admin`)}
+          ${getStyledButton('Ir a admin', `${PUBLIC_DOMAIN}/admin`)}
 				</p>
     `),
   });
@@ -138,7 +139,7 @@ export async function sendPasswordResetEmail(
           Utiliza la siguiente liga.
 				</p>
 				<p>
-          ${getStyledButton('Cambiar mi contraseña', `${DOMAIN}/auth/reset/${token}`)}
+          ${getStyledButton('Cambiar mi contraseña', `${PUBLIC_DOMAIN}/auth/reset/${token}`)}
 				</p>
 				<p>
 					Si no has pedido el cambio puedes descartar este mensaje.

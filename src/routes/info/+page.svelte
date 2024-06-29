@@ -2,14 +2,14 @@
 	import ButtonLink from "$lib/components/ButtonLink.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { fade } from "svelte/transition"
-
+	import { PUBLIC_DOMAIN } from '$env/static/public';
 </script>
 
 <svelte:head>
 	<title>Acerca de Esponja</title>
 	<meta property="og:title" content="Acerca de Esponja" />
   <meta property="og:description" content="Esponja es una plataforma gratuita y sin fines de lucro para publicar eventos de música alternativa en la Ciudad de México." />
-  <meta property="og:image" content="/esponja-logo-tagline-background.jpg" />
+  <meta property="og:image" content="{PUBLIC_DOMAIN}/esponja-logo-tagline-background.jpg" />
   <meta property="og:type" content="event" />
 </svelte:head>
 
