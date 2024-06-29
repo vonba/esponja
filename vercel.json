@@ -3,13 +3,13 @@
     {
       "source": "/api/v1/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=1800, stale-while-revalidate=60" }
+        { "key": "Cache-Control", "value": "s-max-age=1800, stale-while-revalidate=60" }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=1800, stale-while-revalidate=60" }
+        { "key": "Cache-Control", "value": "s-max-age=1800, stale-while-revalidate=60" }
       ]
     }
   ]

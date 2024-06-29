@@ -64,9 +64,9 @@
 </script>
 
 <svelte:head>
-	<title>Esponja – Eventos de Música Alternativa en la Ciudad de México</title>
+	<title>Esponja – Eventos de música alternativa en la Ciudad de México</title>
 	<meta property="og:title" content="Esponja" />
-  <meta property="og:description" content="Eventos de Música Alternativa en la Ciudad de México" />
+  <meta property="og:description" content="Eventos de música alternativa en la Ciudad de México" />
   <meta property="og:image" content="{PUBLIC_DOMAIN}/esponja-preview.jpg" />
   <meta property="og:type" content="website" />
 </svelte:head>
