@@ -1,4 +1,8 @@
 <!-- This is the public home page of the app -->
+<script context="module" lang="ts">
+  export const prerender = true
+</script>
+
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from "$app/navigation"
@@ -7,13 +11,17 @@
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { getDateFiltersFromTimeWindow } from "$lib/dateTime"
 	import { onMount } from 'svelte'
-	import ButtonLink from '$lib/components/ButtonLink.svelte'
 	import { likedEventsPopupVisible } from '../../stores'
 	import SearchEvents from '$lib/components/SearchEvents.svelte'
 	import { PUBLIC_DOMAIN } from '$env/static/public'
+	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
 
-	// Props
-	export let data: HomePageData
+	// Fetch data (ISR)
+	let loading = true;
+	let data: HomePageData = {
+		venues: [],
+		events: [],
+	}
 
 	// State
 	let eventTimeWindow: string | undefined
@@ -52,13 +60,35 @@
 
   const handleSearchChange = (newSearchString: string) => searchString = newSearchString
 
-	onMount(() => {
+	onMount(async () => {
     if(slug) {
 			setEventTimeWindow(slug)
 		} else {
 			// No default filter
 			setEventTimeWindow('')
 		}
+
+		// Fetch venues
+		const venueResponse = await fetch('/api/v1/venue', {
+			method: 'GET'
+		});
+		if (!venueResponse.ok) {
+			loading = false
+			throw new Error('Failed to fetch venues');
+		}
+		data.venues = await venueResponse.json();
+
+		// Fetch events
+		const eventResponse = await fetch('/api/v1/event', {
+			method: 'GET'
+		});
+		if (!eventResponse.ok) {
+			loading = false
+			throw new Error('Failed to fetch events');
+		}
+		data.events = await eventResponse.json();
+		loading = false
+
   });
 
 </script>
@@ -139,15 +169,19 @@
 </div>
 
 <section id="homePage">
-	<PublicEvents 
-		{eventTimeWindow}
-		events={data.events} 
-		venues={data.venues} 
-		startDate={eventFilterDateStart} 
-		endDate={eventFilterDateEnd} 
-		{searchString}
-		{displayMode}
-	/>
+	{#if loading}
+		<LoadingIndicator />
+	{:else}
+		<PublicEvents 
+			{eventTimeWindow}
+			events={data.events} 
+			venues={data.venues} 
+			startDate={eventFilterDateStart} 
+			endDate={eventFilterDateEnd} 
+			{searchString}
+			{displayMode}
+		/>
+	{/if}
 </section>
 
 <style lang="scss">
