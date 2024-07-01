@@ -1,8 +1,4 @@
 <!-- This is the public home page of the app -->
-<script context="module" lang="ts">
-  export const prerender = true
-</script>
-
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from "$app/navigation"
@@ -10,11 +6,12 @@
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { getDateFiltersFromTimeWindow } from "$lib/dateTime"
-	import { onMount } from 'svelte'
+	import { afterUpdate, onMount, tick } from 'svelte'
 	import { likedEventsPopupVisible } from '../../stores'
 	import SearchEvents from '$lib/components/SearchEvents.svelte'
 	import { PUBLIC_DOMAIN } from '$env/static/public'
 	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
+	import type { Snapshot } from '../$types'
 
 	// Fetch data (ISR)
 	let loading = true;
@@ -31,6 +28,22 @@
 	let isSearchVisible = false
   let searchString = ''
 	let displayMode = 'grid'
+	
+	// Restore scroll state
+	let scrollX = 0
+	let scrollY = 0
+	export const snapshot: Snapshot<string> = {
+		capture: () => {
+			return JSON.stringify({scrollPosition: {x: window.scrollX, y: window.scrollY}})
+		},
+		restore: (snapshotJSON) => {
+			const snapshot = JSON.parse(snapshotJSON)
+			if (snapshot.scrollPosition) {
+				scrollX = snapshot.scrollPosition.x
+				scrollY = snapshot.scrollPosition.y
+			}
+		},
+	};
 
 	// Date filters
 	const setEventTimeWindow = (newTimeWindow: string) => {
@@ -60,6 +73,10 @@
 
   const handleSearchChange = (newSearchString: string) => searchString = newSearchString
 
+	afterUpdate(() => {
+		window.scrollTo(scrollX, scrollY);
+	});
+
 	onMount(async () => {
     if(slug) {
 			setEventTimeWindow(slug)
@@ -88,8 +105,7 @@
 		}
 		data.events = await eventResponse.json();
 		loading = false
-
-  });
+  })
 
 </script>
 

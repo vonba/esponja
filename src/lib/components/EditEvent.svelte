@@ -51,6 +51,7 @@
 	let showCreateVenue = false
 	let newVenueAdded = false
 	let showCustomAddress = !!event.addressLine1
+	let isFree = true
 	const isNewEvent = event?.id === 0
 
 	// Observables
@@ -409,36 +410,50 @@
 				/>
 			</div>
 
-			<div class="inputContainer price">
-				<label for="price">Precio</label>
-				<p>El precio máximo lo puedes utilizar si existe un rango de precios. Si no, omítalo.</p>
-				<div class="flex">
-					<input
-						bind:value={event.price}
-						type="number"
-						min="1"
-						max="999999"
-						id="price"
-						placeholder="Precio (normal)"
-					/>
-					<input
-						bind:value={event.priceMax}
-						type="number"
-						min="1"
-						max="999999"
-						placeholder="Precio (máximo)"
-					/>
-				</div>
+			<div class="inputContainer flex alignCenter">
+				<input
+					type="checkbox"
+					bind:checked={isFree}
+					id="isFree"
+				/>
+				<label for="isFree">
+					Entrada libre
+				</label>
 			</div>
 
-			<div class="inputContainer ticketLink">
-				<label for="price">Link para comprar boletos</label>
-				<input
-					bind:value={event.ticketLink}
-					id="ticketLink"
-					placeholder="https://example.com"
-				/>
-			</div>
+			{#if !isFree}
+				<div class="inputContainer price">
+					<label for="price">Precio</label>
+					<p>El precio máximo lo puedes utilizar si existe un rango de precios. Si no, omítalo.</p>
+					<div class="flex">
+						<input
+							bind:value={event.price}
+							type="number"
+							min="1"
+							max="999999"
+							id="price"
+							placeholder="Precio (normal)"
+						/>
+						<input
+							bind:value={event.priceMax}
+							type="number"
+							min="1"
+							max="999999"
+							placeholder="Precio (máximo)"
+						/>
+					</div>
+				</div>
+				
+				<div class="inputContainer ticketLink">
+					<label for="price">Link para comprar boletos</label>
+					<input
+						bind:value={event.ticketLink}
+						id="ticketLink"
+						placeholder="https://example.com"
+					/>
+				</div>
+			{/if}
+
 		</fieldset>
 
 		{#if showAdminOptions && (event.published || isConfirmedToPublish)}

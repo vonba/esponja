@@ -158,7 +158,7 @@ CREATE INDEX events_start_date_index
 CREATE TABLE IF NOT EXISTS public.sessions (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   user_id integer NOT NULL,
-  expires timestamp with time zone DEFAULT (CURRENT_TIMESTAMP + '02:00:00'::interval),
+  expires timestamp with time zone DEFAULT (CURRENT_TIMESTAMP + '60 days'::interval),
   CONSTRAINT sessions_pkey PRIMARY KEY (id),
   CONSTRAINT sessions_user_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
