@@ -29,6 +29,15 @@
       <a href="/evento/{event.slug}">{event.name}</a>
     </h2>
 
+    <div class="price mb">
+      {#if event.price}
+        ${Math.floor(event.price)}
+        {#if event.priceMax} – ${Math.floor(event.priceMax)}{/if}
+      {:else}
+        Entrada libre
+      {/if}
+    </div>
+
     <div class="datesWrapper">
       <img src="/icon-date-green.svg" alt="Fecha" />
       <div class="dates">

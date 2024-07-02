@@ -69,6 +69,15 @@
         </div>
       </header>
 
+      <div class="price mb">
+        {#if event.price}
+          ${Math.floor(event.price)}
+          {#if event.priceMax} – ${Math.floor(event.priceMax)}{/if}
+        {:else}
+          Entrada libre
+        {/if}
+      </div>
+
       <div class="datesWrapper">
         <img src="/icon-date-green.svg" alt="calendar" />
         <div class="dates">
@@ -113,13 +122,6 @@
           <a href={event.ticketLink}>Comprar boletos</a>
         </p>
       {/if}
-
-      {#if event.price}
-        <p class="price">
-          ${Math.floor(event.price)}
-          {#if event.priceMax} – ${Math.floor(event.priceMax)}{/if}
-        </p>
-      {/if}
     </div>
   </li>
 {/if}
@@ -153,8 +155,7 @@
     }
   }
 
-  .ticketLink,
-  .price {
+  .ticketLink {
     display: none;
   }
 

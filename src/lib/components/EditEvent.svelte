@@ -51,7 +51,7 @@
 	let showCreateVenue = false
 	let newVenueAdded = false
 	let showCustomAddress = !!event.addressLine1
-	let isFree = !!event.price
+	let isFree = !!!event.price // True if there's no price set
 	const isNewEvent = event?.id === 0
 
 	// Observables
@@ -424,7 +424,7 @@
 			{#if !isFree}
 				<div class="inputContainer price">
 					<label for="price">Precio</label>
-					<p>El precio máximo lo puedes utilizar si existe un rango de precios. Si no, omítalo.</p>
+					<p>Si existe un rango de precios, puedes ingresar también el precio máximo. Si no, omítalo.</p>
 					<div class="flex">
 						<input
 							bind:value={event.price}

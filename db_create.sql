@@ -406,7 +406,7 @@ DECLARE
   input_description text := TRIM((input->>'description')::text);
   input_ticket_link varchar(255) := TRIM((input->>'ticketLink')::varchar);
   input_price NUMERIC(10, 2) := (input->>'price')::NUMERIC(10, 2);
-  input_price_max NUMERIC(10, 2) := (input->>'price_max')::NUMERIC(10, 2);
+  input_price_max NUMERIC(10, 2) := (input->>'priceMax')::NUMERIC(10, 2);
   input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);
   input_published boolean := COALESCE((input->>'published')::boolean, false);
   input_image_key_large varchar(255) := TRIM((input->>'imageKeyLarge')::varchar);
