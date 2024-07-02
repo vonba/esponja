@@ -27,6 +27,7 @@ const config = {
         '/manana', 
         '/semana', 
         '/mes', 
+				'/info',
       ]
     },
 		csp: {
