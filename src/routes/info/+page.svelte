@@ -9,7 +9,8 @@
 	<title>Acerca de Esponja</title>
 	<meta property="og:title" content="Acerca de Esponja" />
   <meta property="og:description" content="Esponja es una plataforma gratuita y sin fines de lucro para publicar eventos de música alternativa en la Ciudad de México." />
-  <meta property="og:image" content="{PUBLIC_DOMAIN}/esponja-preview.jpg" />
+	<meta name="description" content="Esponja es una plataforma gratuita y sin fines de lucro para publicar eventos de música alternativa en la Ciudad de México.">
+	<meta property="og:image" content="{PUBLIC_DOMAIN}/esponja-preview.jpg" />
   <meta property="og:type" content="event" />
 </svelte:head>
 

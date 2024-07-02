@@ -113,6 +113,7 @@
 	<title>Esponja – Eventos de música alternativa en la Ciudad de México</title>
 	<meta property="og:title" content="Esponja" />
   <meta property="og:description" content="Eventos de música alternativa en la Ciudad de México" />
+	<meta name="description" content="Eventos de música alternativa en la Ciudad de México">
   <meta property="og:image" content="{PUBLIC_DOMAIN}/esponja-preview.jpg" />
   <meta property="og:type" content="website" />
 </svelte:head>
