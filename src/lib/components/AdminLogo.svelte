@@ -3,7 +3,7 @@
   <p>
     Administración
   </p>
-  <a href="/" class="exit">Sitio público</a>
+  <a href="/eventos" class="exit">Sitio público</a>
 </header>
 
 <style lang="scss">
