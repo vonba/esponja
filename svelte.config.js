@@ -19,6 +19,16 @@ const config = {
 
 	kit: {
 		adapter: adapter(),
+		prerender: {
+      entries: [
+        '/', 
+        '/eventos', 
+        '/hoy', 
+        '/manana', 
+        '/semana', 
+        '/mes', 
+      ]
+    },
 		csp: {
 			mode: 'auto',
 			directives: {
