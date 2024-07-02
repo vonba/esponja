@@ -51,7 +51,7 @@
 	let showCreateVenue = false
 	let newVenueAdded = false
 	let showCustomAddress = !!event.addressLine1
-	let isFree = true
+	let isFree = !!event.price
 	const isNewEvent = event?.id === 0
 
 	// Observables
@@ -443,7 +443,7 @@
 						/>
 					</div>
 				</div>
-				
+
 				<div class="inputContainer ticketLink">
 					<label for="price">Link para comprar boletos</label>
 					<input
