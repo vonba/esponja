@@ -1,15 +1,20 @@
 export function formatDescription(description: string | undefined | null) {
   if (!description) return '';
 
-  // Convert URLs into clickable links
+  // Convert URLs into clickable links without the initial http:// or https:// in the link text
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  let formattedDescription = description.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  let formattedDescription = description.replace(urlRegex, (url) => {
+    // Remove the protocol (http:// or https://) from the link text
+    const linkText = url.replace(/https?:\/\//, '');
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+  });
 
   // Convert newlines into <br> tags
   formattedDescription = formattedDescription.replace(/\n/g, '<br>');
 
   return formattedDescription;
 }
+
 
 export function toSlug(input: string) {
   // Normalize the input to decompose combined letters into their base characters
