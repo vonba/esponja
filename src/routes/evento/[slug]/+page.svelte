@@ -8,7 +8,7 @@
 	import { fade } from "svelte/transition"
 	import { likedEventsPopupVisible, loginSession } from "../../../stores"
 	import { likedEventsStore, toggleLikedEvent } from "$lib/likedEvents"
-	import { formatDate } from "$lib/dateTime"
+	import { formatDate, formatDateShort } from "$lib/dateTime"
 	import EventSummary from "$lib/components/EventSummary.svelte"
 	import Notification from "$lib/components/Notification.svelte"
 	import { getImageURL } from "$lib/file"
@@ -24,7 +24,9 @@
   $: venue = venues.find(v => v.id === event?.venueId)
   $: unmoderated = !event.published
   $: likedEvents = $likedEventsStore;
-
+  $: pageTitle = !event ? 'Esponja' : `${event.name} ${venue ? `en ${venue?.name}` : ''} | Esponja`
+  $: metaDescription = !event ? 'Esponja' : event.description?.slice(0, 200)
+  
   // State
   let showEditEvent = false
   let editEvent: EventProperties | null = null
@@ -51,12 +53,6 @@
       showEditEvent = true
     }
     : null
-
-  const pageTitle = !event ? '' : `${event.name} ${venue ? `en ${venue?.name}` : ''}
-    | ${formatDate(event.startDate)} 
-    | Esponja`
-
-  const metaDescription = !event ? '' : `${event.name} | ${event.description?.slice(0, 200)}`
 
 </script>
 
