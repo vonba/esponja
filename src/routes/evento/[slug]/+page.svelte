@@ -56,7 +56,7 @@
     | ${formatDate(event.startDate)} 
     | Esponja`
 
-  const metaDescription = `${event.name} | ${event.description?.slice(0, 200)}`
+  const metaDescription = !event ? '' : `${event.name} | ${event.description?.slice(0, 200)}`
 
 </script>
 
