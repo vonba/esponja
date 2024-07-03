@@ -140,7 +140,7 @@ export const PUT: RequestHandler = async event => {
 	try {
 		await query(`CALL upsert_event($1, $2);`, [queryBody, null])
 	} catch (err) {
-		console.log('Error updating event', err)
+		console.error('Error updating event', err)
 		error(503, 'Error de base de datos')
 	}
 	
@@ -223,7 +223,7 @@ export const POST: RequestHandler = async event => {
 		eventId = dbResult.rows[0].new_id;
 		if (!eventId) throw new Error ('Error creating event (id)')
 	} catch (err) {
-		console.log('Error creating event', err)
+		console.error('Error creating event', err)
 		error(503, 'No se pudo crear el evento')
 	}
 
@@ -295,7 +295,7 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void |
 			})
 		);
 		if (uploadResult.$metadata.httpStatusCode !== 200) {
-			console.log('S3 upload error', uploadResult)
+			console.error('S3 upload error', uploadResult)
 		}
 		// Convert to small jpeg
 		const processedImageSmall = await processImage(imageBuffer, 400);
@@ -308,7 +308,7 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void |
 			})
 		);
 		if (uploadResult.$metadata.httpStatusCode !== 200) {
-			console.log('S3 upload error', uploadResult)
+			console.error('S3 upload error', uploadResult)
 		}
 		// Finished uploading
 
@@ -318,7 +318,7 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void |
 		return { fileKeyLarge, fileKeySmall }
 
 	} catch (err) {
-		console.log('Error uploading event image', err)
+		console.error('Error uploading event image', err)
 		error(503, 'No se pudo subir la imagen')		
 	}
 }
@@ -334,7 +334,6 @@ async function deleteFiles(imageKeys: (string | undefined)[]) {
           Key: key
         })
       );
-      console.log(`Deleted ${key} from S3`);
     }
   } catch (err) {
     console.error("Error deleting images from S3", err);

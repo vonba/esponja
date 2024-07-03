@@ -56,6 +56,8 @@
     | ${formatDate(event.startDate)} 
     | Esponja`
 
+  const metaDescription = `${event.name} | ${event.description?.slice(0, 200)}`
+
 </script>
 
 <svelte:head>
@@ -63,8 +65,8 @@
     {pageTitle}
   </title>
   <meta property="og:title" content={pageTitle} />
-  <meta property="og:description" content={event.description?.slice(0, 200)} />
-  <meta name="description" content={event.description?.slice(0, 200)}>
+  <meta property="og:description" content={metaDescription} />
+  <meta name="description" content={metaDescription}>
   {#if event.imageKeySmall}
     <meta property="og:image" content={getImageURL(event.imageKeySmall)} />
   {/if}

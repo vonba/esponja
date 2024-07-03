@@ -138,8 +138,9 @@
   }
 
   .imageWrapper {
-    height: calc(var(--itemHeight) - var(--spacing));
     width: 100%;
+    height: 100%;
+    min-height: calc(var(--itemHeight) - var(--spacing));
     border-radius: var(--borderRadius);
     overflow: hidden;
     background-color: var(--colorGreen);
