@@ -1,5 +1,5 @@
 <div class="overlay loadingIndicator">
-  <img src="/esponja-symbol3.svg" alt="Cargando" />
+  <img src="/esponja-blob-green.svg" alt="Cargando" />
 </div>
 
 <style lang="scss">

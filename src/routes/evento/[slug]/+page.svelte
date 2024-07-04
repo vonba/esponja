@@ -26,7 +26,8 @@
   $: likedEvents = $likedEventsStore;
   $: pageTitle = !event ? 'Esponja' : `${event.name} ${venue ? `en ${venue?.name}` : ''} | Esponja`
   $: metaDescription = !event ? 'Esponja' : event.description?.slice(0, 200)
-  
+  $: metaTitle = !event ? 'Esponja' : event.name
+
   // State
   let showEditEvent = false
   let editEvent: EventProperties | null = null
@@ -60,9 +61,9 @@
   <title>
     {pageTitle}
   </title>
-  <meta property="og:title" content={pageTitle} />
-  <meta property="og:description" content={metaDescription} />
   <meta name="description" content={metaDescription}>
+  <meta property="og:title" content={metaTitle} />
+  <meta property="og:description" content={metaDescription} />
   {#if event.imageKeySmall}
     <meta property="og:image" content={getImageURL(event.imageKeySmall)} />
   {/if}
