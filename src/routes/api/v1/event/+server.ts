@@ -19,7 +19,7 @@ const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 export const GET: RequestHandler = async event => {
 
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 60 * 4 // 4 hours
+	const cacheSeconds = 60 * 10 // 10 minutes
 	setHeaders({
     "Cache-Control": `max-age=${cacheSeconds}`,
 		// Cache-Control: max-age=604800, stale-while-revalidate=86400
