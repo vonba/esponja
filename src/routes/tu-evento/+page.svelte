@@ -3,6 +3,7 @@
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { fade } from "svelte/transition"
 	import { loginSession } from "../../stores"
+	import { PUBLIC_DOMAIN } from "$env/static/public"
   
   // Props
   export let data: SuggestEventPageData
@@ -18,7 +19,12 @@
 </script>
 
 <svelte:head>
-	<title>Agregar tu evento – Evento</title>
+	<title>Agregar tu evento a Esponja</title>
+  <meta property="og:title" content="Agregar tu evento a Esponja" />
+  <meta property="og:description" content="Eventos de música alternativa en la Ciudad de México" />
+	<meta name="description" content="Eventos de música alternativa en la Ciudad de México">
+  <meta property="og:image" content="{PUBLIC_DOMAIN}/esponja-preview.jpg" />
+  <meta property="og:type" content="website" />
 </svelte:head>
 
 <PublicLogo />
