@@ -1,15 +1,18 @@
+// Returns e.g. "sábado, 6 de julio 2024"
 export function formatDate(dateString: string): string {
   const date = new Date(`${dateString}T00:00:00`); // Force local time
   const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
   return new Intl.DateTimeFormat('es-MX', options).format(date);
 }
 
+// Returns e.g. "6 de julio"
 export function formatDateShort(dateString: string): string {
   const date = new Date(`${dateString}T00:00:00`); // Force local time
   const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
   return new Intl.DateTimeFormat('es-MX', options).format(date);
 }
 
+// Returns e.g. "1 PM"
 export function formatTime(timeString: string): string {
   const [hours, minutes] = timeString.split(':').map(Number);
   const date = new Date();
@@ -18,6 +21,8 @@ export function formatTime(timeString: string): string {
   return new Intl.DateTimeFormat('es-MX', options).format(date);
 }
 
+// Returns { startDate, endDate } corresponding to time window
+// Possible values of time window: hoy | manana | semana | mes
 export function getDateFiltersFromTimeWindow(eventTimeWindow: string): {startDate: string | null, endDate: string | null} {
   let startDate, endDate;
   const today = new Date();
@@ -50,4 +55,3 @@ export function getDateFiltersFromTimeWindow(eventTimeWindow: string): {startDat
   }
   return { startDate, endDate };
 }
-

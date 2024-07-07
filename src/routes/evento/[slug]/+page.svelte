@@ -25,7 +25,7 @@
   $: unmoderated = !event.published
   $: likedEvents = $likedEventsStore;
   $: pageTitle = !event ? 'Esponja' : `${event.name} ${venue ? `en ${venue?.name}` : ''} | Esponja`
-  $: metaDescription = !event ? 'Esponja' : event.description?.slice(0, 200)
+  $: metaDescription = !event || !venue ? 'Esponja' : `${venue.name}, ${formatDateShort(event.startDate)}. ${event.description?.slice(0, 200)}`
   $: metaTitle = !event ? 'Esponja' : event.name
 
   // State

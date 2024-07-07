@@ -11,11 +11,11 @@ import { sendModerationNotification, sendModerationSuccessfulNotification } from
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
+// Endpoint for listing events
 // Possible query parameters:
 // showHidden=true : include events with hidden=true
 // showUnpublished=true : include events with published=false
 // showOnlyPastEvents=true : include events in the past
-
 export const GET: RequestHandler = async event => {
 
 	const { setHeaders } = event
@@ -55,6 +55,7 @@ export const GET: RequestHandler = async event => {
 	return json(formattedRows);
 }
 
+// Endpoint for deleting events
 export const DELETE: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
@@ -81,6 +82,7 @@ export const DELETE: RequestHandler = async event => {
 	})
 }
 
+// Endpoint for updating events
 export const PUT: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
@@ -171,6 +173,7 @@ export const PUT: RequestHandler = async event => {
 	})
 }
 
+// Endpoint for creating new events
 export const POST: RequestHandler = async event => {
 	const { user } = event.locals
 
@@ -185,8 +188,13 @@ export const POST: RequestHandler = async event => {
 		}
 	}
 
-	// Check for slug duplicates
+	// Append start date to slug
 	eventCreate.slug = toSlug(eventCreate.slug)
+	// TODO: create var slugDate, a version of eventCreate.startDate as e.g. "-junio-2" for appending to slug
+	// TODO: slug max length is 120 so get the first (120 - slugDate length) characters of slug and append slugDate
+	// TODO: update eventCreate.slug with result
+
+	// Check for slug duplicates
 	const sameSlugResult = await query(`SELECT id FROM events WHERE slug = '${eventCreate.slug}'`);
 	if (sameSlugResult.rowCount) {
 		// If slug already exists will add a "-2" at the end
