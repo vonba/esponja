@@ -167,10 +167,6 @@
   .actions {
     display: flex;
     gap: var(--spacing);
-    
-    :global(button) {
-      height: 2em;
-    }
   }
   
   .description {

@@ -14,7 +14,7 @@
     border: 1px solid var(--colorGreen);
     border-radius: var(--borderRadius);
     padding: calc(0.5 * var(--spacing)) var(--spacing);
-    height: calc(1em + var(--spacing) + 2px);
+    height: calc(var(--fsNormal) + var(--spacing) + 2px);
     box-shadow: 2px 2px 0 var(--colorGreen);
     transform: translate(-2px, -2px);
     transition: transform 0.25s, background-color 0.5s, color 0.25s, box-shadow 0.25s;
