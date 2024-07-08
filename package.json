@@ -16,7 +16,7 @@
 		"db_create": "psql -d postgres -f db_create.sql"
 	},
 	"engines": {
-		"node": "^18.19.1"
+		"node": "^20"
 	},
 	"type": "module",
 	"dependencies": {
