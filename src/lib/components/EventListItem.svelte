@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { formatDate, formatDateShort, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
+	import { capitalizeFirstChar } from "$lib/strings"
 	import { loginSession } from "../../stores"
   import EButton from "./EButton.svelte"
   
@@ -19,6 +20,8 @@
   });
   // For contributors, only allow editing own events
   const allowEdit = user?.role !== 'contributor' || user?.id === event.userId
+
+  const isMultiDay = event.endDate && event.endDate !== event.startDate
 
   const venue = venues.find(v => v.id === event.venueId)
 </script>
@@ -41,7 +44,16 @@
     <div class="datesWrapper">
       <img src="/icon-date-green.svg" alt="Fecha" />
       <div class="dates">
-        {#if event.startDate}{formatDate(event.startDate)}{/if}
+        {#if event.startDate}
+          {#if event.endDate && isMultiDay}De {/if}
+          {capitalizeFirstChar(formatDate(event.startDate))}
+        {/if} 
+        {#if event.startTime}{formatTime(event.startTime)}{/if}
+        {#if event.endDate && isMultiDay}<br />A {capitalizeFirstChar(formatDate(event.endDate))}{/if}
+        {#if event.endTime}
+          {#if !event.endDate || !isMultiDay} – {/if}
+          {formatTime(event.endTime)}
+        {/if}
       </div>
     </div>
 
