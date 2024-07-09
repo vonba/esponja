@@ -21,6 +21,28 @@ export function formatTime(timeString: string): string {
   return new Intl.DateTimeFormat('es-MX', options).format(date);
 }
 
+export function getDateString(): string {
+    // Create a new Date object (this will hold the current date and time)
+  const currentDate = new Date();
+
+  // Extract the year, month, and day from the Date object
+  const year = currentDate.getFullYear(); // Get the current year (YYYY)
+  let monthNumber = currentDate.getMonth() + 1; // Get the current month (0-11, add 1 to make it 1-12)
+  let monthString
+  let day = currentDate.getDate(); // Get the current day of the month (1-31)
+
+  // Pad month and day with leading zeros if they are single digit
+  if (monthNumber < 10) {
+    monthString = `0${monthNumber}`;
+  }
+  if (day < 10) {
+    monthString = `0${day}`;
+  }
+
+  // Combine year, month, and day into the desired format
+  return `${year}-${monthString}-${day}`;
+}
+
 // Returns { startDate, endDate } corresponding to time window
 // Possible values of time window: hoy | manana | semana | mes
 export function getDateFiltersFromTimeWindow(eventTimeWindow: string): {startDate: string | null, endDate: string | null} {
