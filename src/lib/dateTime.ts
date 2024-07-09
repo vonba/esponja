@@ -29,18 +29,19 @@ export function getDateString(): string {
   const year = currentDate.getFullYear(); // Get the current year (YYYY)
   let monthNumber = currentDate.getMonth() + 1; // Get the current month (0-11, add 1 to make it 1-12)
   let monthString
-  let day = currentDate.getDate(); // Get the current day of the month (1-31)
+  let dayNumber = currentDate.getDate(); // Get the current day of the month (1-31)
+  let dayString
 
   // Pad month and day with leading zeros if they are single digit
   if (monthNumber < 10) {
     monthString = `0${monthNumber}`;
   }
-  if (day < 10) {
-    monthString = `0${day}`;
+  if (dayNumber < 10) {
+    dayString = `0${dayNumber}`;
   }
 
   // Combine year, month, and day into the desired format
-  return `${year}-${monthString}-${day}`;
+  return `${year}-${monthString}-${dayString}`;
 }
 
 // Returns { startDate, endDate } corresponding to time window
