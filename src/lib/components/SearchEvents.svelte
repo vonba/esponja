@@ -51,6 +51,7 @@
     box-shadow: 2px 2px 0 var(--colorGreen);
     transform: translate(-2px, -2px);
     transition: all 0.5s;
+    height: calc(var(--fsNormal) + var(--spacing) + 2px);
 
     :global(input) {
       padding-top: 2px;
