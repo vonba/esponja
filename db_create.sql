@@ -123,7 +123,7 @@ CREATE TABLE public.events (
   end_date date,
   end_time time without time zone,
   description text COLLATE pg_catalog."default",
-  ticket_link character varying(255) COLLATE pg_catalog."default",
+  ticket_link character varying(2083) COLLATE pg_catalog."default",
   price NUMERIC(8, 2),
   price_max NUMERIC(8, 2),
   image_key_large VARCHAR(255),

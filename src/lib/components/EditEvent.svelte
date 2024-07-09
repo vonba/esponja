@@ -449,6 +449,7 @@
 					<input
 						bind:value={event.ticketLink}
 						id="ticketLink"
+						maxlength="2083"
 						placeholder="https://example.com"
 					/>
 				</div>
