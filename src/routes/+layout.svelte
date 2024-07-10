@@ -4,11 +4,13 @@
 	import { loginSession } from '../stores'
 	import LikedEventsPopup from '$lib/components/LikedEventsPopup.svelte';
 	import { navigating } from '$app/stores'
+	import animationData from '$lib/lottie/esponja1.json';
 
 	// Global styles
 	import '../styles/app.scss'
 	import ButtonLink from '$lib/components/ButtonLink.svelte'
 	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
+	import Lottie from '$lib/components/Lottie.svelte'
 
 	export let data: LayoutServerData
 
@@ -34,7 +36,8 @@
 
 <footer id="siteFooter">
 	<div class="contentWrapper">
-		<img src="/esponja-blob-offwhite.svg" alt="Esponja logo" />
+		<!-- <img src="/esponja-blob-offwhite.svg" alt="Esponja logo" /> -->
+		 <Lottie {animationData} />
 	
 		<p>
 			Esponja es una plataforma gratuita y sin fines de lucro 
@@ -76,7 +79,7 @@
 		height: var(--footerHeight);
 		font-style: italic;
 		
-		img {
+		:global(.lottieContainer) {
 			height: 140px;
 			margin: 20px 0;
 		}
@@ -93,4 +96,5 @@
 			margin: 0 auto;
 		}
 	}
+
 </style>

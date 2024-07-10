@@ -1,5 +1,12 @@
+<script>
+
+	import Lottie from "./Lottie.svelte"
+	import animationData from '$lib/lottie/esponja1.json';
+
+</script>
+
 <div class="overlay loadingIndicator">
-  <img src="/esponja-blob-green.svg" alt="Cargando" />
+  <Lottie {animationData} />
 </div>
 
 <style lang="scss">
@@ -20,10 +27,12 @@
     align-items: center;
     justify-content: center;
     padding: var(--spacing);
+    background-color: var(--colorGreen);
 
-    img {
-      animation: pulsate 2.5s infinite ease-in-out;
+    :global(.lottieContainer) {
       height: 150px;
+      width: 150px;
     }
   }
+  
 </style>
