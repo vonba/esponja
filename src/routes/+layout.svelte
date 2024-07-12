@@ -6,6 +6,11 @@
 	import { navigating } from '$app/stores'
 	import animationData from '$lib/lottie/esponja1.json';
 
+	// Analytics
+	import { dev } from '$app/environment'
+	import { inject } from '@vercel/analytics'
+	inject({ mode: dev ? 'development' : 'production' })
+
 	// Global styles
 	import '../styles/app.scss'
 	import ButtonLink from '$lib/components/ButtonLink.svelte'
