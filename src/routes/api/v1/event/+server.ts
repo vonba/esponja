@@ -8,6 +8,7 @@ import { eventColumns } from '$lib/server/queries';
 import sanitizeHtml from 'sanitize-html';
 import { toSlug, truncateAndAppend } from '$lib/strings'
 import { sendModerationNotification, sendModerationSuccessfulNotification } from '$lib/server/mail'
+import { getDateString } from '$lib/dateTime';
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
@@ -15,7 +16,7 @@ const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 // Possible query parameters:
 // showHidden=true : include events with hidden=true
 // showUnpublished=true : include events with published=false
-// showOnlyPastEvents=true : include events in the past
+// showOnlyPastEvents=true : show only events in the past
 export const GET: RequestHandler = async event => {
 
 	const { setHeaders } = event
@@ -25,11 +26,13 @@ export const GET: RequestHandler = async event => {
 		// Cache-Control: max-age=604800, stale-while-revalidate=86400
   });
 
+	const currentDate = getDateString()
+
 	// Set query constraints
 	const searchParams = event.url.searchParams;
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
-	const dateConstraint = searchParams.get('showOnlyPastEvents') ? 'start_date < CURRENT_DATE' : 'start_date >= CURRENT_DATE';
+	const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
 
 	let result;
 	try {
