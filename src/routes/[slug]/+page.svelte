@@ -5,7 +5,7 @@
 	import EButton from "$lib/components/EButton.svelte"
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
-	import { getDateFiltersFromTimeWindow } from "$lib/dateTime"
+	import { getDateFiltersFromTimeWindow, getDateString } from "$lib/dateTime"
 	import { afterUpdate, onMount, tick } from 'svelte'
 	import { likedEventsPopupVisible } from '../../stores'
 	import SearchEvents from '$lib/components/SearchEvents.svelte'
@@ -54,7 +54,6 @@
 		}
 
 		const { startDate, endDate } = getDateFiltersFromTimeWindow(eventTimeWindow)
-		console.log({ startDate, endDate })
 		eventFilterDateStart = startDate
 		eventFilterDateEnd = endDate
 
@@ -97,7 +96,8 @@
 		data.venues = await venueResponse.json();
 
 		// Fetch events
-		const eventResponse = await fetch('/api/v1/event', {
+		const dateString = getDateString()
+		const eventResponse = await fetch(`/api/v1/event?today=${dateString}`, {
 			method: 'GET'
 		});
 		if (!eventResponse.ok) {

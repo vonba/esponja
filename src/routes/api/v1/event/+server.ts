@@ -14,6 +14,7 @@ const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 // Endpoint for listing events
 // Possible query parameters:
+// today : use this as today's date (to use client's time zone) YYYY-MM-DD
 // showHidden=true : include events with hidden=true
 // showUnpublished=true : include events with published=false
 // showOnlyPastEvents=true : show only events in the past
@@ -26,11 +27,9 @@ export const GET: RequestHandler = async event => {
 		// Cache-Control: max-age=604800, stale-while-revalidate=86400
   });
 
-	const currentDate = getDateString()
-	console.log(`Event API date is ${currentDate}`)
-
 	// Set query constraints
 	const searchParams = event.url.searchParams;
+	const currentDate = searchParams.get('today') ? searchParams.get('today') : getDateString();
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
 	const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
