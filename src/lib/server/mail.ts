@@ -62,7 +62,18 @@ function getStyledLink(text: string, link: string): string {
 
 async function sendMail(data: {to: string, from: string, subject: string, html: string}) {
   console.log(`Sending mail to ${data.to} with subject ${data.subject}`)
-  await transport.sendMail(data).catch((reason: string) => console.log('error', `Error sending email: ${reason}`));
+  // await transport.sendMail(data).catch((reason: string) => console.log('error', `Error sending email: ${reason}`));
+  await new Promise((resolve, reject) => {
+    transport.sendMail(data, (err, info) => {
+        if (err) {
+            console.error(err);
+            reject(err);
+        } else {
+            console.log(info);
+            resolve(info);
+        }
+    });
+  });
 }
 
 export async function sendModerationSuccessfulNotification(
