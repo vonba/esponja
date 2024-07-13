@@ -25,7 +25,7 @@ function getFormattedEmail(text: string): string {
       </head>
       <body style="margin: 0; color: #007E68; font-family: 'Open Sans', 'Arial', sans-serif; background-color: #FFFDF7; text-align: center;">
         <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
-          <img src="${PUBLIC_DOMAIN}/esponja-symbol3.png" alt="Esponja" height="40" />
+          <img src="${PUBLIC_DOMAIN}/esponja-blob-green.png" alt="Esponja" height="40" />
         </div>
         <div style="display: inline-block; text-align: left; max-width: 40em; margin: 1em 0.5em; padding: 1em; border: 1px solid #007E68; border-radius: 5px; padding: 1em;">
           ${text}
@@ -61,6 +61,7 @@ function getStyledLink(text: string, link: string): string {
 }
 
 async function sendMail(data: {to: string, from: string, subject: string, html: string}) {
+  console.log(`Sending mail to ${data.to} with subject ${data.subject}`)
   await transport.sendMail(data).catch((reason: string) => console.log('error', `Error sending email: ${reason}`));
 }
 
