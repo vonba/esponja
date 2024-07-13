@@ -12,6 +12,7 @@
 	import EventSummary from "$lib/components/EventSummary.svelte"
 	import Notification from "$lib/components/Notification.svelte"
 	import { getImageURL } from "$lib/file"
+	import Map from "$lib/components/Map.svelte"
 
   // Props
   export let data: SingleEventPageData
@@ -119,6 +120,15 @@
       </div>
     {/if}
 
+    {#if !venue && event.addressLine1}
+      <div class="customLocation">
+        <h2>Ubicación del evento</h2>
+        <div class="mapWrapper">
+          <Map title={event.addressLine1} address={`${event.name}, ${event.addressLine1}, ${event.addressLine2 ? event.addressLine2 + ', ' : ''}Ciudad de México, México`} />
+        </div>
+      </div>
+    {/if}
+
   {:else}
     <!-- NOTE: should most likely never reach this point, instead the 404 page is loaded -->
     <p class="emptyList">
@@ -163,6 +173,27 @@
     
     @media (min-width: $mediaM) {
       padding: 0;
+    }
+  }
+
+  .customLocation {
+    max-width: $singleEventMaxWidth;
+    margin: 0 auto;
+    border-top: 1px solid var(--colorGreen);
+
+    @media (min-width: $singleEventMaxWidth) {
+      border: 1px solid var(--colorGreen);
+      border-bottom: none;
+    }
+
+    .mapWrapper {
+      padding: var(--spacing);
+    }
+
+    h2 {
+      padding: var(--double) var(--spacing);
+      border-bottom: 1px solid var(--colorGreen);
+      font-size: var(--fsTitleMedium);
     }
   }
 

@@ -17,6 +17,7 @@
 	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
 	import Lottie from '$lib/components/Lottie.svelte'
 
+	// Layout prop
 	export let data: LayoutServerData
 
 	// If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
@@ -66,6 +67,7 @@
 {#if $navigating}
 	<LoadingIndicator />
 {/if}
+
 
 <style lang="scss">
 	* {

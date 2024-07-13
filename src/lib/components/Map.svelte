@@ -1,50 +1,61 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 	import { PUBLIC_GOOGLE_API_KEY } from "$env/static/public"
+  import { Loader } from '@googlemaps/js-api-loader';
 
-  export let venue: VenueProperties
+  export let address: string
+  export let title: string
 
-  let mapContainer: HTMLDivElement;
+  // Bindings
+  let mapElement: HTMLElement;
 
-  onMount(() => {
-    // Load Google Maps API script
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${PUBLIC_GOOGLE_API_KEY}`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
+  onMount(async function () {
+    // Create loader
+    const loader = new Loader({
+      apiKey: PUBLIC_GOOGLE_API_KEY,
+      version: 'weekly',
+    });
 
-    script.onload = () => {
-      initMap();
-    };
-  });
+    // Load libraries
+    let libraries: any = null;
+    async function loadLibraries() {
+      if (!libraries) {
+        libraries = await Promise.all([
+          loader.importLibrary('maps'),
+          loader.importLibrary('marker'),
+          loader.importLibrary('geocoding'),
+        ]);
+      }
+      return libraries;
+    }
+    const [{ Map }, { AdvancedMarkerElement }, { Geocoder }] = await loadLibraries();
 
-  function initMap() {
-    const address = `${venue.name}, ${venue.addressline1}, ${venue.addressline2 ? venue.addressline2 + ', ' : ''}${venue.city}, Mexico`;
+    const map = new Map(mapElement,  {
+      zoom: 16,
+      mapId: "ESPONJA_MAP", // Map ID is required for advanced markers.
+    });
 
-    const geocoder = new google.maps.Geocoder();
+    const geocoder = new Geocoder()
 
-    geocoder.geocode({ address }, (results, status) => {
-      if (status === 'OK' && results[0]) {
-        const map = new google.maps.Map(mapContainer, {
-          center: results[0].geometry.location,
-          zoom: 15,
-        });
-
-        new google.maps.Marker({
-          position: results[0].geometry.location,
-          map: map,
-          title: venue.addressline1,
+    await geocoder.geocode( { 'address': address}, function(results: any, status: string) {
+      if (status == 'OK') {
+        map.setCenter(results[0].geometry.location);
+        var marker = new AdvancedMarkerElement({
+            map: map,
+            title,
+            position: results[0].geometry.location
         });
       } else {
-        console.error('Geocode was not successful for the following reason: ' + status);
+        alert('Geocode was not successful for the following reason: ' + status);
       }
     });
-  }
+
+  }) // end onMount
+
 </script>
 
 <div class="map">
-  <div class="mapContainer" bind:this={mapContainer}>
+  <div class="mapContainer" bind:this={mapElement}>
   </div>
 </div>
 

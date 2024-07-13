@@ -12,11 +12,11 @@ import { getDateString } from '$lib/dateTime';
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
-// Endpoint for listing events
+// ====== Endpoint for listing events ======
 // Possible query parameters:
-// today : use this as today's date (to use client's time zone) YYYY-MM-DD
-// showHidden=true : include events with hidden=true
-// showUnpublished=true : include events with published=false
+// today=YYYY-MM-DD : use this as the current date (to use client's time zone)
+// showHidden=true : include events where hidden=true
+// showUnpublished=true : include events where published=false
 // showOnlyPastEvents=true : show only events in the past
 export const GET: RequestHandler = async event => {
 
@@ -24,7 +24,6 @@ export const GET: RequestHandler = async event => {
 	const cacheSeconds = 60 * 10 // 10 minutes
 	setHeaders({
     "Cache-Control": `max-age=${cacheSeconds}`,
-		// Cache-Control: max-age=604800, stale-while-revalidate=86400
   });
 
 	// Set query constraints
@@ -33,7 +32,6 @@ export const GET: RequestHandler = async event => {
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
 	const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
-	console.log(`Event API currentDate = ${currentDate}`)
 
 	let result;
 	try {

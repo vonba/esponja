@@ -358,7 +358,7 @@
 			{#if showCustomAddress}
 				<div class="customAddress" in:fade out:slide>
 					<div class="inputContainer">
-						<label for="addressLine1">Dirección</label>
+						<label for="addressLine1">Dirección *</label>
 						<input
 							bind:value={event.addressLine1}
 							id="addressLine1"
@@ -382,9 +382,7 @@
 							bind:value={event.addressPostCode}
 							id="addressPostCode"
 							maxlength="20"
-							required
 						/>
-						<div class="invalidFeedback">Se requiere el código postal</div>
 					</div>
 
 					<EButton class="close" on:click={(e) => {

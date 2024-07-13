@@ -25,7 +25,7 @@
     </div>
 
     {#if venue.addressline1}  
-      <Map {venue} />
+      <Map title={venue.addressline1} address={`${venue.name}, ${venue.addressline1}, ${venue.addressline2 ? venue.addressline2 + ', ' : ''}${venue.city}, Mexico`} />
     {/if}
   </div>
 
