@@ -53,17 +53,18 @@
 			eventTimeWindow = newTimeWindow
 		}
 
-		const { startDate, endDate } = getDateFiltersFromTimeWindow(eventTimeWindow);
+		const { startDate, endDate } = getDateFiltersFromTimeWindow(eventTimeWindow)
+		console.log({ startDate, endDate })
 		eventFilterDateStart = startDate
 		eventFilterDateEnd = endDate
 
-		goto(`/${eventTimeWindow}`, { replaceState: true });
+		goto(`/${eventTimeWindow}`, { replaceState: true })
 	}
   $: ({ slug } = $page.params);
 
   const showLikedEvents = () => {
-    likedEventsPopupVisible.set(true);
-    document.body.classList.add('popupVisible');
+    likedEventsPopupVisible.set(true)
+    document.body.classList.add('popupVisible')
   }
 
 	const toggleSearch = () => {
@@ -74,7 +75,7 @@
   const handleSearchChange = (newSearchString: string) => searchString = newSearchString
 
 	afterUpdate(() => {
-		window.scrollTo(scrollX, scrollY);
+		window.scrollTo(scrollX, scrollY)
 	});
 
 	onMount(async () => {
