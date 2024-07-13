@@ -33,6 +33,7 @@ export const GET: RequestHandler = async event => {
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
 	const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
+	console.log(`Event API currentDate = ${currentDate}`)
 
 	let result;
 	try {
