@@ -27,6 +27,7 @@ export const GET: RequestHandler = async event => {
   });
 
 	const currentDate = getDateString()
+	console.log(`Event API date is ${currentDate}`)
 
 	// Set query constraints
 	const searchParams = event.url.searchParams;
@@ -46,6 +47,7 @@ export const GET: RequestHandler = async event => {
 		error(503, 'Error de base de datos')
 	}
 
+	// TODO: remove userId from results if no user
 	const formattedRows = result.rows.map(row => {
 		return {
 			...row,
