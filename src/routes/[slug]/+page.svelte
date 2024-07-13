@@ -123,6 +123,12 @@
 	
 	<nav id="eventsNavigation" class={isSearchVisible ? 'searchVisible' : ''}>
 		<EButton 
+			on:click={() => setEventTimeWindow('')}
+			class={[undefined, '', 'eventos'].includes(eventTimeWindow) ? 'selected' : ''}
+		>
+			Todo
+		</EButton>
+		<EButton 
 			on:click={() => setEventTimeWindow('hoy')}
 			class={'hoy' === eventTimeWindow ? 'selected cross' : ''}
 		>
@@ -139,12 +145,6 @@
 			class={'semana' === eventTimeWindow ? 'selected cross' : ''}
 		>
 			Esta semana
-		</EButton>
-		<EButton 
-			on:click={() => setEventTimeWindow('mes')}
-			class={'mes' === eventTimeWindow ? 'selected cross' : ''}
-		>
-			Este mes
 		</EButton>
 		<div class="smallButtons">
 			<div class="viewOptions">

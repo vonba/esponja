@@ -9,6 +9,7 @@ const baseCsp = [
 	'https://accounts.google.com/gsi/', // sign-in w/google
 	'https://www.google.com/recaptcha/', // recapatcha
 	'https://fonts.gstatic.com/', // recaptcha fonts
+	'https://va.vercel-scripts.com/',
 ]
 
 if (!production) baseCsp.push('ws://localhost:3000')

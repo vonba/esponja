@@ -20,6 +20,7 @@ export const GET: RequestHandler = async event => {
 	try {
 		result = await query(`SELECT * FROM venues WHERE ${hiddenConstraint} ORDER BY name ASC`);
 	} catch (err) {
+		console.log(err)
 		error(503, 'Error de base de datos')
 	}
 

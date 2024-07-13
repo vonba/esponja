@@ -9,6 +9,7 @@
   @import "$lib/sass/variables";
 
   button {
+    font-size: var(--fsNormal);
     background: var(--colorOffWhite);
     color: var(--colorGreen);
     border: 1px solid var(--colorGreen);
@@ -53,6 +54,7 @@
       line-height: 1.5;
       font-style: italic;
       height: auto;
+      text-align: center;
     }
   }
 

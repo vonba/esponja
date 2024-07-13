@@ -8,6 +8,7 @@
 
 <style lang="scss">
   a {
+    font-size: var(--fsNormal);
     display: inline-block;
     text-decoration: none;
     background: var(--colorOffWhite);
