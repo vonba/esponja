@@ -48,11 +48,13 @@
           {#if event.endDate && isMultiDay}De {/if}
           {capitalizeFirstChar(formatDate(event.startDate))}
         {/if} 
-        {#if event.startTime}{formatTime(event.startTime)}{/if}
+        {#if event.startTime}<span class="time">{formatTime(event.startTime)}</span>{/if}
         {#if event.endDate && isMultiDay}<br />A {capitalizeFirstChar(formatDate(event.endDate))}{/if}
         {#if event.endTime}
-          {#if !event.endDate || !isMultiDay} – {/if}
-          {formatTime(event.endTime)}
+          <span class="time end">
+            {#if !event.endDate || !isMultiDay} – {/if}
+            {formatTime(event.endTime)}
+          </span>
         {/if}
       </div>
     </div>
@@ -187,6 +189,12 @@
     }
   }
 
+  .venue {
+    @media (max-width: $mediaS) {
+      margin-bottom: 35px;
+    }
+  }
+
   .dates::first-letter {
     text-transform: capitalize;
   }
@@ -197,5 +205,11 @@
     bottom: 0;
     display: flex;
     gap: var(--spacing);
+  }
+
+  .time {
+    @media (max-width: $mediaS) {
+      display: none;
+    }
   }
 </style>
