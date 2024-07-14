@@ -28,18 +28,30 @@ export const GET: RequestHandler = async event => {
 
 	// Set query constraints
 	const searchParams = event.url.searchParams;
-	const currentDate = searchParams.get('today') ? searchParams.get('today') : getDateString();
+	const todayParam = searchParams.get('today')
+	const currentDate = todayParam ? todayParam : getDateString();
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
 	const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
 
-	let result;
-	try {
-		result = await query(`SELECT ${eventColumns} 
+	// Check format of currentDate since it comes from the client
+	if (todayParam) {
+		const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+		if (!dateRegex.test(currentDate)) {
+			throw new Error('El formato de la fecha debe ser YYYY-MM-DD');
+		}
+	}
+
+	// Build query string
+	const queryString = `SELECT ${eventColumns} 
 			FROM events
 			WHERE ${hiddenConstraint} AND ${publishedConstraint}
 			AND ${dateConstraint}
-			ORDER BY start_date ASC`);
+			ORDER BY start_date ASC`
+
+	let result;
+	try {
+		result = await query(queryString);
 	} catch (err) {
 		console.log('Error loading events', err)
 		error(503, 'Error de base de datos')
