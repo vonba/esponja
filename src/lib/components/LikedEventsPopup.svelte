@@ -148,7 +148,7 @@
       }
 
       img.saveIcon {
-        margin: 0 3px;
+        margin: 0 4px -3px 3px;
       }
     }
 

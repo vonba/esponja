@@ -13,13 +13,6 @@
 	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
 	import type { Snapshot } from '../$types'
 
-	// Fetch data (ISR)
-	let loading = true;
-	let data: HomePageData = {
-		venues: [],
-		events: [],
-	}
-
 	// State
 	let eventTimeWindow: string | undefined
 	let eventFilterDateStart: string | null  // YYYY-MM-DD
@@ -28,6 +21,13 @@
 	let isSearchVisible = false
   let searchString = ''
 	let displayMode = 'grid'
+
+	// State for fetching data (ISR)
+	let loading = true;
+	let data: HomePageData = {
+		venues: [],
+		events: [],
+	}
 	
 	// Restore scroll state
 	let scrollX = 0

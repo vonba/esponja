@@ -25,10 +25,13 @@
   });
   $: likedEvents = $likedEventsStore;
 
-  // Observable
+  // Filter events according to these conditions:
   $: filteredEvents = events.filter(event => 
-    (!startDate || event.startDate >= startDate) 
+    // Event must start after startDate (if set) or end after startDate (if set)
+    (!startDate || event.startDate >= startDate || (event.endDate && event.endDate >= startDate))
+    // Event must start before endDate (if set)
     && (!endDate || event.startDate <= endDate)
+    // Event must match search string (if set)
     && (searchString === '' || eventMatchesSearch(event, searchString))
   )
 

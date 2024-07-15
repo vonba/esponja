@@ -43,7 +43,8 @@
 		<h2>Créditos</h2>
 		<p>
 			Desarrollo por <a href="https://balthazaurus.com">Balthazaurus</a><br />
-			Diseño por Simon Balthazar y <a href="https://www.instagram.com/lkiud">Leyla Udimamedova</a><br />
+			Diseño por <a href="https://instagram.com/goodluckbalthazar">Simon Balthazar</a> 
+			y <a href="https://www.instagram.com/lkiud">Leyla Udimamedova</a><br />
 			Ilustración por <a href="https://linktr.ee/sexy.primes">Ksenia Kirsta</a>
 		</p>
 	</div>
