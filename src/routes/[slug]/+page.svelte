@@ -153,12 +153,16 @@
           class="icon grid {displayMode === 'grid' ? 'selected' : ''}"
           on:click={() => displayMode = 'grid'}
           disabled={displayMode === 'grid'}
-        >Grid</EButton>
+        >
+					Grid
+				</EButton>
         <EButton 
           class="icon list {displayMode === 'list' ? 'selected' : ''}"
           on:click={() => displayMode = 'list'}
           disabled={displayMode === 'list'}
-        >List</EButton>
+        >
+					List
+				</EButton>
       </div>
 			<div class="more">
 				<EButton 
@@ -287,6 +291,8 @@
 	}
 
 	.viewOptions {
+		white-space: nowrap;
+		
     // Override EButton styles
     :global(button:hover),
     :global(button.selected) {

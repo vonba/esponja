@@ -72,7 +72,7 @@
       padding-right: var(--spacing);
       border-left: 1px solid var(--colorGreen);
       width: 3em;
-      transition: all 0.5s;
+      transition: background-color 0.5s;
 
       @media (hover: hover) and (pointer: fine) {
         &:hover {
