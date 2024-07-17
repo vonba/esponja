@@ -243,9 +243,10 @@
 						required
 						placeholder="URL"
 						maxlength="120"
+						minlength="10"
 					/>
 				</div>
-				<div class="invalidFeedback">Se requiere un URL</div>
+				<div class="invalidFeedback">Se requiere un URL (mínimo 10 carácteres)</div>
 			</div>
 
 			<div class="inputContainer image">

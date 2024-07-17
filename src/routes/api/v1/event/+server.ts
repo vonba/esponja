@@ -5,10 +5,10 @@ import { query } from '$lib/server/db'
 import { DeleteObjectCommand, PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns } from '$lib/server/queries';
-import sanitizeHtml from 'sanitize-html';
 import { toSlug, truncateAndAppend } from '$lib/strings'
 import { sendModerationNotification, sendModerationSuccessfulNotification } from '$lib/server/mail'
 import { getDateString } from '$lib/dateTime';
+import { stripHtml } from "string-strip-html";
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
@@ -135,9 +135,11 @@ export const PUT: RequestHandler = async event => {
 	}
 
 	// Remove any HTML
-	eventUpdate.name = sanitizeHtml(eventUpdate.name);
-	eventUpdate.description = sanitizeHtml(eventUpdate.description);
-	eventUpdate.ticketLink = sanitizeHtml(eventUpdate.ticketLink);
+	console.log('before', eventUpdate.name)
+	eventUpdate.name = stripHtml(eventUpdate.name).result
+	eventUpdate.description = stripHtml(eventUpdate.description).result
+	eventUpdate.ticketLink = stripHtml(eventUpdate.ticketLink).result
+	console.log('after', eventUpdate.name)
 	
 	// If event was not published, it will be now
 	const wasApproved = !existingEvent.published
@@ -217,9 +219,9 @@ export const POST: RequestHandler = async event => {
 	}
 
 	// Remove any HTML
-	eventCreate.name = sanitizeHtml(eventCreate.name);
-	eventCreate.description = sanitizeHtml(eventCreate.description);
-	eventCreate.ticketLink = sanitizeHtml(eventCreate.ticketLink);
+	eventCreate.name = stripHtml(eventCreate.name).result
+	eventCreate.description = stripHtml(eventCreate.description).result
+	eventCreate.ticketLink = stripHtml(eventCreate.ticketLink).result
 
 	// Create event
 	let eventId
