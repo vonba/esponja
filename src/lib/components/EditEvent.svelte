@@ -8,6 +8,7 @@
 	import { fade, slide } from 'svelte/transition'
 	import EditVenue from './EditVenue.svelte'
 	import { invalidateAll } from '$app/navigation'
+	import TypeAhead from './TypeAhead.svelte'
 
 	const dispatch = createEventDispatcher();
 
@@ -61,6 +62,9 @@
 	$: if(event.addressLine1) event.venueId = undefined
 
 	// ====== HANDLERS ======
+
+	// For TypeAhead component (TypeScript won't allow this inline)
+	const handleVenueChange = (value: any) => event.venueId = value
 
 	// Focus first field when loading
 	onMount(() => {
@@ -317,14 +321,21 @@
 			<div class="inputContainer venue">
 				{#if !showCustomAddress}
 					<label for="venueId">Foro *</label>
-					<select
+					<!-- <select
 						bind:value={event.venueId}
 						id="venueId"
 					>
 						{#each venues as venue (venue?.id)}
 							<option value={venue?.id}>{venue?.name}</option>
 						{/each}
-					</select>
+					</select> -->
+
+					<TypeAhead 
+						items={venues}
+						setValue={handleVenueChange}
+						selectedItem={venues.find(v => v.id === event.venueId)}
+						placeholder='Nombre del foro'
+					/>
 				{/if}
 				
 				{#if newVenueAdded}
