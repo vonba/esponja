@@ -9,24 +9,26 @@
   // Props
   export let items: ListItem[]
   export let setValue: Function
-  export let selectedItem: ListItem | null | undefined
+  export let preSelectedItem: ListItem | null | undefined
   export let placeholder: string
 
   // State
   let searchInput: HTMLInputElement
+  let optionsContainer: HTMLDivElement
   let selectedIndex: number | null = null
-  let searchString = selectedItem ? selectedItem.name : ''
-  
+  let selectedItem = preSelectedItem ? {id: preSelectedItem.id, name: preSelectedItem.name} : null
+  let searchString = preSelectedItem ? preSelectedItem.name : ''
+  let optionsContainerFocused = false
+
   $: filteredItems = items.filter(
     item => !selectedItem || item.name.toLowerCase().startsWith(searchString.toLowerCase())
   )
   $: isSearching = selectedItem ? searchString !== selectedItem.name : false
-  
-  const clearInput = () => {
-    searchString = ""	
-    searchInput.focus()
-  }
 
+  // TODO: would like to trigger then when text input blurs, to revert back to selected item.
+  // However when clicking an option, blur occurs before the option is selected.
+  // Unsure how to solve, have tried setting event handlers manually in onMount but it messed
+  // with everything.
   const handleBlur = () => {
     if (selectedItem) {
       searchString = selectedItem.name
@@ -40,12 +42,18 @@
       isSearching = true
     }
   }
+
+  const handleClear = () => {
+    searchString = ''
+    searchInput.focus()
+  }
     
   const selectItem = (item: ListItem) => {
-    searchString = item.name
     setValue(item.id)
-    searchInput.focus()
+    selectedItem = item
+    searchString = item.name
     selectedIndex = null
+    isSearching = false
   }	
     
   const navigateList = (e: KeyboardEvent) => {
@@ -61,7 +69,8 @@
     } else {
       return
     }
-  } 
+  }
+
 </script>
 
 <svelte:window on:keydown={navigateList} />
@@ -72,21 +81,23 @@
     {placeholder} 
     bind:this={searchInput}
     bind:value={searchString}
-    on:blur={handleBlur}
     on:focus={handleFocus}
   />
+  {#if searchString !== ''}
+    <button class="clear" on:click|preventDefault={handleClear}>Clear</button>
+  {/if}
 
   {#if isSearching && filteredItems.length}
-  <ul class="filteredItems">
+  <div class="filteredItems" bind:this={optionsContainer}>
       {#each filteredItems as item, i}
-        <li 
+        <button 
           class={i === selectedIndex ? 'selected' : ''} 
-          on:click={() => selectItem(item)}
+          on:click|preventDefault={() => selectItem(item)}
         >
           {item.name}
-        </li>
+        </button>
       {/each}			
-    </ul>
+    </div>
   {/if}
 </div>
 
@@ -94,25 +105,48 @@
 <style lang="scss">
   .autocomplete {
     width: 100%;
+    position: relative;
+
+    input {
+      padding-right: 40px;
+    }
+  }
+
+  .clear {
+    background: transparent url('/icon-cross-green.svg') center no-repeat;
+    background-size: 1em;
+    width: 1em;
+    height: 1em;
+    position: absolute;
+    right: 0.5em;
+    top: 0.5em;
+    appearance: none;
+    border: none;
+    text-indent: -9999em;
+    cursor: pointer;
   }
   
   .filteredItems {
     height: 100%;
     max-height: 400px;
     overflow-y: auto;
-    list-style: none;
-    padding: 0;
     background-color: var(--colorOffWhite);
     border: 1px solid var(--colorGreen);
     border-radius: var(--borderRadius);
 
-    li {
+    button {
       padding: var(--spacing);
       cursor: pointer;
+      appearance: none;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: var(--colorGreen);
+      text-align: left;
     }
 
-    li:hover,
-    li.selected {
+    button:hover,
+    button.selected {
       background-color: var(--colorGreen);
       color: var(--colorOffWhite);
     }

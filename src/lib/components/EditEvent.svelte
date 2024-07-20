@@ -333,7 +333,7 @@
 					<TypeAhead 
 						items={venues}
 						setValue={handleVenueChange}
-						selectedItem={venues.find(v => v.id === event.venueId)}
+						preSelectedItem={venues.find(v => v.id === event.venueId)}
 						placeholder='Nombre del foro'
 					/>
 				{/if}
