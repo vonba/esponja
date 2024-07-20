@@ -18,12 +18,12 @@
   let selectedIndex: number | null = null
   let selectedItem = preSelectedItem ? {id: preSelectedItem.id, name: preSelectedItem.name} : null
   let searchString = preSelectedItem ? preSelectedItem.name : ''
-  let optionsContainerFocused = false
+  let isSearching = false
 
   $: filteredItems = items.filter(
-    item => !selectedItem || item.name.toLowerCase().startsWith(searchString.toLowerCase())
+    item => item.name.toLowerCase().includes(searchString.toLowerCase())
   )
-  $: isSearching = selectedItem ? searchString !== selectedItem.name : false
+  $: if (selectedItem && searchString !== selectedItem.name) isSearching = true
 
   // TODO: would like to trigger then when text input blurs, to revert back to selected item.
   // However when clicking an option, blur occurs before the option is selected.
@@ -46,6 +46,7 @@
   const handleClear = () => {
     searchString = ''
     searchInput.focus()
+    isSearching = true
   }
     
   const selectItem = (item: ListItem) => {
@@ -131,7 +132,7 @@
     max-height: 400px;
     overflow-y: auto;
     background-color: var(--colorOffWhite);
-    border: 1px solid var(--colorGreen);
+    border: 2px solid var(--colorGreen);
     border-radius: var(--borderRadius);
 
     button {
