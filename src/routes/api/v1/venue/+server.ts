@@ -7,7 +7,7 @@ import { toSlug } from '$lib/strings';
 // showHidden=true : include venues with hidden=true
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 60 * 24 // 24 hours
+	const cacheSeconds = 60 * 10 // 10 minutes
 	setHeaders({
     "Cache-Control": `max-age=${cacheSeconds}`,
   });
