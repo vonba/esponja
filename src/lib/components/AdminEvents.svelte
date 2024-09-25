@@ -11,6 +11,7 @@
   // Props
   export let events: [EventProperties] | []
   export let venues: [VenueProperties] | []
+  export let users: UserProperties[]
 
   // States
   let showCreateEvent = false
@@ -178,6 +179,7 @@
           <EventListItem 
             {event} 
             {venues} 
+            {users}
             {handleEditEvent} 
             handleDeleteEventPermanently={event.hidden ? handleDeleteEvent : null}
           />
@@ -185,6 +187,7 @@
           <EventGridItem 
             {event} 
             {venues} 
+            {users}
             {handleEditEvent} 
             handleDeleteEventPermanently={event.hidden ? handleDeleteEvent : null}
           />
