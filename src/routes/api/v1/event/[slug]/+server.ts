@@ -9,7 +9,7 @@ export const GET: RequestHandler = async event => {
 	const { user } = event.locals
 
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 60 * 4 // 4 hours
+	const cacheSeconds = 60 * 20 // 20 minutes
 	setHeaders({
 		"Cache-Control": `max-age=${cacheSeconds}`,
 	})
