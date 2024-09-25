@@ -179,7 +179,6 @@
           <EventListItem 
             {event} 
             {venues} 
-            {users}
             {handleEditEvent} 
             handleDeleteEventPermanently={event.hidden ? handleDeleteEvent : null}
           />
@@ -187,7 +186,6 @@
           <EventGridItem 
             {event} 
             {venues} 
-            {users}
             {handleEditEvent} 
             handleDeleteEventPermanently={event.hidden ? handleDeleteEvent : null}
           />

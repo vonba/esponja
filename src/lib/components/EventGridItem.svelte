@@ -8,14 +8,11 @@
   // Props
   export let event: EventProperties
   export let venues: [VenueProperties] | []
-  export let users: UserProperties[]
   export let handleEditEvent: Function | null = null
   export let handleLikeEvent: Function | null = null
   export let handleDeleteEventPermanently: Function | null = null
   export let isSingle = false
   export let isLiked = false
-
-  const author = users.find(u => u.id === event.userId)
 
   // Observables
   let user: User;
@@ -55,12 +52,6 @@
           </a>
         </h2>
 
-        {#if author}
-        <p class="author">
-          Publicado por {author.firstName} {author.lastName}
-        </p>
-        {/if}
-
         <div class="actions">
           {#if handleLikeEvent}
             <EButton on:click={() => handleLikeEvent(event)} class="icon {isLiked ? 'saveFilled' : 'saveOutline'}">
@@ -79,6 +70,12 @@
           {/if}
         </div>
       </header>
+
+      {#if event.author}
+        <p class="author">
+          <i>Publicado por {event.author}</i>
+        </p>
+      {/if}
 
       <div class="price mb">
         {#if event.price}

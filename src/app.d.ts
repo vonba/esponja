@@ -51,6 +51,7 @@ type Venue = VenueProperties | undefined | null
 interface EventProperties {
   id: number;
   userId?: number;
+	author?: string;
   venueId?: number;
   name: string;
 	slug: string;
