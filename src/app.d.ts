@@ -51,7 +51,7 @@ type Venue = VenueProperties | undefined | null
 interface EventProperties {
   id: number;
   userId?: number;
-	author?: string;
+	author?: string; // Added in event/[slug] API if there is a session
   venueId?: number;
   name: string;
 	slug: string;
