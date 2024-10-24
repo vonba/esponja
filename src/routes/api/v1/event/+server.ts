@@ -176,7 +176,7 @@ export const PUT: RequestHandler = async event => {
 
 	// Notify the uploader
 	if (wasApproved) {
-		sendModerationSuccessfulNotification(
+		await sendModerationSuccessfulNotification(
 			eventUpdate.submitterName,
 			eventUpdate.submitterEmail,
 			eventUpdate.name,
@@ -256,7 +256,7 @@ export const POST: RequestHandler = async event => {
 	const fileUploadResult = await doFileUpload(formData, eventId)
 
 	if (needsModeration) {
-		sendModerationNotification(
+		await sendModerationNotification(
 			eventCreate.name,
 			eventCreate.submitterName,
 			eventCreate.submitterEmail,

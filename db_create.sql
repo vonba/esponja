@@ -404,7 +404,7 @@ DECLARE
   input_end_date date := (input->>'endDate')::date;
   input_end_time time := (input->>'endTime')::time;
   input_description text := TRIM((input->>'description')::text);
-  input_ticket_link varchar(255) := TRIM((input->>'ticketLink')::varchar);
+  input_ticket_link varchar(2083) := TRIM((input->>'ticketLink')::varchar);
   input_price NUMERIC(10, 2) := (input->>'price')::NUMERIC(10, 2);
   input_price_max NUMERIC(10, 2) := (input->>'priceMax')::NUMERIC(10, 2);
   input_hidden boolean := COALESCE((input->>'hidden')::boolean, false);

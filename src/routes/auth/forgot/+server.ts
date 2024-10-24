@@ -17,7 +17,7 @@ export const POST: RequestHandler = async event => {
 		const token = jwt.sign({ subject: userId }, <Secret>secret, {
 			expiresIn: '30m'
 		})
-		sendPasswordResetEmail(body.email, token)
+		await sendPasswordResetEmail(body.email, token)
 	}
 
 	return new Response(undefined, { status: 204 })
