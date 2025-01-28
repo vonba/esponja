@@ -55,7 +55,7 @@
 	let isFree = !!!event.price // True if there's no price set
 	const isNewEvent = event?.id === 0
 
-	// Observables
+	// Observables 
 	// Convert name to slug, unless slug has been manually edited
 	$: if(isNewEvent && !isSlugManuallyEdited) event.slug = toSlug(event.name)
 	// If there's a custom address, unset the venue id
