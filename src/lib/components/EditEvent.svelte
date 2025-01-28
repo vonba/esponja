@@ -417,7 +417,7 @@
 					id="description"
 					required
 					placeholder="¡Cuéntanos! Puedes incluir ligas en la descripción."
-				/>
+				></textarea>
 			</div>
 
 			<div class="inputContainer flex alignCenter">
