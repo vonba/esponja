@@ -11,6 +11,7 @@
   // Props
   export let events: [EventProperties] | []
   export let venues: [VenueProperties] | []
+  export let users: UserProperties[]
 
   // States
   let showCreateEvent = false
@@ -228,8 +229,18 @@
 
     // Push grid/list toggle below status button
     @media (max-width: 450px) {
+      .filters {
+        width: 100%;
+      }
+
       .statusOptions {
           order: 1;
+          width: 100%;
+          flex-wrap: wrap;
+
+          :global(button) {
+            flex-grow: 1;
+          }
       }
       .viewOptions {
         order: 2;

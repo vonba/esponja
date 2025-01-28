@@ -71,6 +71,12 @@
         </div>
       </header>
 
+      {#if event.author}
+        <p class="author">
+          <i>Publicado por {event.author}</i>
+        </p>
+      {/if}
+
       <div class="price mb">
         {#if event.price}
           ${Math.floor(event.price)}

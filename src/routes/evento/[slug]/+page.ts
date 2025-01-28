@@ -4,7 +4,6 @@ export const load = async ({params, fetch}) => {
 	const slug = params.slug
 	const returnValue = {
 		event: null,
-		eventsForVenue: null,
 		venues: null,
 	};
 	try {
