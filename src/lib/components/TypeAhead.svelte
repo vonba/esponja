@@ -71,10 +71,15 @@
       return
     }
   }
-
+  function isTextArea(element: EventTarget): element is HTMLTextAreaElement {
+    return (element as HTMLElement).tagName === 'TEXTAREA';
+  }
 </script>
 
-<svelte:window on:keydown={navigateList} />
+<svelte:window on:keydown={(e) => {
+  if (e.target && isTextArea(e.target)) return; // Allow Enter in textareas
+  navigateList(e);
+}} />
 
 <div class="autocomplete">
   <input 
