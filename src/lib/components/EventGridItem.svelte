@@ -73,10 +73,13 @@
 
       {#if event.author}
         <p class="author">
-          <i>Publicado por {event.author}</i>
-          {#if event.submitterName}
-            <br />Creado por colaborador externo {event.submitterName} ({event.submitterEmail})
-          {/if}
+          <i>
+            Publicado por {event.author}
+            {#if event.submitterName}
+              <br />
+              Creado por colaborador externo {event.submitterName} ({event.submitterEmail})
+            {/if}
+          </i>
         </p>
       {/if}
 
