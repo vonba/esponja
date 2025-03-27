@@ -13,7 +13,7 @@ import { stripHtml } from "string-strip-html";
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
 // ====== Endpoint for listing events ======
-// Possible query parameters:
+// Possible query parameters: 
 // today=YYYY-MM-DD : use this as the current date (to use client's time zone)
 // showHidden=true : include events where hidden=true
 // showUnpublished=true : include events where published=false
