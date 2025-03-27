@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "src/routes/api/v1/event/+server.ts": {
+      "maxDuration": 30
+    }
+  },
   "headers": [
     {
       "source": "/api/v1/(.*)",
