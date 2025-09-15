@@ -1,6 +1,6 @@
 {
   "functions": {
-    "src/routes/api/v1/event/+server.ts": {
+    "src/routes/api/**/*.ts": {
       "maxDuration": 30
     }
   },
