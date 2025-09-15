@@ -506,34 +506,34 @@
 				</div>
 			{/if}
 
+			{#if showAdminOptions && (event.published || isConfirmedToPublish)}
+				<p>
+					Si aún estás revisando el evento, lo puedes guardar como borrador. Los borradores no están visible al público.
+				</p>
+				<div class="inputContainer flex alignCenter">
+					<input
+						type="checkbox"
+						bind:checked={event.hidden}
+						id="hidden"
+					/>
+					<label for="hidden">
+						Borrador (no visible)
+					</label>
+				</div>
+			{/if}
+	
+			{#if !isNewEvent && !event.published && !isConfirmedToPublish}
+				<div class="confirmBeforePublishing justifyCenter" in:fade>
+					<h2>¿Quieres borrar este evento?</h2>
+					<p>Este evento fue creado a través del formulario público. Si algo no está bien, aquí lo puedes borrar de forma permanente.</p>
+					<div class="flex justifyCenter">
+						<EButton on:click={() => handleDeleteEvent(event)} class="large">Borrar</EButton>
+						<EButton on:click={() => isConfirmedToPublish = true} class="large">No borrar</EButton>
+					</div>
+				</div>
+			{/if}
 		</fieldset>
 
-		{#if showAdminOptions && (event.published || isConfirmedToPublish)}
-			<p>
-				Si aún estás revisando el evento, lo puedes guardar como borrador. Los borradores no están visible al público.
-			</p>
-			<div class="inputContainer flex alignCenter">
-				<input
-					type="checkbox"
-					bind:checked={event.hidden}
-					id="hidden"
-				/>
-				<label for="hidden">
-					Borrador (no visible)
-				</label>
-			</div>
-		{/if}
-
-		{#if !isNewEvent && !event.published && !isConfirmedToPublish}
-			<div class="confirmBeforePublishing justifyCenter" in:fade>
-				<h2>¿Quieres borrar este evento?</h2>
-				<p>Este evento fue creado a través del formulario público. Si algo no está bien, aquí lo puedes borrar de forma permanente.</p>
-				<div class="flex justifyCenter">
-					<EButton on:click={() => handleDeleteEvent(event)} class="large">Borrar</EButton>
-					<EButton on:click={() => isConfirmedToPublish = true} class="large">No borrar</EButton>
-				</div>
-			</div>
-		{/if}
 
 		{#if message}
 			<p class="message">{message}</p>
