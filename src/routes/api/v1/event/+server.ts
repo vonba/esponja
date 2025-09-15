@@ -212,7 +212,10 @@ export const POST: RequestHandler = async event => {
 	// TODO: update eventCreate.slug with result
 
 	// Check for slug duplicates
-	const sameSlugResult = await query(`SELECT id FROM events WHERE slug = '${eventCreate.slug}'`);
+	const sameSlugResult = await query(
+		`SELECT id FROM events WHERE slug = $1`,
+		[eventCreate.slug]
+	);
 	if (sameSlugResult.rowCount) {
 		// If slug already exists will add a "-2" at the end
 		eventCreate.slug = truncateAndAppend(eventCreate.slug)

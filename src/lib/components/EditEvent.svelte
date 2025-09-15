@@ -89,6 +89,9 @@
 			const url = '/api/v1/event'
 			const method = isNewEvent ? 'POST' : 'PUT'
 			
+			loading = true
+			error = false
+
 			try {
 				// Convert event object to form data
 				const formData = new FormData();
@@ -101,27 +104,63 @@
 				}
 
 				// Check for file upload
-				const eventImageInput = <HTMLInputElement>document.getElementById('eventImage');
+				const eventImageInput = <HTMLInputElement>document.getElementById('eventImage')
+
+				// Check size
 				if (eventImageInput.files && eventImageInput.files[0]) {
-					formData.append('eventImage', eventImageInput.files[0]);
+						const file = eventImageInput.files[0]
+						const maxSize = 4.5 * 1024 * 1024 // 4.5MB in bytes
+						
+						if (file.size > maxSize) {
+								error = true
+								message = 'La imagen es demasiado grande. Máximo 4.5 MB permitido.'
+								return
+						}
 				}
-				loading = true
-				error = false
+
+				if (eventImageInput.files && eventImageInput.files[0]) {
+					formData.append('eventImage', eventImageInput.files[0])
+				}
+
 				const res = await fetch(url, {
 					method,
 					body: formData,
 				})
-				const reply = await res.json()
-				message = reply.message
+
 				if (res.ok) {
-					dispatch('saved', { reply })
+						const reply = await res.json()
+						message = reply.message
+						dispatch('saved', { reply })
 				} else {
-					error = true
+						// Handle error responses
+						if (res.status === 413) {
+								error = true
+								message = 'El tamaño máximo de la imagen es de 4 MB'
+						} else {
+								// Try to get error message, but handle parsing failures
+								try {
+										const reply = await res.json()
+										message = reply.message || 'Error del servidor'
+								} catch {
+										message = 'Error del servidor'
+								}
+						}
+						error = true
 				}
-				loading = false
 			} catch (error) {
-				message = 'Servidor no disponible'
+				error = true
+				    // Check if it's a 413 specifically
+						if ((error as Error).message && (error as Error).message.includes('413')) {
+								message = 'Archivo demasiado grande (máximo 4.5MB)'
+						} else if ((error as Error).message && (error as Error).message.includes('Content Too Large')) {
+								message = 'Archivo demasiado grande (máximo 4.5MB)'
+						} else {
+								message = 'Servidor no disponible'
+						}
+						error = true
 			}
+
+			loading = false
 		} else {
 			form.classList.add('validationErrors')
 			focusOnFirstError(form)
