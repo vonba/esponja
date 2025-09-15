@@ -12,4 +12,3 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .yarn/releases/yarn-4.1.1.cjs
 .yarn/install-state.gz
-yarn.lock
