@@ -19,7 +19,13 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		adapter: adapter(),
+		adapter: adapter({
+			functions: {
+				'src/routes/api/v1/event/+server.ts': {
+					maxDuration: 30
+				}
+			}
+		}),		
 		prerender: {
       entries: [
         '/', 
