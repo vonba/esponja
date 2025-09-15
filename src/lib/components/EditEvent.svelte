@@ -149,15 +149,16 @@
 				}
 			} catch (error) {
 				error = true
-				    // Check if it's a 413 specifically
-						if ((error as Error).message && (error as Error).message.includes('413')) {
-								message = 'Archivo demasiado grande (máximo 4.5MB)'
-						} else if ((error as Error).message && (error as Error).message.includes('Content Too Large')) {
-								message = 'Archivo demasiado grande (máximo 4.5MB)'
-						} else {
-								message = 'Servidor no disponible'
-						}
-						error = true
+				console.error('Network error', error)
+
+				// Check if it's a 413 specifically
+				if ((error as Error).message && (error as Error).message.includes('413')) {
+						message = 'Archivo demasiado grande (máximo 4.5MB)'
+				} else if ((error as Error).message && (error as Error).message.includes('Content Too Large')) {
+						message = 'Archivo demasiado grande (máximo 4.5MB)'
+				} else {
+						message = 'Servidor no disponible'
+				}
 			}
 
 			loading = false
