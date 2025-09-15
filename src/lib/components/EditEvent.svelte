@@ -113,6 +113,7 @@
 						
 						if (file.size > maxSize) {
 								error = true
+								loading = false
 								message = 'La imagen es demasiado grande. Máximo 4.5 MB permitido.'
 								return
 						}
