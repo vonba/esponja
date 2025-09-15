@@ -6,7 +6,7 @@
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { getDateFiltersFromTimeWindow, getDateString } from "$lib/dateTime"
-	import { afterUpdate, onMount, tick } from 'svelte'
+	import { afterUpdate, onMount } from 'svelte'
 	import { likedEventsPopupVisible } from '../../stores'
 	import SearchEvents from '$lib/components/SearchEvents.svelte'
 	import { PUBLIC_DOMAIN } from '$env/static/public'
@@ -59,7 +59,7 @@
 
 		goto(`/${eventTimeWindow}`, { replaceState: true })
 	}
-  $: ({ slug } = $page.params);
+  $: (slug = $page.params.slug || '');
 
   const showLikedEvents = () => {
     likedEventsPopupVisible.set(true)
