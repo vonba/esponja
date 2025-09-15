@@ -25,15 +25,20 @@
   });
   $: likedEvents = $likedEventsStore;
 
-  // Filter events according to these conditions:
-  $: filteredEvents = events.filter(event => 
-    // Event must start after startDate (if set) or end after startDate (if set)
-    (!startDate || event.startDate >= startDate || (event.endDate && event.endDate >= startDate))
-    // Event must start before endDate (if set)
-    && (!endDate || event.startDate <= endDate)
-    // Event must match search string (if set)
-    && (searchString === '' || eventMatchesSearch(event, searchString))
-  )
+  // Filter events according to date range and search string
+  $: filteredEvents = events.filter(event => {
+    const eventStart = event.startDate
+    const eventEnd = event.endDate || event.startDate // Use startDate if no endDate
+    
+    // Check for date range overlap
+    const overlapsDateRange = (!startDate || eventEnd >= startDate) 
+      && (!endDate || eventStart <= endDate)
+    
+    // Check search string
+    const matchesSearch = searchString === '' || eventMatchesSearch(event, searchString)
+    
+    return overlapsDateRange && matchesSearch
+  })
 
   // -- Handlers --
 
