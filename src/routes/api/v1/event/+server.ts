@@ -32,7 +32,10 @@ export const GET: RequestHandler = async event => {
 	const currentDate = todayParam ? todayParam : getDateString();
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
-	const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
+	// const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
+	const dateConstraint = searchParams.get('showOnlyPastEvents') 
+		? `start_date < '${currentDate}' AND (end_date IS NULL OR end_date < '${currentDate}')` 
+		: `start_date >= '${currentDate}' OR (end_date IS NOT NULL AND end_date >= '${currentDate}')`;
 
 	// Check format of currentDate since it comes from the client
 	if (todayParam) {
