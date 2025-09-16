@@ -110,7 +110,7 @@
 {/if}
 
 <style lang="scss">
-  @import "$lib/sass/variables";
+  @use "$lib/sass/variables" as *;
 
   ul.events {
     margin-top: 0;

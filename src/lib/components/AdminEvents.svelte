@@ -202,7 +202,7 @@
 {/if}
 
 <style lang="scss">
-  @import "$lib/sass/variables";
+  @use "$lib/sass/variables" as *;
   
   .tools {
     display: flex;

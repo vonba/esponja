@@ -94,7 +94,7 @@
 {/if}
 
 <style lang="scss">
-  @import "$lib/sass/variables";
+  @use "$lib/sass/variables" as *;
 
   .tools {
     padding: var(--spacing);

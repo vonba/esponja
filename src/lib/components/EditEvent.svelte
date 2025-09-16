@@ -579,7 +579,7 @@
 {/if}
 
 <style lang="scss">
-	@import "$lib/sass/variables";
+	@use "$lib/sass/variables" as *;
 
 	:global(button.eventImageWrapper) {
 		width: 100%;

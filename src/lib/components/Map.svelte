@@ -60,7 +60,7 @@
 </div>
 
 <style lang="scss">
-  @import "$lib/sass/variables";
+  @use "$lib/sass/variables" as *;
 
   .mapContainer {
     border-radius: var(--borderRadius);

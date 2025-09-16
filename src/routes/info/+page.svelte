@@ -51,7 +51,7 @@
 </section>
 
 <style lang="scss">
-	@import "$lib/sass/variables";
+	@use "$lib/sass/variables" as *;
 
 	h2 {
 		font-size: var(--fsTitleBig);

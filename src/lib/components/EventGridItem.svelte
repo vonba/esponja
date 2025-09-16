@@ -144,7 +144,7 @@
 {/if}
 
 <style lang="scss">
-  @import "$lib/sass/variables";
+  @use "$lib/sass/variables" as *;
 
   h2 a {
     text-decoration: none;

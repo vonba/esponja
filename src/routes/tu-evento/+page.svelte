@@ -88,7 +88,7 @@
 </div>
 
 <style lang="scss">
-  @import "$lib/sass/variables";
+  @use "$lib/sass/variables" as *;
 
   h1 {
     margin-bottom: 20px;

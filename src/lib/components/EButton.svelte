@@ -6,7 +6,7 @@
 </button>
 
 <style lang="scss">
-  @import "$lib/sass/variables";
+  @use "$lib/sass/variables" as *;
 
   button {
     font-size: var(--fsNormal);
