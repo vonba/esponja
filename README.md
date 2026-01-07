@@ -17,14 +17,14 @@ Here are the steps:
 
 ```bash
 # Clone the repo to your current directory
-git clone https://github.com/nstuyvesant/sveltekit-auth-example.git
+git clone https://github.com/vonba/esponja.git
 
 # Install the dependencies
-cd /sveltekit-auth-example
+cd /esponja
 yarn install
 
 # Create PostgreSQL database (only works if you installed PostgreSQL)
-npm run db_create
+yarn db_create
 ```
 
 2. Create a google API key for Maps
@@ -37,5 +37,5 @@ npm run db_create
 
 ```bash
 # Start the server and open the app in a new browser tab
-npm run dev
+yarn dev
 ```
