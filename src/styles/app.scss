@@ -1,9 +1,9 @@
-// Archivo font
-@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
+@use '$lib/sass/_variables' as *;
 
-@import '../lib/sass/_variables';
 @import url('forms.scss');
 
+// Archivo font
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* variables */
 
