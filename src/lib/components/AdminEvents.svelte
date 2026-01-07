@@ -11,7 +11,6 @@
   // Props
   export let events: [EventProperties] | []
   export let venues: [VenueProperties] | []
-  export let users: UserProperties[]
 
   // States
   let showCreateEvent = false
