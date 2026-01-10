@@ -20,10 +20,22 @@ export const GET: RequestHandler = async ({ request }) => {
 	try {
 		// Calculate date range: Today (Wednesday) through next Tuesday (inclusive)
 		// Query uses start_date < endDate, so endDate should be day after last included day
-		const now = new Date()
 
-		// Start date: Today at 00:00
-		const today = new Date(now)
+		// Get current date in Mexico City timezone (UTC-6)
+		const nowUTC = new Date()
+		const mexicoCityDateString = nowUTC.toLocaleString('en-US', {
+			timeZone: 'America/Mexico_City',
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit'
+		})
+
+		// Parse the Mexico City date (format: MM/DD/YYYY)
+		const [month, day, year] = mexicoCityDateString.split('/')
+		const todayInMexicoCity = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+
+		// Start date: Today (in Mexico City timezone)
+		const today = new Date(todayInMexicoCity)
 		today.setHours(0, 0, 0, 0)
 
 		// End date: 7 days from today at 00:00 (to include up to and including day 6 with < operator)
