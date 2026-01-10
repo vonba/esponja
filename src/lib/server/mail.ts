@@ -186,8 +186,16 @@ export async function sendWeeklyDigest(
         venueHtml = `${getStyledLink(venue.name, venueUrl)} • `
       }
 
-      // Format start date and time
-      const startDateStr = event.startDate
+      // Format start date with weekday (e.g., "sábado, 10 de enero")
+      const startDateObj = new Date(`${event.startDate}T00:00:00`)
+      const startDateFormatter = new Intl.DateTimeFormat('es-MX', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+      })
+      const startDateStr = startDateFormatter.format(startDateObj)
+
+      // Format start time
       let startTimeStr = ''
       if (event.startTime) {
         const [hours, minutes] = event.startTime.split(':').map(Number)
@@ -202,6 +210,15 @@ export async function sendWeeklyDigest(
       let dateTimeStr = `${startDateStr}${startTimeStr ? ` • ${startTimeStr}` : ''}`
 
       if (isMultiDay) {
+        // Format end date with weekday
+        const endDateObj = new Date(`${event.endDate}T00:00:00`)
+        const endDateFormatter = new Intl.DateTimeFormat('es-MX', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long'
+        })
+        const endDateStr = endDateFormatter.format(endDateObj)
+
         // Show end date with end time if specified
         let endTimeStr = ''
         if (event.endTime) {
@@ -211,7 +228,7 @@ export async function sendWeeklyDigest(
           const options: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', hour12: true }
           endTimeStr = new Intl.DateTimeFormat('es-MX', options).format(date)
         }
-        dateTimeStr += ` – ${event.endDate}${endTimeStr ? ` • ${endTimeStr}` : ''}`
+        dateTimeStr += ` – ${endDateStr}${endTimeStr ? ` • ${endTimeStr}` : ''}`
       }
 
       // Format price (free events can be null or 0)
@@ -250,12 +267,11 @@ export async function sendWeeklyDigest(
 
   const unsubscribeUrl = `${PUBLIC_DOMAIN}/digest/unsubscribe?token=${unsubscribeToken}`
 
-  // Format dates in Spanish (e.g., "miércoles 8 de enero")
+  // Format dates in Spanish (e.g., "10 de enero")
   const startDateObj = new Date(`${startDate}T00:00:00`)
   const endDateObj = new Date(`${endDate}T00:00:00`)
 
   const dateFormatter = new Intl.DateTimeFormat('es-MX', {
-    weekday: 'long',
     day: 'numeric',
     month: 'long'
   })
