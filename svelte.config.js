@@ -23,6 +23,9 @@ const config = {
 			functions: {
 				'src/routes/api/v1/event/+server.ts': {
 					maxDuration: 30
+				},
+				'src/routes/api/cron/weekly-digest/+server.ts': {
+					maxDuration: 60
 				}
 			}
 		}),		

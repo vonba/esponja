@@ -25,7 +25,7 @@ function getFormattedEmail(text: string): string {
       </head>
       <body style="margin: 0; color: #007E68; font-family: 'Open Sans', 'Arial', sans-serif; background-color: #FFFDF7; text-align: center;">
         <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
-          <img src="${PUBLIC_DOMAIN}/esponja-blob-green.png" alt="Esponja" height="40" />
+          <img src="https://esponja.mx/esponja-blob-green.png" alt="Esponja" height="40" />
         </div>
         <div style="display: inline-block; text-align: left; max-width: 40em; margin: 1em 0.5em; padding: 1em; border: 1px solid #007E68; border-radius: 5px; padding: 1em;">
           ${text}
@@ -47,7 +47,7 @@ function getStyledButton(text: string, link: string): string {
 
 function getStyledHeader(text: string): string {
   return `
-  <h2 style="color: #000; text-align: center; margin: 0 0 1em 0;">
+  <h2 style="color: #007E68; text-align: center; margin: 0 0 1em 0;">
     ${text}
     <div style="text-align: center">
       <span style="display: inline-block; height: 0; border-bottom: 2px solid #FFA900; margin-top: 1em;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -156,6 +156,116 @@ export async function sendPasswordResetEmail(
 				<p>
 					Si no has pedido el cambio puedes descartar este mensaje.
 				</p>
+    `),
+  });
+}
+
+export async function sendWeeklyDigest(
+  recipientEmail: string,
+  events: any[],
+  venues: any[],
+  unsubscribeToken: string,
+  startDate: string,
+  endDate: string,
+): Promise<void> {
+  // Build events HTML
+  let eventsHtml = ''
+
+  if (events.length === 0) {
+    eventsHtml = '<p style="text-align: center; font-style: italic;">No hay eventos programados para esta semana.</p>'
+  } else {
+    for (const event of events) {
+      const imageUrl = event.imageKeySmall ? getImageURL(event.imageKeySmall) : ''
+      const eventUrl = `${PUBLIC_DOMAIN}/evento/${event.slug}`
+
+      // Find venue
+      const venue = venues.find(v => v.id === event.venueId)
+      let venueHtml = ''
+      if (venue) {
+        const venueUrl = `${PUBLIC_DOMAIN}/foro/${venue.slug}`
+        venueHtml = `${getStyledLink(venue.name, venueUrl)} • `
+      }
+
+      // Format start date and time
+      const startDateStr = event.startDate
+      let startTimeStr = ''
+      if (event.startTime) {
+        const [hours, minutes] = event.startTime.split(':').map(Number)
+        const date = new Date()
+        date.setHours(hours, minutes)
+        const options: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', hour12: true }
+        startTimeStr = new Intl.DateTimeFormat('es-MX', options).format(date)
+      }
+
+      // Check if multi-day event
+      const isMultiDay = event.endDate && event.endDate !== event.startDate
+      let dateTimeStr = `${startDateStr}${startTimeStr ? ` • ${startTimeStr}` : ''}`
+
+      if (isMultiDay) {
+        // Show end date with end time if specified
+        let endTimeStr = ''
+        if (event.endTime) {
+          const [hours, minutes] = event.endTime.split(':').map(Number)
+          const date = new Date()
+          date.setHours(hours, minutes)
+          const options: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', hour12: true }
+          endTimeStr = new Intl.DateTimeFormat('es-MX', options).format(date)
+        }
+        dateTimeStr += ` – ${event.endDate}${endTimeStr ? ` • ${endTimeStr}` : ''}`
+      }
+
+      // Format price (free events can be null or 0)
+      let priceStr = ''
+      if (event.price === null || event.price === undefined || event.price === 0) {
+        priceStr = ' • Entrada libre'
+      } else if (event.priceMax && event.priceMax !== event.price) {
+        priceStr = ` • $${event.price} – $${event.priceMax}`
+      } else {
+        priceStr = ` • $${event.price}`
+      }
+
+      // Truncate description to ~150 characters
+      let description = event.description || ''
+      if (description.length > 150) {
+        description = description.substring(0, 150) + '...'
+      }
+
+      eventsHtml += `
+        <div style="margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px solid #007E68;">
+          ${imageUrl ? `<img src="${imageUrl}" alt="${event.name}" style="width: 100%; max-width: 400px; height: auto; border-radius: 5px; margin-bottom: 1em;" />` : ''}
+          <h3 style="color: #007E68; margin: 0.5em 0;">
+            <a href="${eventUrl}" style="color: #007E68; text-decoration: none;">${event.name}</a>
+          </h3>
+          <p style="margin: 0.5em 0; color: #FFA900;">
+            ${venueHtml}${dateTimeStr}${priceStr}
+          </p>
+          ${description ? `<p style="margin: 0.5em 0;">${description}</p>` : ''}
+          <p style="margin: 0.5em 0;">
+            ${getStyledLink('Ver más', eventUrl)}
+          </p>
+        </div>
+      `
+    }
+  }
+
+  const unsubscribeUrl = `${PUBLIC_DOMAIN}/digest/unsubscribe?token=${unsubscribeToken}`
+
+  await sendMail({
+    to: recipientEmail,
+    from: MAIL_FROM,
+    subject: 'Eventos de música alternativa esta semana en esponja.mx',
+    html: getFormattedEmail(`
+      ${getStyledHeader('Esta semana en Esponja')}
+      <p style="text-align: center; margin-bottom: 2em;">
+        Eventos de música alternativa del <strong>${startDate}</strong> al <strong>${endDate}</strong>
+      </p>
+      ${eventsHtml}
+      <p style="text-align: center; margin-top: 2em; font-size: 0.9em; color: #666;">
+        ${getStyledLink('Ver todos los eventos', `${PUBLIC_DOMAIN}/eventos`)}
+      </p>
+      <p style="text-align: center; margin-top: 2em; font-size: 0.8em; color: #999;">
+        ${getStyledLink('Darme de baja', unsubscribeUrl)}
+      </p>
     `),
   });
 }

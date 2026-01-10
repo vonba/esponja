@@ -5,6 +5,7 @@
 	import EButton from "$lib/components/EButton.svelte"
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
 	import PublicLogo from "$lib/components/PublicLogo.svelte"
+	import DigestSubscribe from "$lib/components/DigestSubscribe.svelte"
 	import { getDateFiltersFromTimeWindow, getDateString } from "$lib/dateTime"
 	import { afterUpdate, onMount } from 'svelte'
 	import { likedEventsPopupVisible } from '../../stores'
@@ -190,6 +191,10 @@
 	</a>
 </div>
 
+<section id="digestSection">
+	<DigestSubscribe />
+</section>
+
 <section id="homePage">
 	{#if loading}
 		<LoadingIndicator />
@@ -288,6 +293,12 @@
 			// To compensate for .smallButtons which has an absolute position
 			margin-top: 35px;
 		}
+	}
+
+	#digestSection {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 0 var(--spacing);
 	}
 
 	.viewOptions {
