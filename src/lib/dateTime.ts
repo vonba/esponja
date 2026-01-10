@@ -44,6 +44,21 @@ export function getDateString(date?: Date): string {
   return `${year}-${monthString}-${dayString}`;
 }
 
+// Returns current date in Mexico City timezone as YYYY-MM-DD string
+// Use this instead of new Date() to avoid UTC timezone issues
+export function getCurrentDateInMexicoCity(): string {
+  const nowUTC = new Date()
+  const mexicoCityDateString = nowUTC.toLocaleString('en-US', {
+    timeZone: 'America/Mexico_City',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+  const [month, day, year] = mexicoCityDateString.split('/')
+  const todayInMexicoCity = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+  return todayInMexicoCity.toISOString().split('T')[0]
+}
+
 // Returns { startDate, endDate } corresponding to time window
 // Possible values of time window: hoy | manana | semana | mes
 export function getDateFiltersFromTimeWindow(eventTimeWindow: string): {startDate: string | null, endDate: string | null} {

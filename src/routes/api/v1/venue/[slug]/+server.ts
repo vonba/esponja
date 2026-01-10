@@ -2,6 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { eventColumns } from '$lib/server/queries'
+import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
@@ -11,19 +12,20 @@ export const GET: RequestHandler = async event => {
   });
 
 	const slug = event.params.slug
+	const currentDate = getCurrentDateInMexicoCity()
 	let venue, events
 
 	try {
-		const venueResult = await query(`SELECT * FROM venues WHERE hidden = false AND slug = '${slug}'`);
+		const venueResult = await query(`SELECT * FROM venues WHERE hidden = false AND slug = $1`, [slug]);
 		if (venueResult.rows) {
 			venue = venueResult.rows[0];
 
 			// Fetch other events at the same venue
 			const eventsResult = await query(`
 				SELECT ${eventColumns} FROM events
-				WHERE hidden = false AND venue_id = ${venue.id} AND start_date >= CURRENT_DATE
+				WHERE hidden = false AND venue_id = $1 AND start_date >= $2
 				ORDER BY start_date ASC
-			`);
+			`, [venue.id, currentDate]);
 
 			events = eventsResult.rows.map(row => {
 				return {

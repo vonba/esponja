@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { sendWeeklyDigest } from '$lib/server/mail'
 import { eventColumns } from '$lib/server/queries'
+import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 import { CRON_SECRET } from '$env/static/private'
 
 // GET /api/cron/weekly-digest
@@ -21,29 +22,14 @@ export const GET: RequestHandler = async ({ request }) => {
 		// Calculate date range: Today (Wednesday) through next Tuesday (inclusive)
 		// Query uses start_date < endDate, so endDate should be day after last included day
 
-		// Get current date in Mexico City timezone (UTC-6)
-		const nowUTC = new Date()
-		const mexicoCityDateString = nowUTC.toLocaleString('en-US', {
-			timeZone: 'America/Mexico_City',
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit'
-		})
+		// Get current date in Mexico City timezone
+		const startDate = getCurrentDateInMexicoCity()
 
-		// Parse the Mexico City date (format: MM/DD/YYYY)
-		const [month, day, year] = mexicoCityDateString.split('/')
-		const todayInMexicoCity = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-
-		// Start date: Today (in Mexico City timezone)
-		const today = new Date(todayInMexicoCity)
-		today.setHours(0, 0, 0, 0)
-
-		// End date: 7 days from today at 00:00 (to include up to and including day 6 with < operator)
+		// End date: 7 days from today (to include up to and including day 6 with < operator)
+		const today = new Date(startDate + 'T00:00:00')
 		const oneWeekFromToday = new Date(today)
 		oneWeekFromToday.setDate(today.getDate() + 7)
-		oneWeekFromToday.setHours(0, 0, 0, 0)
 
-		const startDate = today.toISOString().split('T')[0]
 		const endDate = oneWeekFromToday.toISOString().split('T')[0]
 
 		// Fetch published, non-hidden events for the week
