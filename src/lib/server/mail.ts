@@ -23,7 +23,7 @@ function getFormattedEmail(text: string): string {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Esponja</title>
       </head>
-      <body style="margin: 0; color: #007E68; font-family: 'Open Sans', 'Arial', sans-serif; background-color: #FFFDF7; text-align: center;">
+      <body style="margin: 0; color: #007E68; font-family: 'Open Sans', 'Arial', sans-serif; background-color: #FFF; text-align: center;">
         <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
           <img src="https://esponja.mx/esponja-blob-green.png" alt="Esponja" height="40" />
         </div>
