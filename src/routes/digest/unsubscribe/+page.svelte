@@ -4,19 +4,28 @@
 	import PublicLogo from '$lib/components/PublicLogo.svelte'
 	import EButton from '$lib/components/EButton.svelte'
 
-	let loading = true
+	let loading = false
+	let confirming = false
 	let message = ''
 	let success = false
 	let token = ''
+	let tokenValid = false
 
-	onMount(async () => {
+	onMount(() => {
 		token = $page.url.searchParams.get('token') || ''
 
 		if (!token) {
 			message = 'Token no válido'
-			loading = false
-			return
+			tokenValid = false
+		} else {
+			tokenValid = true
+			confirming = true
 		}
+	})
+
+	async function handleUnsubscribe() {
+		loading = true
+		confirming = false
 
 		try {
 			const response = await fetch('/api/v1/digest-unsubscribe', {
@@ -39,7 +48,7 @@
 		} finally {
 			loading = false
 		}
-	})
+	}
 </script>
 
 <svelte:head>
@@ -49,8 +58,31 @@
 <PublicLogo />
 
 <div class="unsubscribe">
-	{#if loading}
+	{#if confirming}
+		<div class="confirmation">
+			<h2>Cancelar suscripción al boletín semanal</h2>
+			<p>¿Estás seguro que quieres cancelar tu suscripción al boletín de eventos de Esponja?</p>
+			<p class="subdued">Ya no recibirás correos con los eventos de la semana.</p>
+
+			<div class="buttons">
+				<EButton class="large secondary" on:click={() => (window.location.href = '/eventos')}>
+					Cancelar
+				</EButton>
+				<EButton class="large" on:click={handleUnsubscribe}>
+					Confirmar cancelación
+				</EButton>
+			</div>
+		</div>
+	{:else if loading}
 		<p>Procesando...</p>
+	{:else if !tokenValid}
+		<div class="message error">
+			<h2>✗</h2>
+			<p>{message}</p>
+		</div>
+		<EButton class="large" on:click={() => (window.location.href = '/eventos')}>
+			Volver a eventos
+		</EButton>
 	{:else}
 		<div class="message {success ? 'success' : 'error'}">
 			<h2>{success ? '✓' : '✗'}</h2>
@@ -77,6 +109,30 @@
 		margin: var(--double) auto;
 		padding: var(--spacing);
 		text-align: center;
+
+		.confirmation {
+			h2 {
+				color: var(--colorGreen);
+				margin-bottom: var(--spacing);
+			}
+
+			p {
+				margin-bottom: var(--spacing);
+			}
+
+			.subdued {
+				color: var(--colorGray);
+				font-size: 0.9em;
+				margin-bottom: var(--double);
+			}
+
+			.buttons {
+				display: flex;
+				gap: var(--spacing);
+				justify-content: center;
+				margin-top: var(--double);
+			}
+		}
 
 		.message {
 			padding: var(--double);
