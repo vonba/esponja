@@ -24,10 +24,10 @@ function getFormattedEmail(text: string): string {
           <title>Esponja</title>
       </head>
       <body style="margin: 0; color: #007E68; font-family: 'Open Sans', 'Arial', sans-serif; background-color: #FFF; text-align: center;">
+      <div style="display: inline-block; text-align: left; max-width: 40em; margin: 1em 0.5em; padding: 1em; border: 1px solid #007E68; border-radius: 5px; padding: 1em;">
         <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
           <img src="https://esponja.mx/esponja-blob-green.png" alt="Esponja" height="40" />
         </div>
-        <div style="display: inline-block; text-align: left; max-width: 40em; margin: 1em 0.5em; padding: 1em; border: 1px solid #007E68; border-radius: 5px; padding: 1em;">
           ${text}
         </div>
       </body>
