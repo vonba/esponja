@@ -266,7 +266,7 @@ export async function sendWeeklyDigest(
   await sendMail({
     to: recipientEmail,
     from: MAIL_FROM,
-    subject: 'Eventos de música alternativa esta semana en esponja.mx',
+    subject: 'Música alternativa esta semana en esponja.mx',
     html: getFormattedEmail(`
       ${getStyledHeader('Esta semana en Esponja')}
       <p style="text-align: center; margin-bottom: 2em;">
