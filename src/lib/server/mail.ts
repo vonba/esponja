@@ -250,6 +250,19 @@ export async function sendWeeklyDigest(
 
   const unsubscribeUrl = `${PUBLIC_DOMAIN}/digest/unsubscribe?token=${unsubscribeToken}`
 
+  // Format dates in Spanish (e.g., "miércoles 8 de enero")
+  const startDateObj = new Date(`${startDate}T00:00:00`)
+  const endDateObj = new Date(`${endDate}T00:00:00`)
+
+  const dateFormatter = new Intl.DateTimeFormat('es-MX', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  })
+
+  const formattedStartDate = dateFormatter.format(startDateObj)
+  const formattedEndDate = dateFormatter.format(endDateObj)
+
   await sendMail({
     to: recipientEmail,
     from: MAIL_FROM,
@@ -257,7 +270,7 @@ export async function sendWeeklyDigest(
     html: getFormattedEmail(`
       ${getStyledHeader('Esta semana en Esponja')}
       <p style="text-align: center; margin-bottom: 2em;">
-        Eventos de música alternativa del <strong>${startDate}</strong> al <strong>${endDate}</strong>
+        Eventos de música alternativa del <strong>${formattedStartDate}</strong> al <strong>${formattedEndDate}</strong>
       </p>
       ${eventsHtml}
       <p style="text-align: center; margin-top: 2em; font-size: 0.9em; color: #666;">
