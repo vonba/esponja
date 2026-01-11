@@ -15,6 +15,7 @@ export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPage
 		users: [],
 		venues: [],
 		events: [],
+		subscribers: [],
 	}
 
 	// Fetch venues
@@ -45,6 +46,15 @@ export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPage
 		}
 		const users = await userResponse.json();
 		returnValue.users = users.filter((u: User) => u?.id !== user.id)
+
+		// Fetch subscribers from the API
+		const subscriberResponse = await fetch('/api/v1/subscriber', {
+			method: 'GET'
+		});
+		if (!subscriberResponse.ok) {
+			throw new Error('Failed to fetch subscribers');
+		}
+		returnValue.subscribers = await subscriberResponse.json();
 	}
 
 	return returnValue

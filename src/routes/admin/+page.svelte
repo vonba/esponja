@@ -9,18 +9,18 @@
 	import AdminEvents from '$lib/components/AdminEvents.svelte'
 	import AdminLogo from '$lib/components/AdminLogo.svelte'
 	import AdminVenues from '$lib/components/AdminVenues.svelte'
-
+	import AdminSubscribers from '$lib/components/AdminSubscribers.svelte'
 
 	// Component props
 	export let data: AdminPageData
-	const { user } = data;
+	const { user } = data
 
 	// Tabs
   let activeTab = 0
 	const setActiveTab = (t: number) => activeTab = t
-	let titles = ['Eventos', 'Foros', null, 'Cuenta']
+	let titles = ['Eventos', 'Foros', null, null, 'Cuenta']
 	if (user?.role === 'admin') {
-		titles = ['Eventos', 'Foros', 'Usuarios', 'Cuenta']
+		titles = ['Eventos', 'Foros', 'Usuarios', 'Suscripciones', 'Cuenta']
 	}
 
 	async function logout(e: Event) {
@@ -47,7 +47,7 @@
 <Tabs {titles} {activeTab} {setActiveTab}>
 	{#if activeTab === 0}
 		<div in:fade>
-			<AdminEvents events={data.events} venues={data.venues} users={data.users} />
+			<AdminEvents events={data.events} venues={data.venues} />
 		</div>
 	{:else if activeTab === 1}
 		<div in:fade>
@@ -57,9 +57,13 @@
 		<div in:fade>
 			<AdminUsers users={data.users} />
 		</div>
-	{:else if activeTab === 3}
+	{:else if activeTab === 3 && user?.role === 'admin'}
+		<div in:fade>
+			<AdminSubscribers subscribers={data.subscribers} />
+		</div>
+	{:else if activeTab === 4}
 		<div in:fade class="center">
-			<EditUser 
+			<EditUser
 				user={data.user}
 				showCloseButton={false}
 			/>

@@ -96,11 +96,19 @@ interface UserSession {
 	user: User
 }
 
+interface SubscriberProperties {
+	id: number;
+	email: string;
+	subscribedAt: string;
+	active: boolean;
+}
+
 interface AdminPageData {
 	user: User,
 	users: UserProperties[];
 	venues: [VenueProperties] | [];
 	events: [EventProperties] | [];
+	subscribers: SubscriberProperties[];
 }
 
 interface HomePageData {
