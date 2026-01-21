@@ -7,7 +7,7 @@ import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 import { CRON_SECRET } from '$env/static/private'
 
 // GET /api/cron/weekly-digest
-// Called by Vercel Cron every Wednesday at 8 AM Mexico City time
+// Called by Vercel Cron every Wednesday at 8 PM Mexico City time
 // Local test: curl -X GET 'http://localhost:3000/api/cron/weekly-digest' -H 'Authorization: Bearer LD0AARZi1SVDd3ar25HiZ+gE0QW3c7j8m1Gr/J2N7dY='
 export const GET: RequestHandler = async ({ request }) => {
 	// Verify this is called by Vercel Cron
@@ -19,16 +19,16 @@ export const GET: RequestHandler = async ({ request }) => {
 	}
 
 	try {
-		// Calculate date range: Today (Wednesday) through next Tuesday (inclusive)
+		// Calculate date range: Today (Wednesday) through next Wednesday (inclusive)
 		// Query uses start_date < endDate, so endDate should be day after last included day
 
 		// Get current date in Mexico City timezone
 		const startDate = getCurrentDateInMexicoCity()
 
-		// End date: 7 days from today (to include up to and including day 6 with < operator)
+		// End date: 8 days from today (to include up to and including next Wednesday with < operator)
 		const today = new Date(startDate + 'T00:00:00')
 		const oneWeekFromToday = new Date(today)
-		oneWeekFromToday.setDate(today.getDate() + 7)
+		oneWeekFromToday.setDate(today.getDate() + 8)
 
 		const endDate = oneWeekFromToday.toISOString().split('T')[0]
 
