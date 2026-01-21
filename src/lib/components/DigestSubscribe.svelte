@@ -62,7 +62,7 @@
 
 		<h3>Boletín Semanal</h3>
 		<p>
-			Recibe cada lunes los eventos de la semana<br class="mobileOnly" />
+			Recibe cada miércoles los eventos de la semana<br class="mobileOnly" />
 			en tu correo.
 		</p>
 

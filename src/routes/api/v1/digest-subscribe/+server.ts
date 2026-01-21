@@ -44,7 +44,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				[email]
 			)
 			return json({
-				message: '¡Gracias por suscribirte! Recibirás el boletín cada lunes.',
+				message: '¡Gracias por suscribirte! Recibirás el boletín cada miércoles.',
 				success: true
 			})
 		}
