@@ -248,7 +248,7 @@ export async function sendWeeklyDigest(
       }
 
       eventsHtml += `
-        <div style="margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px solid #007E68;">
+        <div style="margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px solid #007E68; text-align: center;">
           ${imageUrl ? `<img src="${imageUrl}" alt="${event.name}" style="width: 100%; max-width: 400px; height: auto; border-radius: 5px; margin-bottom: 1em;" />` : ''}
           <h3 style="color: #007E68; margin: 0.5em 0;">
             <a href="${eventUrl}" style="color: #007E68; text-decoration: none;">${event.name}</a>
