@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.digest_subscribers (
   ),
   email character varying(255) COLLATE pg_catalog."default" NOT NULL,
   subscribed_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  unsubscribe_token uuid NOT NULL DEFAULT uuid_generate_v4(),
+  unsubscribe_token uuid NOT NULL DEFAULT gen_random_uuid(),
   active boolean NOT NULL DEFAULT true,
   CONSTRAINT digest_subscribers_pkey PRIMARY KEY (id),
   CONSTRAINT digest_subscribers_email_unique UNIQUE (email)
