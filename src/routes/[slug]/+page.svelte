@@ -8,7 +8,6 @@
 	import DigestSubscribe from "$lib/components/DigestSubscribe.svelte"
 	import { getDateFiltersFromTimeWindow, getDateString } from "$lib/dateTime"
 	import { afterUpdate, onMount } from 'svelte'
-	import { likedEventsPopupVisible } from '../../stores'
 	import SearchEvents from '$lib/components/SearchEvents.svelte'
 	import { PUBLIC_DOMAIN } from '$env/static/public'
 	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
@@ -61,11 +60,6 @@
 		goto(`/${eventTimeWindow}`, { replaceState: true })
 	}
   $: (slug = $page.params.slug || '');
-
-  const showLikedEvents = () => {
-    likedEventsPopupVisible.set(true)
-    document.body.classList.add('popupVisible')
-  }
 
 	const toggleSearch = () => {
     isSearchVisible = !isSearchVisible
@@ -166,12 +160,6 @@
 				</EButton>
       </div>
 			<div class="more">
-				<EButton 
-					on:click={() => showLikedEvents()}
-					class="saveFilled icon"
-				>
-					Guardados
-				</EButton>
 				<SearchEvents {isSearchVisible} {toggleSearch} {handleSearchChange}  />
 				<!-- <ButtonLink href="/info" class="info icon">
 					Info

@@ -5,7 +5,6 @@
 	import { loginSession } from "../../stores"
 	import { invalidateAll } from "$app/navigation"
 	import EditEvent from "./EditEvent.svelte"
-  import { likedEventsStore, toggleLikedEvent } from '$lib/likedEvents';
 
   // Props
   export let eventTimeWindow = ''
@@ -23,7 +22,6 @@
   loginSession.subscribe(value => {
     user = value;
   });
-  $: likedEvents = $likedEventsStore;
 
   // Filter events according to date range and search string
   $: filteredEvents = events.filter(event => {
@@ -46,10 +44,6 @@
     const venue = venues.find(v => v.id === event.venueId)
     return (event.name).toLowerCase().includes(searchString.toLowerCase())
       || (`${venue?.name}`).toLowerCase().includes(searchString.toLowerCase())
-  }
-
-  const handleLikeEvent = (event: EventProperties) => {
-    toggleLikedEvent(event);
   }
 
   // If user is logged in, provide an edit function
@@ -80,9 +74,9 @@
     <ul class="events {displayMode}">
       {#each filteredEvents as event (event.id)}
         {#if displayMode === 'list'}
-          <EventListItem {event} {venues} {handleLikeEvent} {handleEditEvent} isLiked={likedEvents.some(e => e.id === event.id)} />
+          <EventListItem {event} {venues} {handleEditEvent} />
         {:else}
-          <EventGridItem {event} {venues} {handleLikeEvent} {handleEditEvent} isLiked={likedEvents.some(e => e.id === event.id)} />
+          <EventGridItem {event} {venues} {handleEditEvent} />
         {/if}
       {/each}
     </ul>

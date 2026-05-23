@@ -4,14 +4,14 @@
 	import { capitalizeFirstChar } from "$lib/strings"
 	import { loginSession } from "../../stores"
   import EButton from "./EButton.svelte"
-  
+  import Notification from "./Notification.svelte"
+  import { fade } from "svelte/transition"
+
   // Props
   export let event: EventProperties
   export let venues: [VenueProperties] | []
   export let handleEditEvent: Function | null = null
-  export let handleLikeEvent: Function | null = null
   export let handleDeleteEventPermanently: Function | null = null
-  export let isLiked = false
 
   // Observables
   let user: User;
@@ -24,6 +24,21 @@
   const isMultiDay = event.endDate && event.endDate !== event.startDate
 
   const venue = venues.find(v => v.id === event.venueId)
+
+  // Share
+  let shareMessage = ''
+  const clearShareMessage = (msg: string) => { shareMessage = msg }
+  const shareEvent = async () => {
+    const url = `${window.location.origin}/evento/${event.slug}`
+    const isMobile = window.matchMedia('(pointer: coarse)').matches
+    if (isMobile && navigator.share) {
+      try { await navigator.share({ title: event.name, url }) } catch {}
+    } else {
+      await navigator.clipboard.writeText(url)
+      shareMessage = 'Link copiado'
+      setTimeout(() => shareMessage = '', 2000)
+    }
+  }
 </script>
 
 <li class="eventListItem">
@@ -75,12 +90,15 @@
       </p>
     {/if}
     
+    {#if shareMessage}
+      <div class="shareNotification" out:fade>
+        <Notification displayMessage={shareMessage} setDisplayMessage={clearShareMessage} />
+      </div>
+    {/if}
     <div class="actions">
-      {#if handleLikeEvent}
-        <EButton on:click={() => handleLikeEvent(event)}  class="icon {isLiked ? 'saveFilled' : 'saveOutline'}">
-          Guardar
-        </EButton>
-      {/if}
+      <EButton on:click={shareEvent} class="icon share">
+        Compartir
+      </EButton>
       {#if handleDeleteEventPermanently}
         <EButton on:click={() => handleDeleteEventPermanently(event)} class="icon delete">
           Borrar
@@ -112,6 +130,18 @@
 
 <style lang="scss">
   @use "$lib/sass/variables" as *;
+
+  .shareNotification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--colorOffWhite);
+    border: 1px solid var(--colorGreen);
+    border-radius: var(--borderRadius);
+    z-index: 100;
+    padding: var(--spacing) var(--double);
+  }
 
   h2 a {
     text-decoration: none;

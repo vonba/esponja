@@ -1,18 +1,11 @@
 <script lang="ts">
 	import ButtonLink from "$lib/components/ButtonLink.svelte"
-	import EButton from "$lib/components/EButton.svelte"
   import PublicLogo from "$lib/components/PublicLogo.svelte"
-	import { likedEventsPopupVisible } from "../../../stores"
 	import PublicVenue from "$lib/components/PublicVenue.svelte"
 
   export let data: SingleVenuePageData
   const events = data.events
   const venue = data.venue
-  
-  const showLikedEvents = () => {
-    likedEventsPopupVisible.set(true);
-    document.body.classList.add('popupVisible');
-  }
 </script>
 
 <svelte:head>
@@ -22,12 +15,6 @@
 <div class="pageHeaderWrapper">
   <PublicLogo />
   <nav id="pageNavigation">
-    <EButton 
-      on:click={() => showLikedEvents()}
-      class="saveFilled icon"
-    >
-      Guardados
-    </EButton>
     <ButtonLink href="/info" class="info icon">
       Info
     </ButtonLink>

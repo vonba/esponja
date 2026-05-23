@@ -6,8 +6,7 @@
 	import EventGridItem from "$lib/components/EventGridItem.svelte"
   import PublicLogo from "$lib/components/PublicLogo.svelte"
 	import { fade } from "svelte/transition"
-	import { likedEventsPopupVisible, loginSession } from "../../../stores"
-	import { likedEventsStore, toggleLikedEvent } from "$lib/likedEvents"
+	import { loginSession } from "../../../stores"
 	import { formatDate, formatDateShort } from "$lib/dateTime"
 	import EventSummary from "$lib/components/EventSummary.svelte"
 	import Notification from "$lib/components/Notification.svelte"
@@ -24,7 +23,6 @@
   $: relatedEvents = data.event.relatedEvents
   $: venue = venues.find(v => v.id === event?.venueId)
   $: unmoderated = !event.published
-  $: likedEvents = $likedEventsStore;
   $: pageTitle = !event ? 'Esponja' : `${event.name} ${venue ? `en ${venue?.name}` : ''} | Esponja`
   $: metaDescription = !event || !venue ? 'Esponja' : `${venue.name}, ${formatDateShort(event.startDate)}. ${event.description?.slice(0, 200)}`
   $: metaTitle = !event ? 'Esponja' : event.name
@@ -39,15 +37,6 @@
   
 
   // Handlers
-
-  const showLikedEvents = () => {
-    likedEventsPopupVisible.set(true);
-    document.body.classList.add('popupVisible');
-  }
-
-  const handleLikeEvent = (event: EventProperties) => {
-    toggleLikedEvent(event)
-  }
 
   const handleEditEvent = $loginSession?.role === 'admin'
     ? (event: EventProperties) => {
@@ -74,12 +63,6 @@
 <div class="pageHeaderWrapper">
   <PublicLogo />
   <nav id="pageNavigation">
-    <EButton 
-      on:click={() => showLikedEvents()}
-      class="saveFilled icon"
-    >
-      Guardados
-    </EButton>
     <ButtonLink href="/info" class="info icon">
       Info
     </ButtonLink>
@@ -106,7 +89,7 @@
     {/if}
     <Notification {displayMessage} {setDisplayMessage} />
     <ul class="eventWrapper">
-      <EventGridItem isSingle={true} {event} {venues} {handleLikeEvent} {handleEditEvent} isLiked={likedEvents.some(e => e.id === event.id)} />
+      <EventGridItem isSingle={true} {event} {venues} {handleEditEvent} />
     </ul>
 
     {#if relatedEvents.length && venue}

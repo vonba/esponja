@@ -2,7 +2,6 @@
 	import type { LayoutServerData } from './$types'
 	import { beforeNavigate } from '$app/navigation'
 	import { loginSession } from '../stores'
-	import LikedEventsPopup from '$lib/components/LikedEventsPopup.svelte';
 	import { navigating } from '$app/stores'
 	import animationData from '$lib/lottie/esponja1.json';
 
@@ -37,8 +36,6 @@
 <main class="container">
 	<slot />
 </main>
-
-<LikedEventsPopup />
 
 <footer id="siteFooter">
 	<div class="contentWrapper">
