@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { QueryResult } from 'pg'
-import pg from 'pg'
 import { DATABASE_URL } from '$env/static/private'
+import { neon } from '@neondatabase/serverless'
+import pg from 'pg'
+import type { QueryResult } from 'pg'
 
-const pool = new pg.Pool({
-	max: 10, // default
-	connectionString: DATABASE_URL,
-	// ssl: {
-	// 	// If your postgresql.conf does not have `ssl = on`, remove the entire ssl property or you will get an error
-	// 	rejectUnauthorized: false
-	// }
-})
+const isNeon = DATABASE_URL.includes('neon.tech')
 
-type PostgresQueryResult = (sql: string, params?: any[]) => Promise<QueryResult<any>>
-export const query: PostgresQueryResult = (sql, params?) => pool.query(sql, params)
+// Neon serverless HTTP driver for production; pg.Pool for local dev
+const sql  = isNeon ? neon(DATABASE_URL) : null
+const pool = isNeon ? null : new pg.Pool({ connectionString: DATABASE_URL, max: 10 })
+
+export const query = async (text: string, params?: any[]): Promise<QueryResult> => {
+	if (sql) {
+		const result = await sql.query(text, params)
+		return result as unknown as QueryResult
+	}
+	return pool!.query(text, params)
+}

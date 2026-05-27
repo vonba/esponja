@@ -1657,6 +1657,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@neondatabase/serverless@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@neondatabase/serverless@npm:1.1.0"
+  checksum: 10c0/ba24391bd53f94b76a817c9bfd09f91259024119b51e64192f2f97f627253d4370699e051d73918352e71fb93ae4575177ca1f5b38f2c27fcf5dc1adda70c677
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -4220,6 +4227,7 @@ __metadata:
   dependencies:
     "@aws-sdk/client-s3": "npm:^3.596.0"
     "@googlemaps/js-api-loader": "npm:^1.16.6"
+    "@neondatabase/serverless": "npm:^1.1.0"
     "@sveltejs/adapter-node": "npm:^5.0.1"
     "@sveltejs/adapter-vercel": "npm:^5.3.2"
     "@sveltejs/kit": "npm:^2.5.7"
