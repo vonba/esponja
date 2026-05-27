@@ -16,7 +16,7 @@
 		"db_create": "bash db_create.sh"
 	},
 	"engines": {
-		"node": "^20"
+		"node": "^22"
 	},
 	"type": "module",
 	"dependencies": {
