@@ -4,6 +4,7 @@ import { neon } from '@neondatabase/serverless'
 import pg from 'pg'
 import type { QueryResult } from 'pg'
 
+// Check if we are on Neon (in production)
 const isNeon = DATABASE_URL.includes('neon.tech')
 
 // Neon serverless HTTP driver for production; pg.Pool for local dev
