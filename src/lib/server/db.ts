@@ -8,7 +8,7 @@ import type { QueryResult } from 'pg'
 const isNeon = DATABASE_URL.includes('neon.tech')
 
 // Neon serverless HTTP driver for production; pg.Pool for local dev
-const sql  = isNeon ? neon(DATABASE_URL) : null
+const sql  = isNeon ? neon(DATABASE_URL, { fullResults: true }) : null
 const pool = isNeon ? null : new pg.Pool({ connectionString: DATABASE_URL, max: 10 })
 
 export const query = async (text: string, params?: any[]): Promise<QueryResult> => {
