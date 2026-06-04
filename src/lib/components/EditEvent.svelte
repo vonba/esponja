@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { focusOnFirstError } from '$lib/focus'
 	import {createEventDispatcher} from 'svelte';
 	import EButton from './EButton.svelte'
@@ -47,6 +47,7 @@
 	let loading = false
 	let eventImageFile: HTMLInputElement | null = null
 	let isEventImageSelected = false
+	let imagePreviewUrl: string | null = null
 	let isSlugManuallyEdited = false
 	let isConfirmedToPublish = false
 	let showCreateVenue = false
@@ -73,12 +74,24 @@
 
 	// Function to handle file selection
 	function handleFileChange() {
+		// Revoke any previous preview to avoid memory leaks
+		if (imagePreviewUrl) {
+			URL.revokeObjectURL(imagePreviewUrl)
+			imagePreviewUrl = null
+		}
+
 		if (eventImageFile && eventImageFile?.files && eventImageFile.files.length > 0) {
 			isEventImageSelected = true;
+			imagePreviewUrl = URL.createObjectURL(eventImageFile.files[0]);
 		} else {
 			isEventImageSelected = false;
 		}
 	}
+
+	// Clean up preview URL when the component is destroyed
+	onDestroy(() => {
+		if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl)
+	})
 
 	// Handle form submit
 	async function update() {
@@ -297,7 +310,11 @@
 			<div class="inputContainer image">
 				<label for="image">Imagen *</label>
 				<p>Recomendamos una imagen con poco texto</p>
-				{#if event.imageKeyLarge}
+				{#if imagePreviewUrl}
+					<div class="imageWrapper">
+						<img src={imagePreviewUrl} alt="Vista previa de la imagen" />
+					</div>
+				{:else if event.imageKeyLarge}
 					<div class="imageWrapper">
 						<img src={getImageURL(event.imageKeyLarge)} alt="Imagen del evento" />
 					</div>
