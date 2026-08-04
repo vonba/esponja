@@ -16,7 +16,9 @@ export function formatDescription(description: string | undefined | null) {
 }
 
 
-export function toSlug(input: string) {
+export function toSlug(input: string, maxLength: number = 120) {
+  if (!input) return '';
+
   // Normalize the input to decompose combined letters into their base characters
   let slug = input.normalize('NFD');
 
@@ -32,25 +34,12 @@ export function toSlug(input: string) {
   // Trim hyphens from start and end
   slug = slug.replace(/^-+|-+$/g, '');
 
-  // Ensure the slug does not exceed 80 characters
-  if (slug.length > 120) {
-      slug = slug.substring(0, 120).replace(/-+$/g, ''); // Avoid trailing hyphens after truncation
+  // Ensure the slug does not exceed the maximum length
+  if (slug.length > maxLength) {
+      slug = slug.substring(0, maxLength).replace(/-+$/g, ''); // Avoid trailing hyphens after truncation
   }
 
   return slug;
-}
-
-export function truncateAndAppend(input: string): string {
-  const maxLength = 118;
-  const suffix = "-2";
-
-  // If the input length is greater than the maxLength, truncate it and add the suffix
-  if (input.length > maxLength) {
-    return input.substring(0, maxLength) + suffix;
-  }
-
-  // Otherwise, just append the suffix
-  return input + suffix;
 }
 
 export function capitalizeFirstChar(str: string) {

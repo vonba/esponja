@@ -5,12 +5,19 @@ import { query } from '$lib/server/db'
 import { DeleteObjectCommand, PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns } from '$lib/server/queries';
-import { toSlug, truncateAndAppend } from '$lib/strings'
 import { sendModerationNotification, sendModerationSuccessfulNotification } from '$lib/server/mail'
 import { getDateString } from '$lib/dateTime';
-import { stripHtml } from "string-strip-html";
-
-const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
+import {
+	DUPLICATE_SLUG_MESSAGE,
+	assertSlugIsAvailable,
+	buildEventSlug,
+	eventFromFormData,
+	isDuplicateSlugError,
+	normalizeEventSlug,
+	parseEventId,
+	sanitizeEventText,
+	toEventQueryBody,
+} from '$lib/server/events';
 
 // ====== Endpoint for listing events ======
 // Possible query parameters:
@@ -81,12 +88,12 @@ export const DELETE: RequestHandler = async event => {
 	const requestBody = await event.request.json() as EventProperties
 	const { id, imageKeyLarge, imageKeySmall } = requestBody
 
-	if (!id) error(503, 'Evento no especificado')
+	const eventId = parseEventId(id)
 
 	// Delete unpublished event permanently from database
 	try {
 		// Delete the event permanently
-		await query(`DELETE FROM events WHERE (published = false OR hidden = true) AND id = ${id}`);
+		await query(`DELETE FROM events WHERE (published = false OR hidden = true) AND id = $1`, [eventId]);
 
 		// Now delete the orphaned images
 		deleteFiles([imageKeyLarge, imageKeySmall])
@@ -107,43 +114,28 @@ export const PUT: RequestHandler = async event => {
 		
 	// Copy form data from the request body (we need form data )
 	const formData = await event.request.formData();
-	
-	const eventUpdate: any = {};
-	for (const [key, value] of formData as any) {
-		if (!(value instanceof File)) {
-			if (value || !dateKeys.includes(key)) {
-				eventUpdate[key] = value;
-			}
-		}
-	}
+	const eventUpdate = eventFromFormData(formData)
+	const eventId = parseEventId(eventUpdate.id)
 
 	// Get existing event
-	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published, 
-		image_key_large AS "imageKeyLarge", image_key_small AS "imageKeySmall" 
-		FROM events WHERE id = ${eventUpdate.id}`);
-	if (!existingEventResult.rowCount) error(404, 'Event not found')
+	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published,
+		image_key_large AS "imageKeyLarge", image_key_small AS "imageKeySmall"
+		FROM events WHERE id = $1`, [eventId]);
+	if (!existingEventResult.rows.length) error(404, 'Event not found')
 	const existingEvent =  existingEventResult.rows[0]
-		
+
 	// Only admins can edit other users' events
 	if (user.role !== 'admin' && user.id !== existingEvent.userId) {
 		error(401, 'Unauthorized')
 	}
 
-	// Check for slug duplicates
-	eventUpdate.slug = toSlug(eventUpdate.slug)
-	const sameSlugResult = await query(`SELECT id FROM events WHERE slug = '${eventUpdate.slug}' AND id != ${existingEvent.id}`);
-	if (sameSlugResult.rowCount) {
-		// If slug already exists will add a "-2" at the end
-		eventUpdate.slug = truncateAndAppend(eventUpdate.slug)
-	}
+	// Keep the slug the event was created with, but refuse to collide with another one
+	eventUpdate.slug = normalizeEventSlug(eventUpdate.slug)
+	await assertSlugIsAvailable(eventUpdate.slug, existingEvent.id)
 
 	// Remove any HTML
-	console.log('before', eventUpdate.name)
-	eventUpdate.name = stripHtml(eventUpdate.name).result
-	eventUpdate.description = stripHtml(eventUpdate.description).result
-	eventUpdate.ticketLink = stripHtml(eventUpdate.ticketLink).result
-	console.log('after', eventUpdate.name)
-	
+	sanitizeEventText(eventUpdate)
+
 	// If event was not published, it will be now
 	const wasApproved = !existingEvent.published
 	if (wasApproved) {
@@ -154,20 +146,20 @@ export const PUT: RequestHandler = async event => {
 	eventUpdate.published = true
 
 	// Correct null values
-	const queryBody = JSON.stringify(eventUpdate)
-		.replace(/"null"/g, 'null')
-		.replace(/"undefined"/g, 'null');
+	const queryBody = toEventQueryBody(eventUpdate)
 
 	// Update event
 	try {
 		await query(`CALL upsert_event($1, $2);`, [queryBody, null])
 	} catch (err) {
+		// A concurrent request may have taken the slug since the check above
+		if (isDuplicateSlugError(err)) error(409, DUPLICATE_SLUG_MESSAGE)
 		console.error('Error updating event', err)
 		error(503, 'Error de base de datos')
 	}
 	
 	// Upload file (this also updates event with image key)
-	await doFileUpload(formData, eventUpdate.id)
+	await doFileUpload(formData, eventId)
 
 	// TODO: check that if file upload fails, no attempt to delete is made
 
@@ -199,35 +191,16 @@ export const POST: RequestHandler = async event => {
 
 	// Copy FormData from the request body (NOTE we only use FormData when file uploads are involved)
   const formData = await event.request.formData();
-  const eventCreate: any = {};
-  for (const [key, value] of formData as any) {
-		if (!(value instanceof File)) {
-			if (value || !dateKeys.includes(key)) {
-				eventCreate[key] = value;
-			}
-		}
-	}
+  const eventCreate = eventFromFormData(formData)
 
-	// Append start date to slug
-	eventCreate.slug = toSlug(eventCreate.slug)
-	// TODO: create var slugDate, a version of eventCreate.startDate as e.g. "-junio-2" for appending to slug
-	// TODO: slug max length is 120 so get the first (120 - slugDate length) characters of slug and append slugDate
-	// TODO: update eventCreate.slug with result
+	// Append start date to slug, so a repeating event gets a distinct slug each time
+	eventCreate.slug = buildEventSlug(eventCreate.slug || eventCreate.name, eventCreate.startDate)
 
-	// Check for slug duplicates
-	const sameSlugResult = await query(
-		`SELECT id FROM events WHERE slug = $1`,
-		[eventCreate.slug]
-	);
-	if (sameSlugResult.rowCount) {
-		// If slug already exists will add a "-2" at the end
-		eventCreate.slug = truncateAndAppend(eventCreate.slug)
-	}
+	// Two events with the same name on the same day are not allowed
+	await assertSlugIsAvailable(eventCreate.slug)
 
 	// Remove any HTML
-	eventCreate.name = stripHtml(eventCreate.name).result
-	eventCreate.description = stripHtml(eventCreate.description).result
-	eventCreate.ticketLink = stripHtml(eventCreate.ticketLink).result
+	sanitizeEventText(eventCreate)
 
 	// Create event
 	let eventId
@@ -240,20 +213,17 @@ export const POST: RequestHandler = async event => {
 		eventCreate.userId = null
 		eventCreate.published = false
 	}
-	const queryBody = JSON.stringify(eventCreate)
-		.replace(/"null"/g, 'null')
-		.replace(/"undefined"/g, 'null');
+	// Correct formatting of null values
+	const queryBody = toEventQueryBody(eventCreate)
 
 	try {
 		// Creates new event (id = 0)
-		const dbResult = await query(
-			`CALL upsert_event($1, $2);`, 
-			// Correct formatting of null values
-			[queryBody, null]
-		)
+		const dbResult = await query(`CALL upsert_event($1, $2);`, [queryBody, null])
 		eventId = dbResult.rows[0].new_id;
 		if (!eventId) throw new Error ('Error creating event (id)')
 	} catch (err) {
+		// A concurrent request may have taken the slug since the check above
+		if (isDuplicateSlugError(err)) error(409, DUPLICATE_SLUG_MESSAGE)
 		console.error('Error creating event', err)
 		error(503, 'No se pudo crear el evento')
 	}

@@ -138,6 +138,9 @@
 
 				const res = await fetch(url, {
 					method,
+					// Ask for JSON so server errors arrive as { message }, not an HTML error page.
+					// NOTE do not set Content-Type here, the browser adds the multipart boundary
+					headers: { Accept: 'application/json' },
 					body: formData,
 				})
 

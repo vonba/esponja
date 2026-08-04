@@ -21,6 +21,22 @@ export function formatTime(timeString: string): string {
   return new Intl.DateTimeFormat('es-MX', options).format(date);
 }
 
+// Returns e.g. "6-julio-2024", for appending to event slugs.
+// Returns null if the date is missing or not a valid YYYY-MM-DD string.
+export function getDateSlug(dateString: string): string | null {
+  if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return null;
+
+  const date = new Date(`${dateString}T00:00:00`); // Force local time
+  if (isNaN(date.getTime())) return null;
+
+  // Built and read back in local time, so the day never shifts
+  const month = new Intl.DateTimeFormat('es-MX', { month: 'long' }).format(date);
+  return `${date.getDate()}-${month}-${date.getFullYear()}`;
+}
+
+// Longest possible result of getDateSlug, e.g. "30-septiembre-2024"
+export const DATE_SLUG_MAX_LENGTH = 18;
+
 export function getDateString(date?: Date): string {
   // Create a new Date object (this will hold the current date and time)
   const theDate = date ? date : new Date();
