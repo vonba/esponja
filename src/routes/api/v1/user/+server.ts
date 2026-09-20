@@ -6,9 +6,8 @@ import { query } from '$lib/server/db'
 // showBlocked=true : include users with blocked=true
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 60 * 24 // 24 hours
 	setHeaders({
-    "Cache-Control": `max-age=${cacheSeconds}`,
+    "Cache-Control": 'private, no-store',
   });
 
 	const { user } = event.locals

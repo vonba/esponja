@@ -4,19 +4,5 @@
       "path": "/api/cron/weekly-digest",
       "schedule": "0 21 * * 3"
     }
-  ],
-  "headers": [
-    {
-      "source": "/api/v1/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "s-max-age=600, stale-while-revalidate=60" }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "s-max-age=1800, stale-while-revalidate=60" }
-      ]
-    }
   ]
 }

@@ -9,7 +9,7 @@ export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
 	const cacheSeconds = 60 * 10 // 10 minutes
 	setHeaders({
-    "Cache-Control": `max-age=${cacheSeconds}`,
+    "Cache-Control": `public, max-age=0, s-maxage=${cacheSeconds}, stale-while-revalidate=60`,
   });
 
 	// Set query constraints

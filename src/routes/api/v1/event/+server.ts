@@ -29,8 +29,10 @@ export const GET: RequestHandler = async event => {
 
 	const { setHeaders } = event
 	const cacheSeconds = 60 * 10 // 10 minutes
+	// Cache on the CDN only: `max-age=0` keeps browsers from holding on to a private copy
+	// we cannot purge, so a revalidated listing reaches visitors on their next request.
 	setHeaders({
-    "Cache-Control": `max-age=${cacheSeconds}`,
+    "Cache-Control": `public, max-age=0, s-maxage=${cacheSeconds}, stale-while-revalidate=60`,
   });
 
 	// Set query constraints

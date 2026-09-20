@@ -4,9 +4,8 @@ import { query } from '$lib/server/db'
 
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 5 // 5 minutes
 	setHeaders({
-		"Cache-Control": `max-age=${cacheSeconds}`,
+		"Cache-Control": 'private, no-store',
 	});
 
 	const { user } = event.locals
