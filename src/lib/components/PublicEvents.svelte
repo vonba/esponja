@@ -137,9 +137,4 @@
       grid-template-columns: repeat(var(--eventColumnsList), 1fr);
     }
   }
-
-  :global(.viewOptions button:disabled) {
-    opacity: 1;
-    pointer-events: none;
-  }
 </style>

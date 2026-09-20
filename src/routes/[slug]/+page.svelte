@@ -113,7 +113,6 @@
 	{eventTimeWindow}
 	{setEventTimeWindow}
 	{handleSearchChange}
-	bind:displayMode
 />
 
 <section id="digestSection">

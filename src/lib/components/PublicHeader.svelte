@@ -9,7 +9,6 @@
   // Props
   export let section: 'eventos' | 'foros' = 'eventos'
   export let eventTimeWindow: string | undefined = undefined
-  export let displayMode = 'grid'
   export let setEventTimeWindow: ((timeWindow: string) => void) | null = null
   export let handleSearchChange: (searchString: string) => void
 
@@ -126,10 +125,6 @@
 
 		@media (max-width: $mediaM) {
 			&.searchVisible {
-				.viewOptions {
-					display: none;
-				}
-
 				.more {
 					width: 100%;
 
@@ -199,28 +194,6 @@
 			border-bottom: 1px solid var(--colorGreen);
 		}
 	}
-
-	.viewOptions {
-		white-space: nowrap;
-		margin-right: -4px;
-
-    // Override EButton styles
-    :global(button:hover),
-    :global(button.selected) {
-      transform: none;
-      box-shadow: 2px 2px 0 var(--colorGreen);
-      transform: translate(-2px, -2px);
-    }
-    :global(button.grid) {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    :global(button.list) {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      transform: translate(-6px, -2px);
-    }
-  }
 
 	.links {
 		position: fixed;
