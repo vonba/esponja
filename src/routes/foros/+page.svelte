@@ -25,5 +25,5 @@
 <PublicHeader section="foros" {handleSearchChange} />
 
 <section id="venuesPage">
-	<PublicVenues venues={data.venues} {searchString} />
+	<PublicVenues venues={data.venues} events={data.events} {searchString} />
 </section>
