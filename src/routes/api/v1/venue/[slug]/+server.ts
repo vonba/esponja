@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
-import { eventColumns } from '$lib/server/queries'
+import { eventColumns, withoutSubmitter } from '$lib/server/queries'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 
 export const GET: RequestHandler = async event => {
@@ -27,14 +27,13 @@ export const GET: RequestHandler = async event => {
 				ORDER BY start_date ASC
 			`, [venue.id, currentDate]);
 
-			events = eventsResult.rows.map(row => {
-				return {
-					...row,
-					// pg creates date objects but we only want the actual date
-					startDate: row.startDate.toISOString().split('T')[0],
-					endDate: row.endDate ? row.endDate.toISOString().split('T')[0] : null,
-				}
-			})
+			// This endpoint is public, so the submitter's contact details never go out
+			events = eventsResult.rows.map(row => withoutSubmitter({
+				...row,
+				// pg creates date objects but we only want the actual date
+				startDate: row.startDate.toISOString().split('T')[0],
+				endDate: row.endDate ? row.endDate.toISOString().split('T')[0] : null,
+			}))
 		}
 	} catch (err) {
 		console.log(err)

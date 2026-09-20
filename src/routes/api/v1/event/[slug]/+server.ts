@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
-import { eventColumns } from '$lib/server/queries'
+import { eventColumns, withoutSubmitter } from '$lib/server/queries'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
@@ -62,11 +62,18 @@ export const GET: RequestHandler = async event => {
 	// Helper to format dates
 	const formatDate = (date: Date) => (date ? date.toISOString().split('T')[0] : null)
 
-	// Format the event data
+	// Format the event data. Submitter contact details are only for logged-in users.
+	const formatEvent = (row: Record<string, unknown> & { startDate: Date, endDate: Date }) => {
+		const formatted = {
+			...row,
+			startDate: formatDate(row.startDate),
+			endDate: formatDate(row.endDate)
+		}
+		return user ? formatted : withoutSubmitter(formatted)
+	}
+
 	const theEventFormatted = {
-		...theEvent,
-		startDate: formatDate(theEvent.startDate),
-		endDate: formatDate(theEvent.endDate),
+		...formatEvent(theEvent),
 		author: user && theEvent.authorFirstName
 			? `${theEvent.authorFirstName} ${theEvent.authorLastName}`
 			: null
@@ -74,11 +81,7 @@ export const GET: RequestHandler = async event => {
 
 	// Format the related events
 	const relatedEvents = otherEventsResult
-		? otherEventsResult.rows.map(row => ({
-			...row,
-			startDate: formatDate(row.startDate),
-			endDate: formatDate(row.endDate)
-		}))
+		? otherEventsResult.rows.map(formatEvent)
 		: []
 
 	return json({ event: theEventFormatted, relatedEvents })

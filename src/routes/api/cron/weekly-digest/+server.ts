@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { sendWeeklyDigest } from '$lib/server/mail'
-import { eventColumns } from '$lib/server/queries'
+import { eventColumns, withoutSubmitter } from '$lib/server/queries'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 import { CRON_SECRET } from '$env/static/private'
 
@@ -48,7 +48,7 @@ export const GET: RequestHandler = async ({ request }) => {
 			[startDate, endDate]
 		)
 
-		const events = eventsResult.rows.map((row) => ({
+		const events = eventsResult.rows.map((row) => withoutSubmitter({
 			...row,
 			startDate: row.startDate instanceof Date ? row.startDate.toISOString().split('T')[0] : row.startDate,
 			endDate: row.endDate instanceof Date ? row.endDate.toISOString().split('T')[0] : row.endDate

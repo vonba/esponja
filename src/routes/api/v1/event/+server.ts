@@ -4,7 +4,7 @@ import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { DeleteObjectCommand, PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
-import { eventColumns } from '$lib/server/queries';
+import { eventColumns, withoutSubmitter } from '$lib/server/queries';
 import { sendModerationNotification, sendModerationSuccessfulNotification } from '$lib/server/mail'
 import { getDateString } from '$lib/dateTime';
 import {
@@ -28,11 +28,16 @@ import {
 export const GET: RequestHandler = async event => {
 
 	const { setHeaders } = event
+	const { user } = event.locals
 	const cacheSeconds = 60 * 10 // 10 minutes
-	// Cache on the CDN only: `max-age=0` keeps browsers from holding on to a private copy
-	// we cannot purge, so a revalidated listing reaches visitors on their next request.
+	// The response carries submitter contact details for a logged-in user, so only the
+	// anonymous variant may be cached. For that one, cache on the CDN only: `max-age=0`
+	// keeps browsers from holding a private copy we cannot purge, so a revalidated listing
+	// reaches visitors on their next request.
 	setHeaders({
-    "Cache-Control": `public, max-age=0, s-maxage=${cacheSeconds}, stale-while-revalidate=60`,
+    "Cache-Control": user
+			? 'private, no-store'
+			: `public, max-age=0, s-maxage=${cacheSeconds}, stale-while-revalidate=60`,
   });
 
 	// Set query constraints
@@ -71,12 +76,13 @@ export const GET: RequestHandler = async event => {
 
 	// TODO: remove userId from results if no user
 	const formattedRows = result.rows.map(row => {
-		return {
+		const formatted = {
 			...row,
 			// pg creates date objects but we only want the actual date
 			startDate: row.startDate.toISOString().split('T')[0],
 			endDate: row.endDate ? row.endDate.toISOString().split('T')[0] : null,
 		}
+		return user ? formatted : withoutSubmitter(formatted)
 	})
 
 	return json(formattedRows);
