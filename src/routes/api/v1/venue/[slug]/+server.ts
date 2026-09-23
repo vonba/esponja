@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { eventColumns, withoutSubmitter } from '$lib/server/queries'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
-import { publicCacheHeaders } from '$lib/server/cache'
+import { publicCacheHeaders } from '$lib/cache'
 
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
@@ -15,8 +15,8 @@ export const GET: RequestHandler = async event => {
 
 	try {
 		const venueResult = await query(`SELECT * FROM venues WHERE hidden = false AND slug = $1`, [slug]);
-		if (venueResult.rows) {
-			venue = venueResult.rows[0];
+		venue = venueResult.rows[0];
+		if (venue) {
 
 			// Fetch other events at the same venue
 			const eventsResult = await query(`
@@ -37,6 +37,9 @@ export const GET: RequestHandler = async event => {
 		console.log(err)
 		error(503, 'Error de base de datos')
 	}
+
+	// A 404 (unlike a 503) can be cached, so repeated requests for a missing venue skip the database
+	if (!venue) error(404, 'Foro no encontrado')
 
 	return json({venue, events});
 }

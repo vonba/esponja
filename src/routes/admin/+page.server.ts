@@ -1,9 +1,12 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async ({ locals, fetch }): Promise<AdminPageData> => {
+export const load: PageServerLoad = async ({ locals, fetch, setHeaders }): Promise<AdminPageData> => {
 	const { user } = locals
-	
+
+	// Everything here depends on who is logged in, so it must never be cached
+	setHeaders({ 'Cache-Control': 'private, no-store' })
+
 	// Check role
 	const authorized = ['admin', 'contributor', 'editor']
 	if (!user || !authorized.includes(user.role)) {

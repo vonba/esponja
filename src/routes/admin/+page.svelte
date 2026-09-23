@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { browser } from '$app/environment'
+	import { onDestroy } from 'svelte'
+	import { forgetPublicData } from '$lib/publicData'
 	import { fade } from 'svelte/transition';
 	import EditUser from '$lib/components/EditUser.svelte';
 	import Tabs from '$lib/components/Tabs.svelte'
@@ -14,6 +17,13 @@
 	// Component props
 	export let data: AdminPageData
 	const { user } = data
+
+	// Public pages don't know who is logged in, so the admin panel tells the rest of the app.
+	// Browser only: on the server this store would be shared by every visitor.
+	if (browser) loginSession.set(user)
+
+	// Edits made here should show up on the public pages straight away
+	onDestroy(forgetPublicData)
 
 	// Tabs
   let activeTab = 0

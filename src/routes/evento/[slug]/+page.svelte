@@ -1,15 +1,9 @@
 <script lang="ts">
-	import { beforeNavigate, goto, invalidateAll } from "$app/navigation"
 	import ButtonLink from "$lib/components/ButtonLink.svelte"
-	import EButton from "$lib/components/EButton.svelte"
-	import EditEvent from "$lib/components/EditEvent.svelte"
 	import EventGridItem from "$lib/components/EventGridItem.svelte"
   import PublicLogo from "$lib/components/PublicLogo.svelte"
-	import { fade } from "svelte/transition"
-	import { loginSession } from "../../../stores"
 	import { formatDate, formatDateShort } from "$lib/dateTime"
 	import EventSummary from "$lib/components/EventSummary.svelte"
-	import Notification from "$lib/components/Notification.svelte"
 	import { getImageURL } from "$lib/file"
 	import Map from "$lib/components/Map.svelte"
 
@@ -26,25 +20,6 @@
   $: pageTitle = !event ? 'Esponja' : `${event.name} ${venue ? `en ${venue?.name}` : ''} | Esponja`
   $: metaDescription = !event || !venue ? 'Esponja' : `${venue.name}, ${formatDateShort(event.startDate)}. ${event.description?.slice(0, 200)}`
   $: metaTitle = !event ? 'Esponja' : event.name
-
-  // State
-  let showEditEvent = false
-  let editEvent: EventProperties | null = null
-
-  // Display message
-  let displayMessage = ''
-  const setDisplayMessage = (str: string) => displayMessage = str
-  
-
-  // Handlers
-
-  const handleEditEvent = $loginSession?.role === 'admin'
-    ? (event: EventProperties) => {
-      editEvent = event
-      showEditEvent = true
-    }
-    : null
-
 </script>
 
 <svelte:head>
@@ -69,57 +44,41 @@
   </nav>
 </div>
 
-{#if showEditEvent}
-  <div in:fade class="overlay">
-    <EditEvent 
-      {venues}
-      event={editEvent}
-      on:saved={() => {
-        invalidateAll();
-        showEditEvent = false
-        setDisplayMessage('Evento actualizado')
-      }}
-      on:cancel={() => showEditEvent = false}
-    />
-  </div>
-{:else}
-  {#if event}
-    {#if unmoderated}
-      <h2 class="unpublishedWarning">Prevista de evento no publicado</h2>
-    {/if}
-    <Notification {displayMessage} {setDisplayMessage} />
-    <ul class="eventWrapper">
-      <EventGridItem isSingle={true} {event} {venues} {handleEditEvent} />
-    </ul>
-
-    {#if relatedEvents.length && venue}
-      <div class="relatedEventsWrapper">
-        <h2>Más eventos en {venue.name}</h2>
-        <ul class="relatedEvents">
-          {#each relatedEvents as relatedEvent}
-            <EventSummary event={relatedEvent} {venue} />
-          {/each}
-        </ul>
-      </div>
-    {/if}
-
-    {#if !venue && event.addressLine1}
-      <div class="customLocation">
-        <h2>Ubicación del evento</h2>
-        <div class="mapWrapper">
-          <Map title={event.addressLine1} address={`${event.name}, ${event.addressLine1}, ${event.addressLine2 ? event.addressLine2 + ', ' : ''}Ciudad de México, México`} />
-        </div>
-      </div>
-    {/if}
-
-  {:else}
-    <!-- NOTE: should most likely never reach this point, instead the 404 page is loaded -->
-    <p class="emptyList">
-      <strong>No encontrado</strong><br />
-      No encontramos el evento que buscas. ¿Pegaste mal el link?
-    </p>
-
+{#if event}
+  {#if unmoderated}
+    <h2 class="unpublishedWarning">Prevista de evento no publicado</h2>
   {/if}
+  <ul class="eventWrapper">
+    <EventGridItem isSingle={true} {event} {venues} />
+  </ul>
+
+  {#if relatedEvents.length && venue}
+    <div class="relatedEventsWrapper">
+      <h2>Más eventos en {venue.name}</h2>
+      <ul class="relatedEvents">
+        {#each relatedEvents as relatedEvent}
+          <EventSummary event={relatedEvent} {venue} />
+        {/each}
+      </ul>
+    </div>
+  {/if}
+
+  {#if !venue && event.addressLine1}
+    <div class="customLocation">
+      <h2>Ubicación del evento</h2>
+      <div class="mapWrapper">
+        <Map title={event.addressLine1} address={`${event.name}, ${event.addressLine1}, ${event.addressLine2 ? event.addressLine2 + ', ' : ''}Ciudad de México, México`} />
+      </div>
+    </div>
+  {/if}
+
+{:else}
+  <!-- NOTE: should most likely never reach this point, instead the 404 page is loaded -->
+  <p class="emptyList">
+    <strong>No encontrado</strong><br />
+    No encontramos el evento que buscas. ¿Pegaste mal el link?
+  </p>
+
 {/if}
 
 <style lang="scss">

@@ -2,7 +2,8 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { toSlug } from '$lib/strings';
-import { clearPublicCache, publicCacheHeaders } from '$lib/server/cache';
+import { publicCacheHeaders } from '$lib/cache';
+import { clearPublicCache } from '$lib/server/cache';
 
 // Possible query parameters:
 // showHidden=true : include venues with hidden=true

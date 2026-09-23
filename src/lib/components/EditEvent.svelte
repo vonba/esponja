@@ -5,6 +5,7 @@
 	import EButton from './EButton.svelte'
 	import { getImageURL } from '$lib/file'
 	import { toSlug } from '$lib/strings'
+	import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 	import { fade, slide } from 'svelte/transition'
 	import EditVenue from './EditVenue.svelte'
 	import { invalidateAll } from '$app/navigation'
@@ -27,7 +28,7 @@
 			userId: 0,
 			name: '',
 			slug: '',
-			startDate: (new Date()).toISOString().split('T')[0], // YYYY-MM-DD
+			startDate: getCurrentDateInMexicoCity(), // YYYY-MM-DD
 			startTime: '19:00:00',
 			endDate: undefined,
 			endTime: undefined,

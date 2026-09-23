@@ -1,102 +1,35 @@
 <!-- This is the public home page of the app -->
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment'
 	import { goto } from "$app/navigation"
 	import PublicEvents from "$lib/components/PublicEvents.svelte"
 	import PublicHeader from "$lib/components/PublicHeader.svelte"
 	import DigestSubscribe from "$lib/components/DigestSubscribe.svelte"
-	import { getDateFiltersFromTimeWindow, getDateString } from "$lib/dateTime"
-	import { afterUpdate, onMount } from 'svelte'
+	import { getDateFiltersFromTimeWindow } from "$lib/dateTime"
 	import { lastEventsPath } from '../../stores'
 	import { PUBLIC_DOMAIN } from '$env/static/public'
-	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
-	import type { Snapshot } from '../$types'
+
+	export let data: HomePageData
 
 	// State
-	let eventTimeWindow: string | undefined
-	let eventFilterDateStart: string | null  // YYYY-MM-DD
-	let eventFilterDateEnd: string | null // YYYY-MM-DD
-	let slug = ''
   let searchString = ''
 	let displayMode = 'grid'
 
-	// State for fetching data (ISR)
-	let loading = true;
-	let data: HomePageData = {
-		venues: [],
-		events: [],
-	}
-	
-	// Restore scroll state
-	let scrollX = 0
-	let scrollY = 0
-	export const snapshot: Snapshot<string> = {
-		capture: () => {
-			return JSON.stringify({scrollPosition: {x: window.scrollX, y: window.scrollY}})
-		},
-		restore: (snapshotJSON) => {
-			const snapshot = JSON.parse(snapshotJSON)
-			if (snapshot.scrollPosition) {
-				scrollX = snapshot.scrollPosition.x
-				scrollY = snapshot.scrollPosition.y
-			}
-		},
-	};
+	// The date filter comes from the URL: /eventos (everything), /hoy, /manana, /semana
+	$: eventTimeWindow = $page.params.slug ?? 'eventos'
+	$: dateFilters = getDateFiltersFromTimeWindow(eventTimeWindow)
+	// Remembered so the "Eventos" button on /foros comes back to the same view. Browser only:
+	// on the server this store would be shared by every visitor.
+	$: if (browser) $lastEventsPath = `/${eventTimeWindow}`
 
-	// Date filters
+	// Clicking the selected filter again goes back to all events
 	const setEventTimeWindow = (newTimeWindow: string) => {
-		if (eventTimeWindow === newTimeWindow) {
-			eventTimeWindow = '' // Unset filter by clicking already selected button
-		} else {
-			eventTimeWindow = newTimeWindow
-		}
-
-		const { startDate, endDate } = getDateFiltersFromTimeWindow(eventTimeWindow)
-		eventFilterDateStart = startDate
-		eventFilterDateEnd = endDate
-
-		$lastEventsPath = `/${eventTimeWindow || 'eventos'}`
-		goto(`/${eventTimeWindow}`, { replaceState: true })
+		const nextTimeWindow = newTimeWindow && newTimeWindow !== eventTimeWindow ? newTimeWindow : 'eventos'
+		goto(`/${nextTimeWindow}`, { replaceState: true })
 	}
-  $: (slug = $page.params.slug || '');
 
   const handleSearchChange = (newSearchString: string) => searchString = newSearchString
-
-	afterUpdate(() => {
-		window.scrollTo(scrollX, scrollY)
-	});
-
-	onMount(async () => {
-    if(slug) {
-			setEventTimeWindow(slug)
-		} else {
-			// No default filter
-			setEventTimeWindow('')
-		}
-
-		// Fetch venues
-		const venueResponse = await fetch('/api/v1/venue', {
-			method: 'GET',
-		});
-		if (!venueResponse.ok) {
-			loading = false
-			throw new Error('Error en API de foros');
-		}
-		data.venues = await venueResponse.json();
-
-		// Fetch events
-		const dateString = getDateString()
-		const eventResponse = await fetch(`/api/v1/event?today=${dateString}`, {
-			method: 'GET'
-		});
-		if (!eventResponse.ok) {
-			loading = false
-			throw new Error('Error en API de eventos');
-		}
-		data.events = await eventResponse.json();
-		loading = false
-  })
-
 </script>
 
 <svelte:head>
@@ -120,19 +53,15 @@
 </section>
 
 <section id="homePage">
-	{#if loading}
-		<LoadingIndicator />
-	{:else}
-		<PublicEvents 
-			{eventTimeWindow}
-			events={data.events} 
-			venues={data.venues} 
-			startDate={eventFilterDateStart} 
-			endDate={eventFilterDateEnd} 
-			{searchString}
-			{displayMode}
-		/>
-	{/if}
+	<PublicEvents 
+		{eventTimeWindow}
+		events={data.events} 
+		venues={data.venues} 
+		startDate={dateFilters.startDate} 
+		endDate={dateFilters.endDate} 
+		{searchString}
+		{displayMode}
+	/>
 </section>
 
 <style lang="scss">

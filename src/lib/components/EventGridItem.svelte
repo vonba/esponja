@@ -26,6 +26,9 @@
 
   const venue = venues.find(v => v.id === event.venueId)
 
+  // Unpublished events only appear in the admin panel, and open as a logged-in preview
+  $: eventPath = `/evento/${event.slug}${event.published ? '' : '?preview'}`
+
   // Share
   let shareMessage = ''
   const clearShareMessage = (msg: string) => { shareMessage = msg }
@@ -44,7 +47,7 @@
 
 {#if event}
   <li class="eventGridItem {isSingle ? 'isSingle' : ''}">
-    <a href="/evento/{event.slug}">
+    <a href={eventPath}>
       <div class="imageWrapper">
         {#if event.imageKeySmall && event.imageKeyLarge}
         
@@ -62,7 +65,7 @@
     <div class="contentWrapper">
       <header>
         <h2>
-          <a href="/evento/{event.slug}">
+          <a href={eventPath}>
             {event.name}
           </a>
         </h2>

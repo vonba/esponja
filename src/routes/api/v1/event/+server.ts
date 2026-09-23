@@ -5,9 +5,10 @@ import { query } from '$lib/server/db'
 import { DeleteObjectCommand, PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns, withoutSubmitter } from '$lib/server/queries';
-import { clearPublicCache, publicCacheHeaders } from '$lib/server/cache';
+import { publicCacheHeaders } from '$lib/cache';
+import { clearPublicCache } from '$lib/server/cache';
 import { sendModerationNotification, sendModerationSuccessfulNotification } from '$lib/server/mail'
-import { getDateString } from '$lib/dateTime';
+import { getCurrentDateInMexicoCity } from '$lib/dateTime';
 import {
 	DUPLICATE_SLUG_MESSAGE,
 	assertSlugIsAvailable,
@@ -22,7 +23,7 @@ import {
 
 // ====== Endpoint for listing events ======
 // Possible query parameters:
-// today=YYYY-MM-DD : use this as the current date (to use client's time zone)
+// today=YYYY-MM-DD : use this as the current date (defaults to today in Mexico City)
 // showHidden=true : include events where hidden=true
 // showUnpublished=true : include events where published=false
 // showOnlyPastEvents=true : show only events in the past
@@ -37,7 +38,7 @@ export const GET: RequestHandler = async event => {
 	// Set query constraints
 	const searchParams = event.url.searchParams;
 	const todayParam = searchParams.get('today')
-	const currentDate = todayParam ? todayParam : getDateString();
+	const currentDate = todayParam ? todayParam : getCurrentDateInMexicoCity();
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
 	// const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;

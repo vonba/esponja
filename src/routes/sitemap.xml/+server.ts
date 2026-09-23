@@ -1,11 +1,11 @@
-import { getDateString } from "$lib/dateTime"
+import { getCurrentDateInMexicoCity } from "$lib/dateTime"
 import type { RequestHandler } from "@sveltejs/kit"
-import { publicCacheHeaders } from "$lib/server/cache"
+import { publicCacheHeaders } from "$lib/cache"
 
 export const GET: RequestHandler = async event => {
 
 	const { fetch } = event
-  const currentDate = getDateString()
+  const currentDate = getCurrentDateInMexicoCity()
   let events = []
 
   // Fetch events

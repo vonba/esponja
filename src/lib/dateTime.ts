@@ -37,42 +37,25 @@ export function getDateSlug(dateString: string): string | null {
 // Longest possible result of getDateSlug, e.g. "30-septiembre-2024"
 export const DATE_SLUG_MAX_LENGTH = 18;
 
-export function getDateString(date?: Date): string {
-  // Create a new Date object (this will hold the current date and time)
-  const theDate = date ? date : new Date();
-
-  // Extract the year, month, and day from the Date object
-  const year = theDate.getFullYear(); // Get the current year (YYYY)
-  let monthNumber = theDate.getMonth() + 1; // Get the current month (0-11, add 1 to make it 1-12)
-  let monthString = `${monthNumber}`
-  let dayNumber = theDate.getDate(); // Get the current day of the month (1-31)
-  let dayString = `${dayNumber}`
-
-  // Pad month and day with leading zeros if they are single digit
-  if (monthNumber < 10) {
-    monthString = `0${monthNumber}`;
-  }
-  if (dayNumber < 10) {
-    dayString = `0${dayNumber}`;
-  }
-
-  // Combine year, month, and day into the desired format
-  return `${year}-${monthString}-${dayString}`;
-}
-
-// Returns current date in Mexico City timezone as YYYY-MM-DD string
-// Use this instead of new Date() to avoid UTC timezone issues
+// Returns the current date in Mexico City as a YYYY-MM-DD string. Esponja's "today" is
+// always Mexico City's, whether this runs on the server (in UTC) or in a visitor's browser.
 export function getCurrentDateInMexicoCity(): string {
-  const nowUTC = new Date()
-  const mexicoCityDateString = nowUTC.toLocaleString('en-US', {
+  const mexicoCityDateString = new Date().toLocaleString('en-US', {
     timeZone: 'America/Mexico_City',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
   })
   const [month, day, year] = mexicoCityDateString.split('/')
-  const todayInMexicoCity = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-  return todayInMexicoCity.toISOString().split('T')[0]
+  return `${year}-${month}-${day}`
+}
+
+// Returns the YYYY-MM-DD date the given number of days after (or before) a YYYY-MM-DD date.
+// Works in UTC throughout so the local time zone can never shift the day.
+function addDays(dateString: string, days: number): string {
+  const date = new Date(`${dateString}T00:00:00Z`)
+  date.setUTCDate(date.getUTCDate() + days)
+  return date.toISOString().split('T')[0]
 }
 
 // Returns the number of seconds until the date changes in Mexico City, for anything
@@ -88,30 +71,16 @@ export function secondsUntilMidnightInMexicoCity(): number {
 // Returns { startDate, endDate } corresponding to time window
 // Possible values of time window: hoy | manana | semana | mes
 export function getDateFiltersFromTimeWindow(eventTimeWindow: string): {startDate: string | null, endDate: string | null} {
-  let startDate, endDate
-  const today = new Date()
+  const today = getCurrentDateInMexicoCity()
   if ('hoy' === eventTimeWindow) {
-    startDate = getDateString(today)
-    endDate = startDate;
+    return { startDate: today, endDate: today }
   } else if ('manana' === eventTimeWindow) {
-    const tomorrow = new Date()
-    tomorrow.setDate(today.getDate() + 1)
-    startDate = getDateString(tomorrow)
-    endDate = startDate;
+    const tomorrow = addDays(today, 1)
+    return { startDate: tomorrow, endDate: tomorrow }
   } else if ('semana' === eventTimeWindow) {
-    const dayOfWeek = today.getDay() // 0 (Sun) to 6 (Sat)
-    const startOfWeek = new Date(today)
-    const endOfWeek = new Date(today)
-
-    // Adjust start and end dates to the beginning and end of the week
-    startOfWeek.setDate(today.getDate() - dayOfWeek) // Move to Sunday (beginning of the week)
-    endOfWeek.setDate(today.getDate() + (6 - dayOfWeek)) // Move to Saturday (end of the week)
-
-    startDate = getDateString(startOfWeek)
-    endDate = getDateString(endOfWeek)
-  } else {
-    startDate = null
-    endDate = null
+    // Sunday to Saturday of the current week
+    const dayOfWeek = new Date(`${today}T00:00:00Z`).getUTCDay() // 0 (Sun) to 6 (Sat)
+    return { startDate: addDays(today, -dayOfWeek), endDate: addDays(today, 6 - dayOfWeek) }
   }
-  return { startDate, endDate }
+  return { startDate: null, endDate: null }
 }

@@ -1,38 +1,15 @@
-import { error, type HttpError } from "@sveltejs/kit";
+import { publicCacheHeaders } from '$lib/cache'
+import { getEvent, getEventPreview, getVenues } from '$lib/publicData'
 
-export const load = async ({params, fetch}) => {
-	const slug = params.slug
-	const returnValue = {
-		event: null,
-		venues: null,
-	};
-	try {
-		// Fetch venues
-		const venueResponse = await fetch('/api/v1/venue', {
-			method: 'GET'
-		});
-		if (!venueResponse.ok) {
-			throw new Error('Failed to fetch venues');
-		}
-		returnValue.venues = await venueResponse.json();
+export const load = async ({ params, url, fetch, setHeaders }) => {
+	// Logged-in users can preview an unpublished event at /evento/[slug]?preview (the admin
+	// panel links there). What that page shows depends on who is looking, so it is never cached.
+	const isPreview = url.searchParams.has('preview')
+	setHeaders(isPreview ? { 'Cache-Control': 'private, no-store' } : publicCacheHeaders())
 
-		// Fetch single event
-		const eventResponse = await fetch(`/api/v1/event/${slug}`, {
-			method: 'GET'
-		});
-		if (!eventResponse.ok) {
-			error(eventResponse.status)
-		}
-		returnValue.event = await eventResponse.json()
-		
-	} catch (err) {
-		const errorObj = err as HttpError;
-		if (errorObj.status) {
-			throw error(errorObj.status, errorObj.body?.message || 'Error fetching event');
-		} else {
-			throw error(503, 'Error de base de datos');
-		}
-	}
-
-	return returnValue;
+	const [venues, event] = await Promise.all([
+		getVenues(fetch),
+		isPreview ? getEventPreview(fetch, params.slug) : getEvent(fetch, params.slug),
+	])
+	return { venues, event }
 }

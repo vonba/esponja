@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { eventColumns, withoutSubmitter } from '$lib/server/queries'
-import { publicCacheHeaders } from '$lib/server/cache'
+import { publicCacheHeaders } from '$lib/cache'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
@@ -12,8 +12,10 @@ export const GET: RequestHandler = async event => {
 
 	const { setHeaders } = event
 	// A logged-in user also gets unpublished events and the author, so only the anonymous
-	// variant may be cached
-	setHeaders(user ? { 'Cache-Control': 'private, no-store' } : publicCacheHeaders())
+	// variant may be cached. Previews (?preview) are never cached either, so the CDN can
+	// never answer a logged-in preview with the public copy of the same URL.
+	const isPreview = event.url.searchParams.has('preview')
+	setHeaders(user || isPreview ? { 'Cache-Control': 'private, no-store' } : publicCacheHeaders())
 
 	const slug = event.params.slug
 	const currentDate = getCurrentDateInMexicoCity()

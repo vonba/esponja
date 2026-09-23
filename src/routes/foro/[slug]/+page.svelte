@@ -4,8 +4,8 @@
 	import PublicVenue from "$lib/components/PublicVenue.svelte"
 
   export let data: SingleVenuePageData
-  const events = data.events
-  const venue = data.venue
+  $: events = data.events
+  $: venue = data.venue
 </script>
 
 <svelte:head>

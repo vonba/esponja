@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { LayoutServerData } from './$types'
 	import { beforeNavigate } from '$app/navigation'
 	import { loginSession } from '../stores'
 	import { navigating } from '$app/stores'
@@ -16,12 +15,9 @@
 	import LoadingIndicator from '$lib/components/LoadingIndicator.svelte'
 	import Lottie from '$lib/components/Lottie.svelte'
 
-	// Layout prop
-	export let data: LayoutServerData
-
-	// If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
-	const { user } = data
-	$loginSession = user
+	// NOTE the logged-in user is deliberately not loaded here. Public pages are cached by the
+	// CDN and shared by every visitor, so nothing on them may depend on who is logged in. The
+	// admin panel and the login page set loginSession themselves.
 
 	beforeNavigate(() => {
 		let expirationDate = $loginSession?.expires ? new Date($loginSession.expires) : undefined
@@ -31,6 +27,16 @@
 			$loginSession = null
 		}
 	})
+
+	// Only show the loader when a navigation takes long enough to notice, so quick ones
+	// (most of them, with preloading and cached data) don't flash it
+	let showLoader = false
+	let loaderTimeout: ReturnType<typeof setTimeout>
+	$: {
+		clearTimeout(loaderTimeout)
+		if ($navigating) loaderTimeout = setTimeout(() => (showLoader = true), 150)
+		else showLoader = false
+	}
 </script>
 
 <main class="container">
@@ -61,7 +67,7 @@
 	</div>
 </footer>
 
-{#if $navigating}
+{#if showLoader}
 	<LoadingIndicator />
 {/if}
 
