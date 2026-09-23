@@ -2,6 +2,7 @@
 	import { fade } from "svelte/transition"
 	import { formatDateShort, formatTime } from "$lib/dateTime"
 	import { getImageURL } from "$lib/file"
+	import { isOnlineVenue } from "$lib/venues"
 
   // Props
   export let venues: VenueProperties[] = []
@@ -49,7 +50,7 @@
                 </a>
               </h3>
 
-              {#if venue.addressline1 || venue.addressline2 || venue.postcode}
+              {#if !isOnlineVenue(venue) && (venue.addressline1 || venue.addressline2 || venue.postcode)}
                 <div class="venue">
                   <img src="/icon-venue-green.svg" alt="Dirección" />
                   <div class="address">

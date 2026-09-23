@@ -1,9 +1,12 @@
 <script lang="ts">
 	import EventSummary from "./EventSummary.svelte"
 	import Map from "./Map.svelte"
+	import { isOnlineVenue } from "$lib/venues"
 
   export let venue: VenueProperties
   export let events: [EventProperties] | []
+
+  $: isOnline = isOnlineVenue(venue)
 </script>
 
 
@@ -17,15 +20,17 @@
       </h2>
     </div>
 
-    <div class="address">
-      {venue.addressline1}
-      {#if venue.addressline2}
-        , {venue.addressline2}
-      {/if}
-    </div>
+    {#if !isOnline}
+      <div class="address">
+        {venue.addressline1}
+        {#if venue.addressline2}
+          , {venue.addressline2}
+        {/if}
+      </div>
 
-    {#if venue.addressline1}  
-      <Map title={venue.addressline1} address={`${venue.name}, ${venue.addressline1}, ${venue.addressline2 ? venue.addressline2 + ', ' : ''}${venue.city}, Mexico`} />
+      {#if venue.addressline1}
+        <Map title={venue.addressline1} address={`${venue.name}, ${venue.addressline1}, ${venue.addressline2 ? venue.addressline2 + ', ' : ''}${venue.city}, Mexico`} />
+      {/if}
     {/if}
   </div>
 
