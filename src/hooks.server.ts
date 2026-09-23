@@ -20,7 +20,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		await attachUserToRequestEvent(sessionId, event)
 	}
 
-	if (!event.locals.user) cookies.delete('session', { path: '/' })
+	// Only clear a session cookie that was sent but is no longer valid. Deleting it
+	// unconditionally adds a Set-Cookie header to every response, and the CDN refuses
+	// to cache any response that sets a cookie.
+	if (sessionId && !event.locals.user) cookies.delete('session', { path: '/' })
 
 	const response = await resolve(event)
 

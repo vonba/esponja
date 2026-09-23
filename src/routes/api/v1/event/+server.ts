@@ -5,6 +5,7 @@ import { query } from '$lib/server/db'
 import { DeleteObjectCommand, PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns, withoutSubmitter } from '$lib/server/queries';
+import { clearPublicCache, publicCacheHeaders } from '$lib/server/cache';
 import { sendModerationNotification, sendModerationSuccessfulNotification } from '$lib/server/mail'
 import { getDateString } from '$lib/dateTime';
 import {
@@ -29,16 +30,9 @@ export const GET: RequestHandler = async event => {
 
 	const { setHeaders } = event
 	const { user } = event.locals
-	const cacheSeconds = 60 * 10 // 10 minutes
 	// The response carries submitter contact details for a logged-in user, so only the
-	// anonymous variant may be cached. For that one, cache on the CDN only: `max-age=0`
-	// keeps browsers from holding a private copy we cannot purge, so a revalidated listing
-	// reaches visitors on their next request.
-	setHeaders({
-    "Cache-Control": user
-			? 'private, no-store'
-			: `public, max-age=0, s-maxage=${cacheSeconds}, stale-while-revalidate=60`,
-  });
+	// anonymous variant may be cached
+	setHeaders(user ? { 'Cache-Control': 'private, no-store' } : publicCacheHeaders())
 
 	// Set query constraints
 	const searchParams = event.url.searchParams;
@@ -105,6 +99,8 @@ export const DELETE: RequestHandler = async event => {
 
 		// Now delete the orphaned images
 		deleteFiles([imageKeyLarge, imageKeySmall])
+
+		await clearPublicCache()
 	} catch (err) {
 		console.log('Error while deleting event', err)
 		error(503, 'Error de base de datos')
@@ -127,7 +123,8 @@ export const PUT: RequestHandler = async event => {
 
 	// Get existing event
 	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published,
-		image_key_large AS "imageKeyLarge", image_key_small AS "imageKeySmall"
+		image_key_large AS "imageKeyLarge", image_key_small AS "imageKeySmall",
+		submitter_name AS "submitterName", submitter_email AS "submitterEmail"
 		FROM events WHERE id = $1`, [eventId]);
 	if (!existingEventResult.rows.length) error(404, 'Event not found')
 	const existingEvent =  existingEventResult.rows[0]
@@ -143,6 +140,11 @@ export const PUT: RequestHandler = async event => {
 
 	// Remove any HTML
 	sanitizeEventText(eventUpdate)
+
+	// The submitter is only recorded when an event is created. upsert_event overwrites
+	// these columns, so carry the stored values forward whatever the client sent.
+	eventUpdate.submitterName = existingEvent.submitterName
+	eventUpdate.submitterEmail = existingEvent.submitterEmail
 
 	// If event was not published, it will be now
 	const wasApproved = !existingEvent.published
@@ -176,6 +178,8 @@ export const PUT: RequestHandler = async event => {
 	if (imageWasUpdated) {
 		deleteFiles([existingEvent.imageKeyLarge, existingEvent.imageKeySmall])
 	}
+
+	await clearPublicCache()
 
 	// Notify the uploader
 	if (wasApproved) {
@@ -238,6 +242,10 @@ export const POST: RequestHandler = async event => {
 
 	// Upload file (this also updates event with image key)
 	const fileUploadResult = await doFileUpload(formData, eventId)
+
+	// Submissions from the public stay out of sight until approved (a PUT), so only
+	// events published straight away change what visitors see
+	if (!needsModeration) await clearPublicCache()
 
 	if (needsModeration) {
 		await sendModerationNotification(

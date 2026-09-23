@@ -75,6 +75,16 @@ export function getCurrentDateInMexicoCity(): string {
   return todayInMexicoCity.toISOString().split('T')[0]
 }
 
+// Returns the number of seconds until the date changes in Mexico City, for anything
+// that should expire when "today" does
+export function secondsUntilMidnightInMexicoCity(): number {
+  const [hours, minutes, seconds] = new Date()
+    .toLocaleTimeString('en-GB', { timeZone: 'America/Mexico_City', hourCycle: 'h23' })
+    .split(':')
+    .map(Number)
+  return 24 * 60 * 60 - (hours * 60 * 60 + minutes * 60 + seconds)
+}
+
 // Returns { startDate, endDate } corresponding to time window
 // Possible values of time window: hoy | manana | semana | mes
 export function getDateFiltersFromTimeWindow(eventTimeWindow: string): {startDate: string | null, endDate: string | null} {

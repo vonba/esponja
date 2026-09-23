@@ -2,15 +2,13 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { toSlug } from '$lib/strings';
+import { clearPublicCache, publicCacheHeaders } from '$lib/server/cache';
 
 // Possible query parameters:
 // showHidden=true : include venues with hidden=true
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 10 // 10 minutes
-	setHeaders({
-    "Cache-Control": `public, max-age=0, s-maxage=${cacheSeconds}, stale-while-revalidate=60`,
-  });
+	setHeaders(publicCacheHeaders())
 
 	// Set query constraints
 	const searchParams = event.url.searchParams;
@@ -40,6 +38,8 @@ export const PUT: RequestHandler = async event => {
 		error(503, 'No se pudo actualizar el foro')
 	}
 
+	await clearPublicCache()
+
 	return json({
 		message: 'Foro actualizado'
 	})
@@ -65,6 +65,8 @@ export const POST: RequestHandler = async event => {
 		}
 		error(503, message)
 	}
+
+	await clearPublicCache()
 
 	return json({
 		message: 'Nuevo foro creado',

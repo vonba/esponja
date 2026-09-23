@@ -2,6 +2,7 @@ import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { eventColumns, withoutSubmitter } from '$lib/server/queries'
+import { publicCacheHeaders } from '$lib/server/cache'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
@@ -10,10 +11,9 @@ export const GET: RequestHandler = async event => {
 	const { user } = event.locals
 
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 20 // 20 minutes
-	setHeaders({
-		"Cache-Control": `private, max-age=${cacheSeconds}`,
-	})
+	// A logged-in user also gets unpublished events and the author, so only the anonymous
+	// variant may be cached
+	setHeaders(user ? { 'Cache-Control': 'private, no-store' } : publicCacheHeaders())
 
 	const slug = event.params.slug
 	const currentDate = getCurrentDateInMexicoCity()

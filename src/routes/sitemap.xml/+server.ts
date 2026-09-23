@@ -1,5 +1,6 @@
 import { getDateString } from "$lib/dateTime"
 import type { RequestHandler } from "@sveltejs/kit"
+import { publicCacheHeaders } from "$lib/server/cache"
 
 export const GET: RequestHandler = async event => {
 
@@ -54,6 +55,6 @@ export const GET: RequestHandler = async event => {
       ${urlElements}
     </urlset>`
     .trim(), {
-      headers: { 'Content-Type': 'application/xml' }
+      headers: { 'Content-Type': 'application/xml', ...publicCacheHeaders() }
     })
   }

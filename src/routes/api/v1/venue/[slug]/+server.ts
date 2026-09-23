@@ -3,13 +3,11 @@ import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { eventColumns, withoutSubmitter } from '$lib/server/queries'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
+import { publicCacheHeaders } from '$lib/server/cache'
 
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
-	const cacheSeconds = 60 * 60 * 24 // 24 hours
-	setHeaders({
-    "Cache-Control": `public, max-age=0, s-maxage=${cacheSeconds}, stale-while-revalidate=60`,
-  });
+	setHeaders(publicCacheHeaders())
 
 	const slug = event.params.slug
 	const currentDate = getCurrentDateInMexicoCity()
