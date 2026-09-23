@@ -54,11 +54,12 @@ export const GET: RequestHandler = async event => {
 		}
 	}
 
-	// Build query string
-	const queryString = `SELECT ${eventColumns} 
+	// Build query string. The date constraint contains an OR, so it needs its own parentheses:
+	// without them any multi-day event still running would skip the hidden/published checks.
+	const queryString = `SELECT ${eventColumns}
 			FROM events
 			WHERE ${hiddenConstraint} AND ${publishedConstraint}
-			AND ${dateConstraint}
+			AND (${dateConstraint})
 			ORDER BY start_date ASC`
 
 	let result;

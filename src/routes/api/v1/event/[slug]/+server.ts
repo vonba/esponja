@@ -51,7 +51,7 @@ export const GET: RequestHandler = async event => {
 			otherEventsResult = await query(`
 				SELECT ${eventColumns}
 				FROM events
-				WHERE hidden = false AND venue_id = $1 AND slug != $2 AND start_date >= $3
+				WHERE hidden = false AND published = true AND venue_id = $1 AND slug != $2 AND start_date >= $3
 				ORDER BY start_date ASC
 			`, [venueId, slug, currentDate])
 		}

@@ -21,7 +21,7 @@ export const GET: RequestHandler = async event => {
 			// Fetch other events at the same venue
 			const eventsResult = await query(`
 				SELECT ${eventColumns} FROM events
-				WHERE hidden = false AND venue_id = $1 AND start_date >= $2
+				WHERE hidden = false AND published = true AND venue_id = $1 AND start_date >= $2
 				ORDER BY start_date ASC
 			`, [venue.id, currentDate]);
 
