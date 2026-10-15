@@ -55,15 +55,15 @@ export const GET: RequestHandler = async event => {
 
 	// Upcoming events are sorted in three groups so that long-running events (classes etc.)
 	// don't pile up at the top of the list:
-	// 1. events starting during the current week (Monday to Sunday)
-	// 2. multi-day events that started before this week and are still running
+	// 1. events starting between today and the end of the current week (Sunday)
+	// 2. multi-day events that started before today and are still running
 	// 3. events starting after this week
-	const weekStart = `date_trunc('week', '${currentDate}'::date)`
+	const nextWeekStart = `date_trunc('week', '${currentDate}'::date) + interval '7 days'`
 	const orderBy = searchParams.get('showOnlyPastEvents')
 		? 'start_date ASC'
 		: `CASE
-				WHEN start_date < ${weekStart} THEN 2
-				WHEN start_date < ${weekStart} + interval '7 days' THEN 1
+				WHEN start_date < '${currentDate}' THEN 2
+				WHEN start_date < ${nextWeekStart} THEN 1
 				ELSE 3
 			END, start_date ASC, start_time ASC`
 
