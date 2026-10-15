@@ -41,7 +41,6 @@ export const GET: RequestHandler = async event => {
 	const currentDate = todayParam ? todayParam : getCurrentDateInMexicoCity();
 	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
 	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
-	// const dateConstraint = searchParams.get('showOnlyPastEvents') ? `start_date < '${currentDate}'` : `start_date >= '${currentDate}'`;
 	const dateConstraint = searchParams.get('showOnlyPastEvents') 
 		? `start_date < '${currentDate}' AND (end_date IS NULL OR end_date < '${currentDate}')` 
 		: `start_date >= '${currentDate}' OR (end_date IS NOT NULL AND end_date >= '${currentDate}')`;
@@ -54,13 +53,27 @@ export const GET: RequestHandler = async event => {
 		}
 	}
 
+	// Upcoming events are sorted in three groups so that long-running events (classes etc.)
+	// don't pile up at the top of the list:
+	// 1. events starting during the current week (Monday to Sunday)
+	// 2. multi-day events that started before this week and are still running
+	// 3. events starting after this week
+	const weekStart = `date_trunc('week', '${currentDate}'::date)`
+	const orderBy = searchParams.get('showOnlyPastEvents')
+		? 'start_date ASC'
+		: `CASE
+				WHEN start_date < ${weekStart} THEN 2
+				WHEN start_date < ${weekStart} + interval '7 days' THEN 1
+				ELSE 3
+			END, start_date ASC, start_time ASC`
+
 	// Build query string. The date constraint contains an OR, so it needs its own parentheses:
 	// without them any multi-day event still running would skip the hidden/published checks.
 	const queryString = `SELECT ${eventColumns}
 			FROM events
 			WHERE ${hiddenConstraint} AND ${publishedConstraint}
 			AND (${dateConstraint})
-			ORDER BY start_date ASC`
+			ORDER BY ${orderBy}`
 
 	let result;
 	try {
@@ -70,7 +83,6 @@ export const GET: RequestHandler = async event => {
 		error(503, 'Error de base de datos')
 	}
 
-	// TODO: remove userId from results if no user
 	const formattedRows = result.rows.map(row => {
 		const formatted = {
 			...row,
@@ -78,6 +90,7 @@ export const GET: RequestHandler = async event => {
 			startDate: row.startDate.toISOString().split('T')[0],
 			endDate: row.endDate ? row.endDate.toISOString().split('T')[0] : null,
 		}
+		// If there's no logged in user, remove submitter info (including user ID) from results
 		return user ? formatted : withoutSubmitter(formatted)
 	})
 
