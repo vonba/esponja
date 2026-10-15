@@ -61,6 +61,7 @@
 	"packageManager": "yarn@4.1.1",
 	"prettier": "./prettier.config.mjs",
 	"resolutions": {
-		"tar": "7.5.8"
+		"tar": "7.5.8",
+		"rollup": "4.50.2"
 	}
 }

@@ -6382,7 +6382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^4.20.0, rollup@npm:^4.9.5":
+"rollup@npm:4.50.2":
   version: 4.50.2
   resolution: "rollup@npm:4.50.2"
   dependencies:
