@@ -1,6 +1,5 @@
 import Jimp from 'jimp';
 import { error, json } from '@sveltejs/kit'
-import type { Config } from '@sveltejs/adapter-vercel'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { readJsonBody } from '$lib/server/http'
@@ -22,10 +21,6 @@ import {
 	sanitizeEventText,
 	toEventQueryBody,
 } from '$lib/server/events';
-
-// Vercel function time limit in seconds: resizing an uploaded image with Jimp and storing both
-// sizes in S3 can take a while
-export const config: Config = { maxDuration: 30 }
 
 // ====== Endpoint for listing events ======
 // Possible query parameters:

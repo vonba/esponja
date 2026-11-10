@@ -19,9 +19,13 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// Time limits for slow routes are set in the routes themselves (export const config), since
-		// adapter-vercel reads them from there and has no per-file option here
-		adapter: adapter(),
+		// One time limit (seconds) for every route, long enough for the slowest two: the weekly digest
+		// emailing every subscriber, and an event upload resizing its image and storing it in S3.
+		// Don't give a single route its own config (export const config) instead: that moves the
+		// route into a separate Vercel function, and pages that load data from it while rendering
+		// on the server then fetch it over HTTP instead of in-process, which is slower and fails on
+		// password-protected preview deployments.
+		adapter: adapter({ maxDuration: 60 }),
 		prerender: {
       entries: [
         '/', 
