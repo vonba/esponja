@@ -289,6 +289,16 @@ export const POST: RequestHandler = async event => {
 	})
 }
 
+// True when the bytes start with a JPEG, PNG or GIF signature
+function hasAllowedImageSignature(bytes: Uint8Array): boolean {
+	const startsWith = (signature: number[]) => signature.every((byte, i) => bytes[i] === byte)
+	return (
+		startsWith([0xff, 0xd8, 0xff]) || // JPEG
+		startsWith([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]) || // PNG
+		startsWith([0x47, 0x49, 0x46, 0x38]) // GIF8
+	)
+}
+
 // Resize image with Jimp
 async function processImage(arrayBuffer: ArrayBuffer, width: number = 1200): Promise<Buffer> {
 	const imageBuffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
@@ -328,7 +338,14 @@ const doFileUpload = async (formData: FormData, eventId: number): Promise<void |
 
 		// Get image data
 		const imageBuffer = await file.arrayBuffer();
-		
+
+		// file.type is whatever the browser (or attacker) claims, so check the bytes too before
+		// Jimp sees them. Jimp 0.x sniffs the format with file-type 16, whose ASF parser can loop
+		// forever on a malformed file (GHSA-5v7r-6r5c-r473); only JPEG, PNG and GIF get that far.
+		if (!hasAllowedImageSignature(new Uint8Array(imageBuffer, 0, Math.min(8, imageBuffer.byteLength)))) {
+			throw new Error("Solo se permiten imagenes JPEG, PNG y GIF");
+		}
+
 		// Convert to large jpeg
 		const processedImageLarge = await processImage(imageBuffer, 1200);
 		const fileKeyLarge = `event-${eventId}-${Date.now()}.jpg`
