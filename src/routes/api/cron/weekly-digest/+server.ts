@@ -1,10 +1,14 @@
 import { error, json } from '@sveltejs/kit'
+import type { Config } from '@sveltejs/adapter-vercel'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
 import { sendWeeklyDigest } from '$lib/server/mail'
 import { eventColumns, withoutSubmitter } from '$lib/server/queries'
 import { getCurrentDateInMexicoCity } from '$lib/dateTime'
 import { CRON_SECRET } from '$env/static/private'
+
+// Vercel function time limit in seconds: the digest emails every subscriber in one run
+export const config: Config = { maxDuration: 60 }
 
 // GET /api/cron/weekly-digest
 // Called by Vercel Cron every Wednesday at 8 PM Mexico City time

@@ -19,16 +19,9 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		adapter: adapter({
-			functions: {
-				'src/routes/api/v1/event/+server.ts': {
-					maxDuration: 30
-				},
-				'src/routes/api/cron/weekly-digest/+server.ts': {
-					maxDuration: 60
-				}
-			}
-		}),		
+		// Time limits for slow routes are set in the routes themselves (export const config), since
+		// adapter-vercel reads them from there and has no per-file option here
+		adapter: adapter(),
 		prerender: {
       entries: [
         '/', 
