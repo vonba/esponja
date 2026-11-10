@@ -1,11 +1,12 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
+import { readJsonBody } from '$lib/server/http'
 
 // POST /api/v1/digest-subscribe
 // Body: { email: string }
 export const POST: RequestHandler = async ({ request }) => {
-	const body = await request.json()
+	const body = await readJsonBody(request)
 	const email = body.email?.toLowerCase().trim()
 
 	// Validate email format

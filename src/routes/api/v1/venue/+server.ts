@@ -1,19 +1,25 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
+import { readJsonBody } from '$lib/server/http'
 import { toSlug } from '$lib/strings';
 import { publicCacheHeaders } from '$lib/cache';
 import { clearPublicCache } from '$lib/server/cache';
 
 // Possible query parameters:
-// showHidden=true : include venues with hidden=true
+// showHidden=true : include venues with hidden=true (logged-in users only)
 export const GET: RequestHandler = async event => {
 	const { setHeaders } = event
-	setHeaders(publicCacheHeaders())
+	const { user } = event.locals
+
+	// Hidden venues are for the admin panel, so anyone else asking for them gets the public list
+	const showHidden = !!user && !!event.url.searchParams.get('showHidden')
+
+	// A list with hidden venues depends on who asked, so the CDN must never keep it
+	setHeaders(showHidden ? { 'Cache-Control': 'private, no-store' } : publicCacheHeaders())
 
 	// Set query constraints
-	const searchParams = event.url.searchParams;
-	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
+	const hiddenConstraint = showHidden ? '1=1' : 'hidden = false';
 	
 	let result;
 	try {
@@ -30,7 +36,7 @@ export const PUT: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
 		
-	const venueUpdate = await event.request.json()
+	const venueUpdate = await readJsonBody(event.request)
 
 	try {
 		await query(`CALL upsert_venue($1, $2);`, [JSON.stringify(venueUpdate), null])
@@ -50,7 +56,7 @@ export const POST: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
 		
-	const venueCreate = await event.request.json()
+	const venueCreate = await readJsonBody(event.request)
 	const newSlug = toSlug(venueCreate.name)
 	venueCreate.slug = newSlug
 

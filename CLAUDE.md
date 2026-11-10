@@ -83,7 +83,17 @@ Authentication is handled through SvelteKit hooks:
 - `src/hooks.server.ts`: Attaches user data to `event.locals.user` on every request based on session cookie
 - Sessions are validated against the database using `get_session()` function
 - Invalid sessions automatically delete the session cookie
+- `get_session()` ignores blocked users, so blocking someone ends their sessions at once
 - User roles: `contributor`, `editor`, `admin` (defined in `src/app.d.ts`)
+- There is no public sign-up: admins create users through `POST /api/v1/user`. Everyone can edit their own account; only admins edit other users, roles and access.
+
+### XSS and CSRF guards
+
+Code that defends against XSS or CSRF carries a comment starting `XSS guard:` or `CSRF guard:`, so `grep -rn "XSS guard\|CSRF guard" src svelte.config.js` lists every one. In short:
+
+- Never render user input with `{@html}`. Event descriptions go through `descriptionParts()` and user-supplied links through `safeHttpUrl()` (both in `src/lib/strings.ts`). HTML emails escape every value with `escapeHtml()`.
+- The CSP has no `'unsafe-inline'` in `script-src`, so inline event handlers and `javascript:` URLs don't run.
+- `hooks.server.ts` rejects POST/PUT/PATCH/DELETE requests whose `Origin` is another site, and JSON endpoints read their body with `readJsonBody()` (`src/lib/server/http.ts`), which requires `Content-Type: application/json`.
 
 ### Route Structure
 
@@ -95,7 +105,7 @@ src/routes/
 ├── [slug]/                    # Dynamic venue pages
 ├── admin/                     # Admin dashboard (requires auth)
 ├── auth/                      # Authentication endpoints
-│   ├── [slug]/+server.ts      # Login/logout/register
+│   ├── [slug]/+server.ts      # Login/logout
 │   ├── forgot/+server.ts      # Password reset request
 │   └── reset/                 # Password reset pages
 ├── api/v1/                    # API endpoints
@@ -148,6 +158,8 @@ CSP is configured in `svelte.config.js` with specific allowances for:
 
 In development, WebSocket connections to `ws://localhost:3000` are allowed.
 
+`script-src` has no `'unsafe-inline'`, and `mode: 'hash'` makes SvelteKit add a hash for its own startup script (hashes suit CDN-cached pages better than nonces). Any third-party snippet that needs an inline `<script>` or an `on...=` attribute will be blocked, so load scripts as files from an allowed host.
+
 ### Prerendering
 
 Static routes are prerendered for better performance:
@@ -167,7 +179,7 @@ Required environment variables (see `sample.env`):
 - `PUBLIC_GOOGLE_API_KEY`: Google Maps API key
 - `MAIL_FROM`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASS`: SMTP configuration
 - `PUBLIC_DOMAIN`, `DOMAIN`: Application URLs
-- `PRODUCTION`: Boolean flag for production environment
+- `CRON_SECRET`: Bearer token Vercel Cron sends to `/api/cron/weekly-digest`
 
 ### Styling
 

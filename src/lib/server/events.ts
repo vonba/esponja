@@ -2,7 +2,7 @@
 import { error } from '@sveltejs/kit'
 import { stripHtml } from 'string-strip-html'
 import { query } from '$lib/server/db'
-import { toSlug } from '$lib/strings'
+import { safeHttpUrl, toSlug } from '$lib/strings'
 import { getDateSlug, DATE_SLUG_MAX_LENGTH } from '$lib/dateTime'
 
 // Matches the slug column in the events table
@@ -12,8 +12,9 @@ const SLUG_MAX_LENGTH = 120
 // cannot cast to date/time
 const dateKeys = ['startDate', 'endDate', 'startTime', 'endTime']
 
-// User-facing text fields that must never contain HTML
-const textKeys = ['name', 'description', 'ticketLink']
+// User-facing text fields that must never contain HTML. The submitter's name and email go
+// into the moderation emails, which are HTML.
+const textKeys = ['name', 'description', 'ticketLink', 'submitterName', 'submitterEmail']
 
 // Shown to the user both by the pre-flight check and by the unique constraint,
 // so the two paths are indistinguishable from the outside
@@ -74,13 +75,32 @@ export function isDuplicateSlugError(err: unknown): boolean {
 	return dbError.constraint === 'events_slug_key' || !!dbError.message?.includes('events_slug_key')
 }
 
-// Removes any HTML from the user-supplied text fields
+// Removes any HTML from the user-supplied text fields and checks the ticket link.
+// XSS guard: this is the first line of defence, on the way in. Pages escape on the way out
+// as well (see descriptionParts and safeHttpUrl in $lib/strings).
 export function sanitizeEventText(eventData: any) {
 	for (const key of textKeys) {
 		if (typeof eventData[key] === 'string') {
 			eventData[key] = stripHtml(eventData[key]).result
 		}
 	}
+	normalizeTicketLink(eventData)
+}
+
+// XSS guard: the ticket link becomes an href on the event page, so it has to be an http(s) URL.
+// A javascript: link would run script for whoever clicks "Comprar boletos". A link typed without
+// a scheme (boletia.com/...) gets https:// in front rather than being turned away.
+function normalizeTicketLink(eventData: any) {
+	const link = typeof eventData.ticketLink === 'string' ? eventData.ticketLink.trim() : ''
+	// The form sends an empty link as "null" or "undefined" (see toEventQueryBody)
+	if (!link || link === 'null' || link === 'undefined') return
+
+	const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(link)
+	const withScheme = hasScheme ? link : `https://${link}`
+	if (!safeHttpUrl(withScheme)) {
+		error(400, 'El link para comprar boletos debe ser una dirección web (https://...)')
+	}
+	eventData.ticketLink = withScheme
 }
 
 // upsert_event takes JSON, so values that arrived as the strings "null" or

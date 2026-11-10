@@ -1,11 +1,12 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
+import { readJsonBody } from '$lib/server/http'
 
 // POST /api/v1/digest-unsubscribe
 // Body: { token: string }
 export const POST: RequestHandler = async ({ request }) => {
-	const body = await request.json()
+	const body = await readJsonBody(request)
 	const token = body.token?.trim()
 
 	if (!token) {

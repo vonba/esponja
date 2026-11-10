@@ -46,8 +46,8 @@
 		}
 
 		if (form.checkValidity()) {
-			// Use API route for update and auth route for creating
-			const url = !isNewUser ? '/api/v1/user' : '/auth/register'
+			// Create (admins only) or update
+			const url = '/api/v1/user'
 			const method = !isNewUser ? 'PUT' : 'POST'
 
 			try {
@@ -133,6 +133,7 @@
 					type="password"
 					id="password"
 					bind:value={user.password}
+					required={isNewUser}
 					minlength="8"
 					maxlength="80"
 					placeholder="Contraseña"

@@ -2,6 +2,7 @@ import Jimp from 'jimp';
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import { query } from '$lib/server/db'
+import { readJsonBody } from '$lib/server/http'
 import { DeleteObjectCommand, PutObjectCommand, s3Client } from '$lib/s3-config';
 import { S3_BUCKET } from '$env/static/private';
 import { eventColumns, withoutSubmitter } from '$lib/server/queries';
@@ -24,8 +25,8 @@ import {
 // ====== Endpoint for listing events ======
 // Possible query parameters:
 // today=YYYY-MM-DD : use this as the current date (defaults to today in Mexico City)
-// showHidden=true : include events where hidden=true
-// showUnpublished=true : include events where published=false
+// showHidden=true : include events where hidden=true (logged-in users only)
+// showUnpublished=true : include events where published=false (logged-in users only)
 // showOnlyPastEvents=true : show only events in the past
 export const GET: RequestHandler = async event => {
 
@@ -39,8 +40,10 @@ export const GET: RequestHandler = async event => {
 	const searchParams = event.url.searchParams;
 	const todayParam = searchParams.get('today')
 	const currentDate = todayParam ? todayParam : getCurrentDateInMexicoCity();
-	const publishedConstraint = searchParams.get('showUnpublished') ? '1=1' : 'published = true';
-	const hiddenConstraint = searchParams.get('showHidden') ? '1=1' : 'hidden = false';
+	// Unpublished submissions and hidden events are for the admin panel, so anyone else asking
+	// for them gets the public list
+	const publishedConstraint = user && searchParams.get('showUnpublished') ? '1=1' : 'published = true';
+	const hiddenConstraint = user && searchParams.get('showHidden') ? '1=1' : 'hidden = false';
 	const dateConstraint = searchParams.get('showOnlyPastEvents') 
 		? `start_date < '${currentDate}' AND (end_date IS NULL OR end_date < '${currentDate}')` 
 		: `start_date >= '${currentDate}' OR (end_date IS NOT NULL AND end_date >= '${currentDate}')`;
@@ -102,7 +105,7 @@ export const DELETE: RequestHandler = async event => {
 	const { user } = event.locals
 	if (!user) error(401, 'Unauthorized')
 
-	const requestBody = await event.request.json() as EventProperties
+	const requestBody = await readJsonBody(event.request) as EventProperties
 	const { id, imageKeyLarge, imageKeySmall } = requestBody
 
 	const eventId = parseEventId(id)
@@ -135,6 +138,9 @@ export const PUT: RequestHandler = async event => {
 	const formData = await event.request.formData();
 	const eventUpdate = eventFromFormData(formData)
 	const eventId = parseEventId(eventUpdate.id)
+	// upsert_event updates whichever id it is handed, so give it exactly the number checked
+	// below rather than the client's string (Number() and Postgres don't read every string alike)
+	eventUpdate.id = eventId
 
 	// Get existing event
 	const existingEventResult = await query(`SELECT id, user_id AS "userId", hidden, published,
@@ -219,6 +225,13 @@ export const POST: RequestHandler = async event => {
 	// Copy FormData from the request body (NOTE we only use FormData when file uploads are involved)
   const formData = await event.request.formData();
   const eventCreate = eventFromFormData(formData)
+
+	// Creating always makes a new event. upsert_event updates any event whose id it is handed,
+	// so an id sent by the client here would overwrite (and unpublish) that existing event,
+	// without even a login. The images are set by the upload below, never by the client.
+	eventCreate.id = 0
+	delete eventCreate.imageKeyLarge
+	delete eventCreate.imageKeySmall
 
 	// Append start date to slug, so a repeating event gets a distinct slug each time
 	eventCreate.slug = buildEventSlug(eventCreate.slug || eventCreate.name, eventCreate.startDate)

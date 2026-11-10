@@ -3,6 +3,12 @@ import { createTransport } from 'nodemailer';
 import { MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, MAIL_FROM, MAIL_NOTIFICATIONS_TO } from '$env/static/private'
 import { PUBLIC_DOMAIN } from '$env/static/public';
 import { getImageURL } from '$lib/file';
+import { escapeHtml } from '$lib/strings';
+
+// XSS guard: these emails are HTML built as strings, and event names, descriptions and the
+// submitter's name and email are typed in by the public. Every such value goes through
+// escapeHtml() before it lands in the HTML; the getStyled* helpers below escape their own
+// text and link, so pass them plain text.
 
 const transport = createTransport({
   host: MAIL_HOST,
@@ -38,8 +44,8 @@ function getFormattedEmail(text: string): string {
 function getStyledButton(text: string, link: string): string {
   return `
   <p style="text-align: center;">
-    <a href="${link}" style="text-decoration: none; color: #007E68; padding: 0.5em 1em; border-radius: 5px; display: inline-block; margin: 1em; border: 1px solid #007E68;">
-      ${text}
+    <a href="${escapeHtml(link)}" style="text-decoration: none; color: #007E68; padding: 0.5em 1em; border-radius: 5px; display: inline-block; margin: 1em; border: 1px solid #007E68;">
+      ${escapeHtml(text)}
     </a>
   <p>
 	`;
@@ -48,7 +54,7 @@ function getStyledButton(text: string, link: string): string {
 function getStyledHeader(text: string): string {
   return `
   <h2 style="color: #007E68; text-align: center; margin: 0 0 1em 0;">
-    ${text}
+    ${escapeHtml(text)}
     <div style="text-align: center">
       <span style="display: inline-block; height: 0; border-bottom: 2px solid #FFA900; margin-top: 1em;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     </div>
@@ -57,7 +63,7 @@ function getStyledHeader(text: string): string {
 }
 
 function getStyledLink(text: string, link: string): string {
-  return `<a href="${link}" style="color: #007E68;">${text}</a>`;
+  return `<a href="${escapeHtml(link)}" style="color: #007E68;">${escapeHtml(text)}</a>`;
 }
 
 async function sendMail(data: {to: string, from: string, subject: string, html: string}) {
@@ -88,14 +94,14 @@ export async function sendModerationSuccessfulNotification(
     from: MAIL_FROM,
     subject: `Tu evento: ${eventName}`,
     html: getFormattedEmail(`
-        <h2>¡Hola ${submitterName}!</h2>
+        <h2>¡Hola ${escapeHtml(submitterName)}!</h2>
         <p>
-					Tu evento ${eventName} ya está publicado en
+					Tu evento ${escapeHtml(eventName)} ya está publicado en
           ${getStyledLink('este URL', `${PUBLIC_DOMAIN}/evento/${eventSlug}`)}
 				</p>
         <p>
           <br />
-          <img src="${getImageURL(eventImageKeySmall)}" alt="Imagen del evento" height="400" />
+          <img src="${escapeHtml(getImageURL(eventImageKeySmall))}" alt="Imagen del evento" height="400" />
           <br /><br />
         </p>
 				<p>
@@ -119,15 +125,15 @@ export async function sendModerationNotification(
         <h2>¡Hola!</h2>
         <p>
 					El siguiente evento se acaba de crear:<br />
-          ${eventName}
+          ${escapeHtml(eventName)}
 				</p>
         <p>
           <br />
-          <img src="${eventImageKeySmall ? getImageURL(eventImageKeySmall) : ''}" alt="Imagen del evento" height="400" />
+          <img src="${eventImageKeySmall ? escapeHtml(getImageURL(eventImageKeySmall)) : ''}" alt="Imagen del evento" height="400" />
           <br /><br />
         </p>
         <p>
-          Creado por: ${submitterName} (${getStyledLink(submitterEmail, `mailto:${submitterEmail}`)})
+          Creado por: ${escapeHtml(submitterName)} (${getStyledLink(submitterEmail, `mailto:${submitterEmail}`)})
         </p>
 				<p>
           ${getStyledButton('Ir a admin', `${PUBLIC_DOMAIN}/admin`)}
@@ -249,14 +255,14 @@ export async function sendWeeklyDigest(
 
       eventsHtml += `
         <div style="margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px solid #007E68; text-align: center;">
-          ${imageUrl ? `<img src="${imageUrl}" alt="${event.name}" style="width: 100%; max-width: 400px; height: auto; border-radius: 5px; margin-bottom: 1em;" />` : ''}
+          ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(event.name)}" style="width: 100%; max-width: 400px; height: auto; border-radius: 5px; margin-bottom: 1em;" />` : ''}
           <h3 style="color: #007E68; margin: 0.5em 0;">
-            <a href="${eventUrl}" style="color: #007E68; text-decoration: none;">${event.name}</a>
+            <a href="${escapeHtml(eventUrl)}" style="color: #007E68; text-decoration: none;">${escapeHtml(event.name)}</a>
           </h3>
           <p style="margin: 0.5em 0; color: #FFA900;">
             ${venueHtml}${dateTimeStr}${priceStr}
           </p>
-          ${description ? `<p style="margin: 0.5em 0;">${description}</p>` : ''}
+          ${description ? `<p style="margin: 0.5em 0;">${escapeHtml(description)}</p>` : ''}
           <p style="margin: 0.5em 0;">
             ${getStyledLink('Ver más', eventUrl)}
           </p>

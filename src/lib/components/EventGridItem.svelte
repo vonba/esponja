@@ -4,7 +4,7 @@
 	import EButton from "./EButton.svelte"
 	import Notification from "./Notification.svelte"
 	import { fade } from "svelte/transition"
-	import { capitalizeFirstChar, formatDescription } from "$lib/strings"
+	import { capitalizeFirstChar, descriptionParts, safeHttpUrl } from "$lib/strings"
 	import { loginSession } from "../../stores"
 
   // Props
@@ -28,6 +28,11 @@
 
   // Unpublished events only appear in the admin panel, and open as a logged-in preview
   $: eventPath = `/evento/${event.slug}${event.published ? '' : '?preview'}`
+
+  // XSS guard: the ticket link is typed in by whoever submitted the event. Only an http(s)
+  // URL becomes a link, so a stored javascript: URL can never run when someone clicks it.
+  // (The API also rejects such links on save, see sanitizeEventText in $lib/server/events.)
+  $: ticketHref = safeHttpUrl(event.ticketLink)
 
   // Share
   let shareMessage = ''
@@ -149,15 +154,18 @@
         </div>
       {/if}
 
+      <!-- XSS guard: the description is user input, so it is never rendered with {@html}.
+           descriptionParts() splits it into text, links and line breaks, and Svelte escapes
+           each piece. Kept on one line so no stray whitespace ends up between the pieces. -->
       <div class="description">
         <p><strong>Acerca del evento</strong></p>
-        <p>{@html formatDescription(event.description)}</p>
+        <p>{#each descriptionParts(event.description) as part}{#if part.kind === 'link'}<a href={part.href} target="_blank" rel="noopener noreferrer">{part.text}</a>{:else if part.kind === 'lineBreak'}<br />{:else}{part.text}{/if}{/each}</p>
       </div>
 
-      {#if event.ticketLink}
+      {#if ticketHref}
         <p class="ticketLink flex alignCenter">
           <img src="/icon-ticket-green.svg" alt="Entrada" />
-          <a href={event.ticketLink}>Comprar boletos</a>
+          <a href={ticketHref}>Comprar boletos</a>
         </p>
       {/if}
     </div>

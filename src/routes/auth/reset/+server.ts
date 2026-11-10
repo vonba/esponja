@@ -4,9 +4,10 @@ import type { JwtPayload } from 'jsonwebtoken'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '$env/static/private'
 import { query } from '$lib/server/db'
+import { readJsonBody } from '$lib/server/http'
 
 export const PUT: RequestHandler = async event => {
-	const body = await event.request.json()
+	const body = await readJsonBody(event.request)
 	const { token, password } = body
 
 	// Check the validity of the token and extract userId
