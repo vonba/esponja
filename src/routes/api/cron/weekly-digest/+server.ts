@@ -8,12 +8,13 @@ import { CRON_SECRET } from '$env/static/private'
 
 // GET /api/cron/weekly-digest
 // Called by Vercel Cron every Wednesday at 8 PM Mexico City time
-// Local test: curl -X GET 'http://localhost:3000/api/cron/weekly-digest' -H 'Authorization: Bearer LD0AARZi1SVDd3ar25HiZ+gE0QW3c7j8m1Gr/J2N7dY='
+// Local test: curl -X GET 'http://localhost:3000/api/cron/weekly-digest' -H 'Authorization: Bearer [CRON_SECRET]'
 export const GET: RequestHandler = async ({ request }) => {
-	// Verify this is called by Vercel Cron
+	// Verify this is called by Vercel Cron. An empty CRON_SECRET refuses every request rather
+	// than skipping the check, since anyone could otherwise email every subscriber at will.
 	const authHeader = request.headers.get('authorization')
 
-	if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+	if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
 		console.error('Unauthorized cron request')
 		error(401, 'Unauthorized')
 	}

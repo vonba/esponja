@@ -179,7 +179,7 @@ Required environment variables (see `sample.env`):
 - `PUBLIC_GOOGLE_API_KEY`: Google Maps API key
 - `MAIL_FROM`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASS`: SMTP configuration
 - `PUBLIC_DOMAIN`, `DOMAIN`: Application URLs
-- `CRON_SECRET`: Bearer token Vercel Cron sends to `/api/cron/weekly-digest`
+- `CRON_SECRET`: Bearer token Vercel Cron sends to `/api/cron/weekly-digest`; while it is empty the route refuses every request
 
 ### Styling
 
