@@ -23,7 +23,11 @@ const createPool = (connectionString: string) => {
 	const isLocal = !hostname || ['localhost', '127.0.0.1', '[::1]'].includes(hostname)
 	const ssl = isLocal ? false : { ca: [...rootCertificates, supabaseCaCert] }
 
-	const pool = new pg.Pool({ connectionString, max: 10, ssl })
+	// Idle connections close after 1 s rather than pg's default 10 s. attachDatabasePool (below)
+	// keeps the function running until they have closed, and Vercel bills that time, so with 10 s
+	// every request that touched the database cost about 10 s of function duration however fast
+	// it answered. Queries within one request run back to back, so they still share a connection.
+	const pool = new pg.Pool({ connectionString, max: 10, ssl, idleTimeoutMillis: 1000 })
 
 	// On Vercel, keeps a function alive until its idle connections are closed, so they aren't
 	// left hanging when the function is paused between requests
